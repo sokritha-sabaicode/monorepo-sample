@@ -10,6 +10,7 @@ We aim to maintain a clean and uniform codebase. Please adhere to the following 
 
 Our project is organized into several key directories:
 
+```bash
 /project-root
 |-- /apps
 | |-- /backend # Backend Service
@@ -20,6 +21,7 @@ Our project is organized into several key directories:
 | |-- /libs
 | |-- /utils # Utility functions
 | |-- /types # TypeScript type definitions
+```
 
 ### Naming Conventions
 
