@@ -68,11 +68,17 @@ Example: "Add payment processing module", "Fix boundary error in cart calculatio
 To set up the project locally, follow these steps:
 
 1. Clone the repository
+```bash
 git clone [repository-url]
+```
 2. Install dependencies
+```bash
 yarn install
+```
 3. Start All Server
+```bash
 yarn start
+```
 
 #### Contributing
 Please read our contributing guidelines carefully before making a pull request. Contributions should be made in a separate branch and submitted via pull requests to the main branch for review.
