@@ -1,6 +1,6 @@
 import { createRoot } from 'react-dom/client';
 import './styles.css'
-import Button from './button';  // Assuming index.tsx exports Button
+import Button from './atoms/button';  // Assuming index.tsx exports Button
 
 const Demo = () => (
   <div>
