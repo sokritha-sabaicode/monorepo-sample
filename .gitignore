@@ -87,6 +87,8 @@ development
 
 # dotenv environment variables file
 .env
+.env.development
+.env.production
 
 yarn.lock
 

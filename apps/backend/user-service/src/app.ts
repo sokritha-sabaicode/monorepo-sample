@@ -13,6 +13,11 @@ const swaggerDocument = JSON.parse(fs.readFileSync(path.join(__dirname, 'docs/sw
 const app = express();
 
 // ========================
+// Global Middleware
+// ========================
+app.use(express.json())
+
+// ========================
 // Global API V1
 // ========================
 RegisterRoutes(app)

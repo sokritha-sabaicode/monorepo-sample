@@ -1,4 +1,4 @@
-export interface UserUpdateRequest {
+export interface UserCreationParams {
   email: string;
   username: string;
 }

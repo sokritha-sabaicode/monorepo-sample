@@ -26,6 +26,49 @@
 				],
 				"type": "object",
 				"additionalProperties": false
+			},
+			"UserProfileError": {
+				"properties": {
+					"message": {
+						"type": "string"
+					},
+					"error": {
+						"anyOf": [
+							{
+								"type": "string"
+							},
+							{
+								"items": {
+									"additionalProperties": false,
+									"type": "object"
+								},
+								"type": "array"
+							}
+						]
+					}
+				},
+				"required": [
+					"message",
+					"error"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"UserCreationParams": {
+				"properties": {
+					"email": {
+						"type": "string"
+					},
+					"username": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"email",
+					"username"
+				],
+				"type": "object",
+				"additionalProperties": false
 			}
 		},
 		"securitySchemes": {}
@@ -39,7 +82,7 @@
 		"contact": {}
 	},
 	"paths": {
-		"/users/{userId}": {
+		"/v1/users/{userId}": {
 			"get": {
 				"operationId": "GetUser",
 				"responses": {
@@ -48,7 +91,14 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/UserProfileResponse"
+									"anyOf": [
+										{
+											"$ref": "#/components/schemas/UserProfileResponse"
+										},
+										{
+											"$ref": "#/components/schemas/UserProfileError"
+										}
+									]
 								}
 							}
 						}
@@ -65,6 +115,42 @@
 						}
 					}
 				]
+			}
+		},
+		"/v1/users": {
+			"post": {
+				"operationId": "CreateUser",
+				"responses": {
+					"201": {
+						"description": "Created",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"$ref": "#/components/schemas/UserProfileResponse"
+										},
+										{
+											"$ref": "#/components/schemas/UserProfileError"
+										}
+									]
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/UserCreationParams"
+							}
+						}
+					}
+				}
 			}
 		}
 	},

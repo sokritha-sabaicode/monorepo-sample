@@ -3,3 +3,8 @@ export interface UserProfileResponse {
   email: string;
   username: string;
 }
+
+export interface UserProfileError {
+  message: string;
+  error: string | object[];
+}
