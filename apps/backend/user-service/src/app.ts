@@ -1,8 +1,15 @@
 import express from 'express';
 import swaggerUi from "swagger-ui-express";
-import * as swaggerDocument from '@/src/docs/swagger.json'
 import { RegisterRoutes } from '@/src/routes/v1/routes';
+import fs from 'fs';
+import path from 'path'
 
+// Dynamically load swagger.json
+const swaggerDocument = JSON.parse(fs.readFileSync(path.join(__dirname, 'docs/swagger.json'), 'utf8'));
+
+// ========================
+// Initialize App Express
+// ========================
 const app = express();
 
 // ========================
