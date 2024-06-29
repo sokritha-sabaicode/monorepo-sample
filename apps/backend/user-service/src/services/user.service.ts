@@ -3,11 +3,18 @@ import { UserCreationParams } from "ms-libs/types";
 
 class UserService {
   async getUserById(userId: string) {
-    const user = await UserRepository.findById(userId);
-    if (!user) {
-      throw new Error('User not found');
+    try {
+      const user = await UserRepository.findById(userId);
+      if (!user) {
+        throw new Error('User not found');
+      }
+      return user;
+    } catch (error) {
+      console.error(`UserService - getUserById() method error: `, error)
+
+      throw error;
     }
-    return user;
+
   }
 
   async createNewUser(userInfo: UserCreationParams) {
@@ -15,6 +22,8 @@ class UserService {
       const newUser = await UserRepository.create(userInfo);
       return newUser;
     } catch (error) {
+      console.error(`UserService - createNewUser() method error: `, error)
+
       throw error;
     }
   }

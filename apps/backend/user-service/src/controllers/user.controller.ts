@@ -1,4 +1,4 @@
-import { UserProfileError, UserProfileResponse, UserCreationParams } from 'ms-libs/types';
+import { UserProfileError, UserCreationParams, UserProfileResponse, UserProfile } from 'ms-libs/types';
 import {
   Controller,
   Get,
@@ -6,25 +6,34 @@ import {
   Path,
   Route,
   SuccessResponse,
-  Body
+  Body,
+  Middlewares
 } from "tsoa";
 import UserService from '@/src/services/user.service';
+import sendResponse from '@/src/utils/send-response';
+import loggerRequest from '@/src/middewares/logger-request';
 
 
 @Route("v1/users")
 export class UsersController extends Controller {
   @Get("{userId}")
-  public async getUser(
+  @Middlewares(loggerRequest)
+  public async getUserProfile(
     @Path() userId: string
   ): Promise<UserProfileResponse | UserProfileError> {
     try {
-      const user = await UserService.getUserById(userId);
-      return {
-        id: user._id.toString(),
-        email: user.email,
-        username: user.username,
+      const response = await UserService.getUserById(userId);
+
+      const user: UserProfile = {
+        id: response._id.toString(),
+        email: response.email,
+        username: response.username
       };
+
+      return sendResponse<UserProfile>({ message: 'success', data: user })
     } catch (error) {
+      console.error(`UsersController - getUserProfile() method error: `, error)
+
       this.setStatus(404); // Set HTTP status code to 404
       return { message: 'failed', error: "not found" };
     }
@@ -36,16 +45,21 @@ export class UsersController extends Controller {
     @Body() requestBody: UserCreationParams
   ): Promise<UserProfileResponse | UserProfileError> {
     try {
-      this.setStatus(201); // set return status 201
-      const newUser = await UserService.createNewUser(requestBody);
+      const response = await UserService.createNewUser(requestBody);
 
-      return {
-        id: newUser._id.toString(),
-        email: newUser.email,
-        username: newUser.username
+      const newUser = {
+        id: response._id.toString(),
+        username: response.username,
+        email: response.email
       }
+
+      this.setStatus(201); // set return status 201
+      return sendResponse({ message: 'success', data: newUser })
     } catch (error) {
-      throw error;
+      console.error(`UsersController - createUser() method error: `, error)
+
+      this.setStatus(500); // Set HTTP status code to 404
+      return { message: 'failed', error: "something went wrong" };
     }
   }
 }

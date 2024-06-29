@@ -7,7 +7,7 @@
 		"requestBodies": {},
 		"responses": {},
 		"schemas": {
-			"UserProfileResponse": {
+			"UserProfile": {
 				"properties": {
 					"id": {
 						"type": "string"
@@ -23,6 +23,22 @@
 					"id",
 					"email",
 					"username"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"UserProfileResponse": {
+				"properties": {
+					"message": {
+						"type": "string"
+					},
+					"data": {
+						"$ref": "#/components/schemas/UserProfile"
+					}
+				},
+				"required": [
+					"message",
+					"data"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -84,7 +100,7 @@
 	"paths": {
 		"/v1/users/{userId}": {
 			"get": {
-				"operationId": "GetUser",
+				"operationId": "GetUserProfile",
 				"responses": {
 					"200": {
 						"description": "Ok",

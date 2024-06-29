@@ -11,12 +11,21 @@ import type { Request as ExRequest, Response as ExResponse, RequestHandler, Rout
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 
 const models: TsoaRoute.Models = {
-    "UserProfileResponse": {
+    "UserProfile": {
         "dataType": "refObject",
         "properties": {
             "id": {"dataType":"string","required":true},
             "email": {"dataType":"string","required":true},
             "username": {"dataType":"string","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "UserProfileResponse": {
+        "dataType": "refObject",
+        "properties": {
+            "message": {"dataType":"string","required":true},
+            "data": {"ref":"UserProfile","required":true},
         },
         "additionalProperties": false,
     },
@@ -51,9 +60,9 @@ export function RegisterRoutes(app: Router) {
     // ###########################################################################################################
         app.get('/v1/users/:userId',
             ...(fetchMiddlewares<RequestHandler>(UsersController)),
-            ...(fetchMiddlewares<RequestHandler>(UsersController.prototype.getUser)),
+            ...(fetchMiddlewares<RequestHandler>(UsersController.prototype.getUserProfile)),
 
-            async function UsersController_getUser(request: ExRequest, response: ExResponse, next: any) {
+            async function UsersController_getUserProfile(request: ExRequest, response: ExResponse, next: any) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
                     userId: {"in":"path","name":"userId","required":true,"dataType":"string"},
             };
@@ -67,7 +76,7 @@ export function RegisterRoutes(app: Router) {
                 const controller = new UsersController();
 
               await templateService.apiHandler({
-                methodName: 'getUser',
+                methodName: 'getUserProfile',
                 controller,
                 response,
                 next,

@@ -5,8 +5,11 @@ class UserRepository {
   async findById(userId: string) {
     try {
       const result = await UserModel.findById(userId);
+
       return result;
     } catch (error) {
+      console.error(`UserRepository - findById() method error: `, error)
+
       throw error
     }
   }
@@ -16,6 +19,8 @@ class UserRepository {
       const result = await UserModel.create(newInfo);
       return result;
     } catch (error) {
+      console.error(`UserRepository - create() method error: `, error)
+
       throw error;
     }
   }

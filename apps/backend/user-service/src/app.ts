@@ -17,6 +17,7 @@ const app = express();
 // ========================
 app.use(express.json())
 
+
 // ========================
 // Global API V1
 // ========================
@@ -26,6 +27,10 @@ RegisterRoutes(app)
 // API Documentations
 // ========================
 app.use("/user-api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
+// ========================
+// ERROR Handler
+// ========================
 
 
 export default app;
