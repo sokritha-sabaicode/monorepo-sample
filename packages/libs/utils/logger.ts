@@ -7,3 +7,7 @@ export default function logger(message: string) {
 export function loggerBeautifulObject(data: object) {
   console.log(prettyPrint(data, { indent: ' ', singleQuotes: false }))
 }
+
+export function prettyObject(data: {}) {
+  return JSON.stringify(data, null, 2)
+}

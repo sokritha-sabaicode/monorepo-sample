@@ -3,6 +3,7 @@ import swaggerUi from "swagger-ui-express";
 import { RegisterRoutes } from '@/src/routes/v1/routes';
 import fs from 'fs';
 import path from 'path'
+import { globalErrorHandler } from '@/src/middewares/global-error';
 
 // Dynamically load swagger.json
 const swaggerDocument = JSON.parse(fs.readFileSync(path.join(__dirname, 'docs/swagger.json'), 'utf8'));
@@ -31,6 +32,6 @@ app.use("/user-api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 // ========================
 // ERROR Handler
 // ========================
-
+app.use(globalErrorHandler)
 
 export default app;
