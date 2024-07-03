@@ -19,12 +19,14 @@ export interface UserCreationRepoParams {
   email: string;
   username: string;
   gender: string;
+  age: number;
 }
 
 export interface UserUpdateRepoParams {
   id?: string;
   username?: string;
-  gender?: string
+  gender?: string;
+  age?: number;
 }
 
 export interface MongoError extends Error {

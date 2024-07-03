@@ -18,25 +18,41 @@ class UserRepository {
       return acc;
     }, {} as Record<keyof UserSortParams, SortOrder>);
 
+    // Build MongoDB filter object
+    const buildFilter = (filter: Record<string, any>) => {
+      const mongoFilter: Record<string, any> = {};
+      for (const key in filter) {
+        if (typeof filter[key] === 'object') {
+          if (filter[key].hasOwnProperty('min') || filter[key].hasOwnProperty('max')) {
+            mongoFilter[key] = {};
+            if (filter[key].min !== undefined) {
+              mongoFilter[key].$gte = filter[key].min;
+            }
+            if (filter[key].max !== undefined) {
+              mongoFilter[key].$lte = filter[key].max;
+            }
+          } else {
+            mongoFilter[key] = filter[key];
+          }
+        } else {
+          mongoFilter[key] = filter[key];
+        }
+      }
+      return mongoFilter;
+    };
+
     try {
-      const operation = UserModel.find(filter)
+      const mongoFilter = buildFilter(filter);
+      const operation = UserModel.find(mongoFilter)
         .sort(sortFields)
         .skip((page - 1) * limit)
         .limit(limit);
 
       const result = await operation;
-      const totalItems = await UserModel.countDocuments(filter);
-
-      const data = result.map(doc => ({
-        _id: doc._id.toString(),
-        username: doc.username,
-        email: doc.email,
-        gender: doc.gender,
-        createdAt: doc.createdAt
-      }));
+      const totalItems = await UserModel.countDocuments(mongoFilter);
 
       return {
-        [UserModel.collection.collectionName]: data,
+        [UserModel.collection.collectionName]: result,
         totalItems,
         totalPages: Math.ceil(totalItems / limit),
         currentPage: page

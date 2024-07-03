@@ -7,7 +7,9 @@
     "tsoa:gen": "tsoa spec && tsoa routes",
     "dev": "yarn tsoa:gen && nodemon src/server.ts",
     "build": "node build-script.js",
-    "start": "node ./build/server.js"
+    "start": "node ./build/server.js",
+    "db:insert": "ts-node src/database/scripts/insert-data",
+    "db:dump": "ts-node src/database/scripts/dump-data"
   },
   "dependencies": {
     "dotenv": "^16.4.5",

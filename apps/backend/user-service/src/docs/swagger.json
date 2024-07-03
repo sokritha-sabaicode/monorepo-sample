@@ -7,8 +7,93 @@
 		"requestBodies": {},
 		"responses": {},
 		"schemas": {
-			"NativeDate": {
-				"type": "string"
+			"IUser": {
+				"properties": {
+					"_id": {
+						"type": "string"
+					},
+					"username": {
+						"type": "string"
+					},
+					"email": {
+						"type": "string"
+					},
+					"gender": {
+						"type": "string"
+					},
+					"age": {
+						"type": "number",
+						"format": "double"
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"updatedAt": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"_id",
+					"username",
+					"email",
+					"gender",
+					"age",
+					"createdAt",
+					"updatedAt"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"UsersPaginatedResponse": {
+				"properties": {
+					"message": {
+						"type": "string"
+					},
+					"data": {
+						"properties": {
+							"currentPage": {
+								"type": "number",
+								"format": "double"
+							},
+							"totalPages": {
+								"type": "number",
+								"format": "double"
+							},
+							"totalItems": {
+								"type": "number",
+								"format": "double"
+							}
+						},
+						"additionalProperties": {
+							"anyOf": [
+								{
+									"items": {
+										"$ref": "#/components/schemas/IUser"
+									},
+									"type": "array"
+								},
+								{
+									"type": "number",
+									"format": "double"
+								}
+							]
+						},
+						"required": [
+							"currentPage",
+							"totalPages",
+							"totalItems"
+						],
+						"type": "object"
+					}
+				},
+				"required": [
+					"message",
+					"data"
+				],
+				"type": "object",
+				"additionalProperties": false
 			},
 			"UserGetAllControllerParams": {
 				"properties": {
@@ -30,33 +115,13 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"UserProfile": {
-				"properties": {
-					"id": {
-						"type": "string"
-					},
-					"email": {
-						"type": "string"
-					},
-					"username": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"id",
-					"email",
-					"username"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
 			"UserProfileResponse": {
 				"properties": {
 					"message": {
 						"type": "string"
 					},
 					"data": {
-						"$ref": "#/components/schemas/UserProfile"
+						"$ref": "#/components/schemas/IUser"
 					}
 				},
 				"required": [
@@ -76,12 +141,17 @@
 					},
 					"gender": {
 						"type": "string"
+					},
+					"age": {
+						"type": "number",
+						"format": "double"
 					}
 				},
 				"required": [
 					"email",
 					"username",
-					"gender"
+					"gender",
+					"age"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -93,6 +163,10 @@
 					},
 					"gender": {
 						"type": "string"
+					},
+					"age": {
+						"type": "number",
+						"format": "double"
 					}
 				},
 				"type": "object",
@@ -119,72 +193,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"properties": {
-										"data": {
-											"properties": {
-												"currentPage": {
-													"type": "number",
-													"format": "double"
-												},
-												"totalPages": {
-													"type": "number",
-													"format": "double"
-												},
-												"totalItems": {
-													"type": "number",
-													"format": "double"
-												}
-											},
-											"additionalProperties": {
-												"anyOf": [
-													{
-														"type": "number",
-														"format": "double"
-													},
-													{
-														"items": {
-															"properties": {
-																"createdAt": {
-																	"$ref": "#/components/schemas/NativeDate"
-																},
-																"email": {
-																	"type": "string"
-																},
-																"username": {
-																	"type": "string"
-																},
-																"_id": {
-																	"type": "string"
-																}
-															},
-															"required": [
-																"createdAt",
-																"email",
-																"username",
-																"_id"
-															],
-															"type": "object"
-														},
-														"type": "array"
-													}
-												]
-											},
-											"required": [
-												"currentPage",
-												"totalPages",
-												"totalItems"
-											],
-											"type": "object"
-										},
-										"message": {
-											"type": "string"
-										}
-									},
-									"required": [
-										"data",
-										"message"
-									],
-									"type": "object"
+									"$ref": "#/components/schemas/UsersPaginatedResponse"
 								}
 							}
 						}
@@ -323,7 +332,7 @@
 				"operationId": "DeleteUserById",
 				"responses": {
 					"204": {
-						"description": "No Content"
+						"description": "Delete Successful"
 					}
 				},
 				"security": [],

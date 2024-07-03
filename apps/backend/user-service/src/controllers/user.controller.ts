@@ -1,4 +1,4 @@
-import { UserProfileResponse, UserProfile, UserCreationRequestParams, UserUpdateRequestParams } from 'ms-libs/types';
+import { UserProfileResponse, UserCreationRequestParams, UserUpdateRequestParams, UsersPaginatedResponse } from 'ms-libs/types';
 import {
   Controller,
   Get,
@@ -15,12 +15,13 @@ import UserService from '@/src/services/user.service';
 import sendResponse from '@/src/utils/send-response';
 import { prettyObject } from 'ms-libs/utils/logger';
 import { UserGetAllControllerParams } from '@/src/controllers/types/user-controller.type';
+import { IUser } from '@/src/database/models/user.model';
 
 
 @Route("v1/users")
 export class UsersController extends Controller {
   @Get()
-  public async getAllUsers(@Queries() queries: UserGetAllControllerParams) {
+  public async getAllUsers(@Queries() queries: UserGetAllControllerParams): Promise<UsersPaginatedResponse> {
     try {
       const response = await UserService.getAllUsers(queries);
 
@@ -39,15 +40,8 @@ export class UsersController extends Controller {
     try {
       const response = await UserService.createNewUser(requestBody);
 
-      const newUser = {
-        id: response._id.toString(),
-        username: response.username,
-        email: response.email,
-        gender: response.gender
-      }
-
       this.setStatus(201); // set return status 201
-      return sendResponse({ message: 'success', data: newUser })
+      return sendResponse<IUser>({ message: 'success', data: response })
     } catch (error) {
       console.error(`UsersController - createUser() method error: `, prettyObject(error as {}))
       throw error;
@@ -61,14 +55,7 @@ export class UsersController extends Controller {
     try {
       const response = await UserService.getUserById(userId);
 
-      const user = {
-        id: response._id.toString(),
-        email: response.email,
-        username: response.username,
-        gender: response.gender
-      };
-
-      return sendResponse<UserProfile>({ message: 'success', data: user })
+      return sendResponse<IUser>({ message: 'success', data: response })
     } catch (error) {
       console.error(`UsersController - getUserProfile() method error: `, prettyObject(error as {}))
       throw error;
@@ -84,21 +71,14 @@ export class UsersController extends Controller {
       const newUpdateUserInfo = { id: userId, ...updateUserInfo }
       const response = await UserService.updateUserById(newUpdateUserInfo);
 
-      const newUser = {
-        id: response._id.toString(),
-        username: response.username,
-        email: response.email,
-        gender: response.gender
-      }
-
-      return sendResponse({ message: 'success', data: newUser })
+      return sendResponse<IUser>({ message: 'success', data: response })
     } catch (error) {
       console.error(`UsersController - createUser() method error: `, prettyObject(error as {}))
       throw error;
     }
   }
 
-  @SuccessResponse("204", "No Content")
+  @SuccessResponse("204", "Delete Successful")
   @Delete("{userId}")
   public async deleteUserById(
     @Path() userId: string,
