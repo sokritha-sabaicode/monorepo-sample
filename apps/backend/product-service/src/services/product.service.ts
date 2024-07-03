@@ -51,9 +51,9 @@ export class ProductService {
         throw error;
       }
   }
-  public async getAllProducts(page: number, limit: number): Promise<IItem[] | null> {
+  public async getAllProducts(page: number, limit: number, price?: "asc"| "desc", productName?: "asc" | "desc", category?: string): Promise<IItem[] | null> {
     try {
-      const products = await productRepository.getAllProducts(page, limit);
+      const products = await productRepository.getAllProducts(page, limit, price, productName,category);
       return products;
     } catch (error) {
       throw error;

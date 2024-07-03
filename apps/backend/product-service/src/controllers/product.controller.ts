@@ -46,10 +46,13 @@ export class ProductController extends Controller {
   @Get('/')
   public async getAllProducts(
     @Query() page: number = 1, // Default page number is 1
-    @Query() limit: number = 2 // Default limit is 10
+    @Query() limit: number = 10 ,// Default limit is 10
+    @Query() price?: "asc" | "desc",  // Default limit is 10
+    @Query() productName?: "asc" | "desc" , // Default limit is 10
+    @Query() category?: string,
   ): Promise<IItem[] | null> {
     try {
-      const products = await ProductService.getAllProducts(page, limit)
+      const products = await ProductService.getAllProducts(page, limit, price,productName, category)
 
       return products;
     } catch (error) {

@@ -43,7 +43,8 @@ class UserRepository {
 
     try {
       const mongoFilter = buildFilter(filter);
-      const operation = UserModel.find(mongoFilter)
+      console.log(mongoFilter)
+      const operation = UserModel.find({ age: { '$gte': 18, '$lte': 28 }, gender: 'Male' })
         .sort(sortFields)
         .skip((page - 1) * limit)
         .limit(limit);

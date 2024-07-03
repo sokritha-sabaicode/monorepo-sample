@@ -52,14 +52,14 @@ class ProductRepository {
       throw error;
     }
   }
-    public async deleteProduct(id: string): Promise<IItem | null> {
+  public async deleteProduct(id: string): Promise<IItem | null> {
     try {
       const deleteProduct = await ItemModel.findByIdAndDelete(id);
-  
+
       if (!deleteProduct) {
         throw new Error('Product not found!')
       }
-  
+
       return deleteProduct;
     } catch (error) {
       throw error;
@@ -68,27 +68,50 @@ class ProductRepository {
 
   // page =1 , limit =3 => 1 , 2, 3
   // page = 2, limit =3 => 4, 5, 6
-  
-  public async getAllProducts(page: number, limit: number): Promise<IItem[] | null> {
+
+  public async getAllProducts(page: number, limit: number, price?: "asc" | "desc", productName?: "asc" | "desc", category?: string): Promise<IItem[] | null> {
     try {
-      const products = await ItemModel.find()
+      // Initialize the query with ItemModel.find()
+      let query = ItemModel.find();
+  
+      // Apply category filter if provided
+      if (category) {
+        query = query.where('category').equals(category);
+      }
+  
+      // Create sort options object
+      const sortOptions: { [key: string]: number } = {};
+  
+      if (price) {
+        sortOptions.price = price === "asc" ? 1 : -1;
+      }
+  
+      if (productName) {
+        sortOptions.name = productName === "asc" ? 1 : -1;
+      }
+
+  
+      // Apply pagination and sorting
+      query = query
         .skip((page - 1) * limit)
-        .limit(limit);
-        
-        
+        .limit(limit)
+  
+      // Execute the query
+      const products = await query.exec();
+  
       if (!products || products.length === 0) {
         throw new Error('Products not found!');
       }
-
+  
       return products;
     } catch (error) {
       throw error;
     }
   }
-}
+}  
 
 
-  // Add more repository methods as needed
+// Add more repository methods as needed
 
 
 export default new ProductRepository();

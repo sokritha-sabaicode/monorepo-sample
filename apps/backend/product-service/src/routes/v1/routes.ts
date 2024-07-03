@@ -118,7 +118,10 @@ export function RegisterRoutes(app: Router) {
             async function ProductController_getAllProducts(request: ExRequest, response: ExResponse, next: any) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
                     page: {"default":1,"in":"query","name":"page","dataType":"double"},
-                    limit: {"default":2,"in":"query","name":"limit","dataType":"double"},
+                    limit: {"default":10,"in":"query","name":"limit","dataType":"double"},
+                    price: {"in":"query","name":"price","dataType":"double"},
+                    productName: {"in":"query","name":"productName","dataType":"union","subSchemas":[{"dataType":"enum","enums":["asc"]},{"dataType":"enum","enums":["desc"]}]},
+                    category: {"in":"query","name":"category","dataType":"string"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa

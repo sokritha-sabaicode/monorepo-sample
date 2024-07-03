@@ -5,7 +5,8 @@
   "license": "MIT",
   "scripts": {
     "tsoa:gen": "tsoa spec && tsoa routes",
-    "dev": "yarn tsoa:gen && nodemon src/server.ts"
+    "dev": "yarn tsoa:gen && nodemon src/server.ts",
+    "db:insert": "ts-node src/database/scripts/insert-data.ts"
   },
   "dependencies": {
     "dotenv": "^16.4.5",
