@@ -18,7 +18,9 @@ const app = express();
 // ========================
 app.use(express.json())
 
-
+app.get('/test', (_req, res) => {
+  res.json({ message: 'Test route works' });
+});
 // ========================
 // Global API V1
 // ========================

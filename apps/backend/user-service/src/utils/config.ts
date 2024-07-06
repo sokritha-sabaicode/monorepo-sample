@@ -18,7 +18,7 @@ function loadConfig(): Config {
   // Define a schema for the environment variables
   const envVarsSchema = Joi.object({
     NODE_ENV: Joi.string()
-      .valid('development', 'production', 'test')
+      .valid('development', 'production', 'testing')
       .default('development'),
     PORT: Joi.number().default(3000),
     MONGODB_URL: Joi.string().required(),

@@ -1,21 +1,20 @@
 import mongoose from "mongoose";
 
 export default class MongoDBConnector {
-  private static instance: MongoDBConnector;
+  private static instances: Map<string, MongoDBConnector> = new Map();
   private mongoUrl: string = "";
   private db = mongoose.connection;
 
-  // Singleton Pattern to ensure only one instance of mongodb is connected
+  // Private constructor to enforce singleton pattern differently
   private constructor() {
     this.setupEventListeners();
   }
 
-  public static getInstance(): MongoDBConnector {
-    if (!MongoDBConnector.instance) {
-      MongoDBConnector.instance = new MongoDBConnector();
+  public static getInstance(env: string = 'development'): MongoDBConnector {
+    if (!MongoDBConnector.instances.has(env)) {
+      MongoDBConnector.instances.set(env, new MongoDBConnector());
     }
-
-    return MongoDBConnector.instance;
+    return MongoDBConnector.instances.get(env)!;
   }
 
   private setupEventListeners(): void {
@@ -38,8 +37,8 @@ export default class MongoDBConnector {
       await mongoose.connect(this.mongoUrl);
       console.log("Successfully connected to MongoDB");
     } catch (error) {
-      console.log("Initial MongoDB connection eoror", { error });
-      throw error
+      console.log("Initial MongoDB connection error", { error });
+      throw error;
     }
   }
 

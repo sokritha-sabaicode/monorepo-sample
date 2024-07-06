@@ -5,10 +5,10 @@ import configs from "@/src/utils/config";
 async function run() {
   try {
     // Activate MongoDB
-    const mongodb = MongoDBConnector.getInstance();
+    const mongodb = MongoDBConnector.getInstance(configs.env);
     await mongodb.connect({ url: configs.mongodbUrl });
 
-    app.listen(configs.port, () => {
+     app.listen(configs.port, () => {
       console.log(`User Service running on Port:`, configs.port)
     })
   } catch (error) {

@@ -85,6 +85,7 @@ class UserRepository {
 
       return result;
     } catch (error) {
+      console.log(error)
       console.error(`UserRepository - create() method error: `, prettyObject(error as {}))
 
       // Duplicate Email
