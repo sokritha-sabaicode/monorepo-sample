@@ -1,6 +1,6 @@
 import app from "@/src/app"
 import MongoDBConnector from "@/src/database/connector"
-import configs from "@/src/utils/config";
+import configs from "@/src/config";
 
 async function run() {
   try {
@@ -8,7 +8,7 @@ async function run() {
     const mongodb = MongoDBConnector.getInstance(configs.env);
     await mongodb.connect({ url: configs.mongodbUrl });
 
-     app.listen(configs.port, () => {
+    app.listen(configs.port, () => {
       console.log(`User Service running on Port:`, configs.port)
     })
   } catch (error) {

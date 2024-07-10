@@ -1,6 +1,6 @@
 import MongoDBConnector from '@/src/database/connector';
 import UserRepository from '@/src/database/repositories/user.repository';
-import configs from '@/src/utils/config';
+import configs from '@/src/config';
 import { InvalidInputError } from 'ms-libs/utils/errors';
 
 let createdUserId;

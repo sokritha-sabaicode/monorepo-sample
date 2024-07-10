@@ -16,6 +16,7 @@ describe('validateRequest Middleware', () => {
     age: Joi.number().integer().min(0).required(),
   });
 
+  // Case 1
   it('should call next if validation passes', () => {
     const req = {
       body: {
@@ -33,6 +34,7 @@ describe('validateRequest Middleware', () => {
     expect(nextFunction).toHaveBeenCalledTimes(1);
   });
 
+  // Case 2
   it('should throw InvalidInputError if validation fails', () => {
     const req = {
       body: {
@@ -49,6 +51,7 @@ describe('validateRequest Middleware', () => {
     expect(nextFunction).toHaveBeenCalledTimes(1);
   });
 
+  // Case 3
   it('should throw InvalidInputError if unknown properties are present', () => {
     const req = {
       body: {

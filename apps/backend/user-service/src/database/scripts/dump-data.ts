@@ -1,5 +1,5 @@
 import UserModel from '@/src/database/models/user.model';
-import configs from '@/src/utils/config';
+import configs from '@/src/config';
 import mongoose from 'mongoose';
 
 // Function to connect to the database and delete all data
