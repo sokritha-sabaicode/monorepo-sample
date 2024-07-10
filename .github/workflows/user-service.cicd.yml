@@ -44,7 +44,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: build
-          path: apps/backend/user-service/build
+          path: ./apps/backend/user-service/build
 
   deploy:
     runs-on: ubuntu-latest
@@ -64,7 +64,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: build
-          path: apps/backend/user-service/build
+          path: ./apps/backend/user-service/build
 
       - name: Prepare Deployment Directories
         uses: appleboy/ssh-action@master
@@ -77,15 +77,15 @@ jobs:
             mkdir -p /home/ubuntu/apps/user-service/build
             mkdir -p /home/ubuntu/apps/user-service/configs
 
-      - name: Sync Build Artifacts using SCP
-        uses: appleboy/ssh-action@master
+      - name: Copy files to EC2
+        uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.EC2_IP }}
-          username: ${{ secrets.EC2_USERNAME }}
+          username: ${{ secrets.EC2_USERNAME }} # Update as per your setup
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 22
-          script: |
-            scp -r apps/backend/user-service/build/ ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_IP }}:/home/ubuntu/apps/user-service/build/
+          source: "apps/backend/user-service/build/*"
+          target: "/home/ubuntu/apps/"
 
       - name: Create .env File
         uses: appleboy/ssh-action@master
