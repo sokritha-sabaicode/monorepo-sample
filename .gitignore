@@ -87,5 +87,12 @@ development
 
 # dotenv environment variables file
 .env
+.env.development
+.env.production
+.env.testing
 
 yarn.lock
+
+node_modules
+
+build
