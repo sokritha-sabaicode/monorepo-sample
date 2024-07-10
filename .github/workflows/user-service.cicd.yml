@@ -41,7 +41,7 @@ jobs:
         run: yarn test
 
       - name: Archive build artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: build
           path: apps/backend/user-service/build
