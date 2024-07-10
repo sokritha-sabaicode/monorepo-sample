@@ -44,7 +44,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: build
-          path: apps/backend/user-service/build
+          path: build
 
   deploy:
     runs-on: ubuntu-latest
@@ -64,7 +64,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: build
-          path: apps/backend/user-service/build
+          path: build
 
       - name: Prepare Deployment Directories
         uses: appleboy/ssh-action@master
@@ -109,4 +109,4 @@ jobs:
           script: |
             cd /home/ubuntu/apps/user-service/build
             yarn install --production
-            pm2 restart all
+            yarn start
