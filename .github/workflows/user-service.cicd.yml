@@ -84,7 +84,7 @@ jobs:
           username: ${{ secrets.EC2_USERNAME }} # Update as per your setup
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 22
-          source: "./apps/backend/user-service/build/"
+          source: "apps/backend/user-service/build/*"
           target: "/home/ubuntu/apps/user-service/build"
 
       - name: Create .env File
