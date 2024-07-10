@@ -77,7 +77,7 @@ jobs:
             mkdir -p /home/ubuntu/apps/user-service/build
             mkdir -p /home/ubuntu/apps/user-service/configs
 
-      - name: Sync Build Artifacts
+      - name: Sync Build Artifacts using SCP
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.EC2_IP }}
@@ -85,7 +85,7 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 22
           script: |
-            rsync -avz -e "ssh -o StrictHostKeyChecking=no" build/ ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_IP }}:/home/ubuntu/apps/user-service/build/
+            scp -r build/ ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_IP }}:/home/ubuntu/apps/user-service/build/
 
       - name: Create .env File
         uses: appleboy/ssh-action@master
