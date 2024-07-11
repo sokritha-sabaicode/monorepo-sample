@@ -80,9 +80,11 @@ jobs:
       - name: Copy files to EC2 using SCP
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          scp -r -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ./apps/backend/user-service/build/* ubuntu@${{ secrets.EC2_IP }}:/home/ubuntu/apps/user-service/build/
+          ls -lah ~/.ssh
+          cat ~/.ssh/id_rsa
+          scp -vvv -r -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ./apps/backend/user-service/build/* ubuntu@${{ secrets.EC2_IP }}:/home/ubuntu/apps/user-service/build/
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
 
