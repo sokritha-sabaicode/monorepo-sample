@@ -39,6 +39,17 @@ jobs:
         env:
           MONGODB_URL: ${{ secrets.TEST_MONGODB_URL}}
         run: yarn test
+      
+      - name: Prepare files for deployment
+        run: |
+          mkdir -p flatten-build
+          cp -r apps/backend/user-service/build/* flatten-build/
+
+      - name: Archive build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build
+          path: flatten-build
 
       - name: Archive build artifacts
         uses: actions/upload-artifact@v4
@@ -64,7 +75,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: build
-          path: ./apps/backend/user-service/build
+          path: flatten-build
 
       - name: Prepare Deployment Directories
         uses: appleboy/ssh-action@master
@@ -84,7 +95,7 @@ jobs:
           username: ${{ secrets.EC2_USERNAME }} # Update as per your setup
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 22
-          source: "apps/backend/user-service/build/*"
+          source: "flatten-build/*"
           target: "/home/ubuntu/apps/user-service/build"
 
       - name: Create .env File
