@@ -111,7 +111,7 @@ jobs:
             # Load the full user environment for non-interactive shells
             source /home/ubuntu/.nvm/nvm.sh
             source /home/ubuntu/.profile
-            
+
             cd /home/ubuntu/apps/user-service/build
             yarn install --production
             yarn start
