@@ -77,16 +77,16 @@ jobs:
             mkdir -p /home/ubuntu/apps/user-service/build
             mkdir -p /home/ubuntu/apps/user-service/configs
 
-      - name: Copy files to EC2 using SCP
-        run: |
-          mkdir -p ~/.ssh
-          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          ls -lah ~/.ssh
-          cat ~/.ssh/id_rsa
-          scp -vvv -r -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa apps/backend/user-service/build/* ubuntu@${{ secrets.EC2_IP }}:/home/ubuntu/apps/user-service/build/
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+      - name: Copy files to EC2
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.EC2_IP }}
+          username: ${{ secrets.EC2_USERNAME }} # Update as per your setup
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: 22
+          source: "./apps/backend/user-service/build/*"
+          target: "/home/ubuntu/apps/user-service/build"
+          strip_components: 4
 
       - name: Create .env File
         uses: appleboy/ssh-action@master
