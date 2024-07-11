@@ -39,17 +39,6 @@ jobs:
         env:
           MONGODB_URL: ${{ secrets.TEST_MONGODB_URL}}
         run: yarn test
-      
-      - name: Prepare files for deployment
-        run: |
-          mkdir -p flatten-build
-          cp -r apps/backend/user-service/build/* flatten-build/
-
-      - name: Archive build artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: build
-          path: flatten-build
 
       - name: Archive build artifacts
         uses: actions/upload-artifact@v4
@@ -75,7 +64,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: build
-          path: flatten-build
+          path: ./apps/backend/user-service/build
 
       - name: Prepare Deployment Directories
         uses: appleboy/ssh-action@master
@@ -88,15 +77,14 @@ jobs:
             mkdir -p /home/ubuntu/apps/user-service/build
             mkdir -p /home/ubuntu/apps/user-service/configs
 
-      - name: Copy files to EC2
-        uses: appleboy/scp-action@master
-        with:
-          host: ${{ secrets.EC2_IP }}
-          username: ${{ secrets.EC2_USERNAME }} # Update as per your setup
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          port: 22
-          source: "flatten-build/*"
-          target: "/home/ubuntu/apps/user-service/build"
+      - name: Copy files to EC2 using SCP
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          scp -r -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ./apps/backend/user-service/build/* ubuntu@${{ secrets.EC2_IP }}:/home/ubuntu/apps/user-service/build/
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
 
       - name: Create .env File
         uses: appleboy/ssh-action@master
