@@ -21,7 +21,7 @@
     "joi": "^17.13.3",
     "jsonapi-serializer": "^3.6.9",
     "mongoose": "^8.4.3",
-    "ms-libs": "workspace:*",
+    "ms-libs": "1.0.0",
     "swagger-ui-express": "^5.0.1",
     "tsoa": "^6.3.1"
   },

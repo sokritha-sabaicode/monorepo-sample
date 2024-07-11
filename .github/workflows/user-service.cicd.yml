@@ -14,7 +14,7 @@ on:
 
 defaults:
   run:
-    working-directory: apps/backend/user-service
+    working-directory: .
 
 jobs:
   build:
@@ -33,12 +33,12 @@ jobs:
         run: yarn install
 
       - name: Run build
-        run: yarn build
+        run: yarn workspace user-service build
 
       - name: Run tests
         env:
           MONGODB_URL: ${{ secrets.TEST_MONGODB_URL}}
-        run: yarn test
+        run: yarn workspace user-service test
 
       - name: Archive build artifacts
         uses: actions/upload-artifact@v4
