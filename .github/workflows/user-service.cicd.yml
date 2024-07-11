@@ -75,7 +75,7 @@ jobs:
           port: 22
           script: |
             mkdir -p /home/ubuntu/apps/user-service/build
-            mkdir -p /home/ubuntu/apps/user-service/configs
+            mkdir -p /home/ubuntu/apps/user-service/build/configs
 
       - name: Copy files to EC2
         uses: appleboy/scp-action@master
@@ -96,9 +96,9 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 22
           script: |
-            echo "${{ secrets.NODE_ENV }}" > /home/ubuntu/apps/user-service/configs/.env.production
-            echo "${{ secrets.PORT }}" >> /home/ubuntu/apps/user-service/configs/.env.production
-            echo "${{ secrets.MONGODB_URL }}" >> /home/ubuntu/apps/user-service/configs/.env.production
+            echo "${{ secrets.NODE_ENV }}" > /home/ubuntu/apps/user-service/build/configs/.env.production
+            echo "${{ secrets.PORT }}" >> /home/ubuntu/apps/user-service/build/configs/.env.production
+            echo "${{ secrets.MONGODB_URL }}" >> /home/ubuntu/apps/user-service/build/configs/.env.production
 
       - name: Install Dependencies and Restart PM2
         uses: appleboy/ssh-action@master

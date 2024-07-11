@@ -3,9 +3,6 @@ const path = require('path');
 const fs = require('fs-extra');
 const copy = require('esbuild-plugin-copy').default;
 
-require('dotenv').config({ path: path.resolve(__dirname, `src/configs/.env.${process.env.NODE_ENV || 'development'}`) });
-
-
 esbuild.build({
   entryPoints: ['src/server.ts'],
   bundle: true,
@@ -41,9 +38,7 @@ esbuild.build({
   ],
   resolveExtensions: ['.ts', '.js'],
   define: {
-    'process.env.NODE_ENV': '"production"',
-    'process.env.PORT': `"${process.env.PORT}"`,
-    'process.env.MONGODB_URL': `"${process.env.MONGODB_URL}"`,
+    'process.env.NODE_ENV': '"production"'
   },
   alias: {
     '@': path.resolve(__dirname, '.'),
@@ -51,6 +46,8 @@ esbuild.build({
 }).then(() => {
   // (1) Solve: Copy swagger.json after successful build
   fs.copySync(path.resolve(__dirname, 'src/docs/swagger.json'), path.resolve(__dirname, 'build/docs/swagger.json'));
+  // Copy package.json after ensuring the build was successful
+  fs.copySync(path.resolve(__dirname, 'package.json'), path.resolve(__dirname, 'build/package.json'));
   console.log('Swagger JSON copied successfully!');
 }).catch(error => {
   console.error('Build failed:', error);
