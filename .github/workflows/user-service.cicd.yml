@@ -30,6 +30,7 @@ jobs:
           node-version: "20" # Use the version of Node.js that your project requires
 
       - name: Install dependencies
+        working-directory: .
         run: yarn install
 
       - name: Run build
@@ -113,5 +114,5 @@ jobs:
             source /home/ubuntu/.profile
 
             cd /home/ubuntu/apps/user-service/build
-            yarn install --production
+            yarn install --production --verbose
             yarn start
