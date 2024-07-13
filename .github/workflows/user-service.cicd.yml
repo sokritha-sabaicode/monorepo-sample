@@ -24,7 +24,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Ensures all branches and tags are fetched
+          fetch-depth: 0 # Ensures all branches and tags are fetched
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -98,6 +98,7 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 22
           script: |
+            echo "NODE_ENV=${{ secrets.NODE_ENV }}" >> /home/ubuntu/apps/user-service/build/configs/.env.production
             echo "PORT=${{ secrets.PORT }}" >> /home/ubuntu/apps/user-service/build/configs/.env.production
             echo "MONGODB_URL=${{ secrets.MONGODB_URL }}" >> /home/ubuntu/apps/user-service/build/configs/.env.production
 
