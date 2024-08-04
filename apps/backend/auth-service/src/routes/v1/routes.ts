@@ -3,7 +3,7 @@
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { TsoaRoute, fetchMiddlewares, ExpressTemplateService } from '@tsoa/runtime';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-import { UsersController } from './../../controllers/user.controller';
+import { ProductController } from './../../controllers/auth.controller';
 import type { Request as ExRequest, Response as ExResponse, RequestHandler, Router } from 'express';
 
 
@@ -11,66 +11,43 @@ import type { Request as ExRequest, Response as ExResponse, RequestHandler, Rout
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 
 const models: TsoaRoute.Models = {
-    "IUser": {
+    "SignupRequest": {
         "dataType": "refObject",
         "properties": {
-            "_id": {"dataType":"string","required":true},
-            "username": {"dataType":"string","required":true},
-            "email": {"dataType":"string","required":true},
-            "gender": {"dataType":"string","required":true},
-            "age": {"dataType":"double","required":true},
-            "createdAt": {"dataType":"datetime","required":true},
-            "updatedAt": {"dataType":"datetime","required":true},
+            "name": {"dataType":"string"},
+            "email": {"dataType":"string"},
+            "phone_number": {"dataType":"string"},
+            "password": {"dataType":"string"},
         },
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "UsersPaginatedResponse": {
+    "VerifyUserRequest": {
         "dataType": "refObject",
         "properties": {
-            "message": {"dataType":"string","required":true},
-            "data": {"dataType":"nestedObjectLiteral","nestedProperties":{"currentPage":{"dataType":"double","required":true},"totalPages":{"dataType":"double","required":true},"totalItems":{"dataType":"double","required":true}},"additionalProperties":{"dataType":"union","subSchemas":[{"dataType":"array","array":{"dataType":"refObject","ref":"IUser"}},{"dataType":"double"}]},"required":true},
+            "email": {"dataType":"string"},
+            "phone_number": {"dataType":"string"},
+            "code": {"dataType":"string","required":true},
         },
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "UserGetAllControllerParams": {
+    "LoginRequest": {
         "dataType": "refObject",
         "properties": {
-            "page": {"dataType":"double"},
-            "limit": {"dataType":"double"},
-            "filter": {"dataType":"string"},
-            "sort": {"dataType":"string"},
+            "email": {"dataType":"string"},
+            "phone_number": {"dataType":"string"},
+            "password": {"dataType":"string"},
         },
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "UserProfileResponse": {
+    "GoogleCallbackRequest": {
         "dataType": "refObject",
         "properties": {
-            "message": {"dataType":"string","required":true},
-            "data": {"ref":"IUser","required":true},
-        },
-        "additionalProperties": false,
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "UserCreationRequestParams": {
-        "dataType": "refObject",
-        "properties": {
-            "email": {"dataType":"string","required":true},
-            "username": {"dataType":"string","required":true},
-            "gender": {"dataType":"string","required":true},
-            "age": {"dataType":"double","required":true},
-        },
-        "additionalProperties": false,
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "UserUpdateRequestParams": {
-        "dataType": "refObject",
-        "properties": {
-            "username": {"dataType":"string"},
-            "gender": {"dataType":"string"},
-            "age": {"dataType":"double"},
+            "code": {"dataType":"string"},
+            "state": {"dataType":"string"},
+            "error": {"dataType":"string"},
         },
         "additionalProperties": false,
     },
@@ -92,13 +69,13 @@ export function RegisterRoutes(app: Router) {
 
 
     
-        app.get('/v1/users',
-            ...(fetchMiddlewares<RequestHandler>(UsersController)),
-            ...(fetchMiddlewares<RequestHandler>(UsersController.prototype.getAllUsers)),
+        app.post('/v1/auth/signup',
+            ...(fetchMiddlewares<RequestHandler>(ProductController)),
+            ...(fetchMiddlewares<RequestHandler>(ProductController.prototype.signup)),
 
-            async function UsersController_getAllUsers(request: ExRequest, response: ExResponse, next: any) {
+            async function ProductController_signup(request: ExRequest, response: ExResponse, next: any) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
-                    queries: {"in":"queries","name":"queries","required":true,"ref":"UserGetAllControllerParams"},
+                    body: {"in":"body","name":"body","required":true,"ref":"SignupRequest"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -107,10 +84,10 @@ export function RegisterRoutes(app: Router) {
             try {
                 validatedArgs = templateService.getValidatedArgs({ args, request, response });
 
-                const controller = new UsersController();
+                const controller = new ProductController();
 
               await templateService.apiHandler({
-                methodName: 'getAllUsers',
+                methodName: 'signup',
                 controller,
                 response,
                 next,
@@ -122,13 +99,13 @@ export function RegisterRoutes(app: Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        app.post('/v1/users',
-            ...(fetchMiddlewares<RequestHandler>(UsersController)),
-            ...(fetchMiddlewares<RequestHandler>(UsersController.prototype.createUser)),
+        app.post('/v1/auth/verify',
+            ...(fetchMiddlewares<RequestHandler>(ProductController)),
+            ...(fetchMiddlewares<RequestHandler>(ProductController.prototype.verifyUser)),
 
-            async function UsersController_createUser(request: ExRequest, response: ExResponse, next: any) {
+            async function ProductController_verifyUser(request: ExRequest, response: ExResponse, next: any) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
-                    requestBody: {"in":"body","name":"requestBody","required":true,"ref":"UserCreationRequestParams"},
+                    body: {"in":"body","name":"body","required":true,"ref":"VerifyUserRequest"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -137,40 +114,10 @@ export function RegisterRoutes(app: Router) {
             try {
                 validatedArgs = templateService.getValidatedArgs({ args, request, response });
 
-                const controller = new UsersController();
+                const controller = new ProductController();
 
               await templateService.apiHandler({
-                methodName: 'createUser',
-                controller,
-                response,
-                next,
-                validatedArgs,
-                successStatus: 201,
-              });
-            } catch (err) {
-                return next(err);
-            }
-        });
-        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        app.get('/v1/users/:userId',
-            ...(fetchMiddlewares<RequestHandler>(UsersController)),
-            ...(fetchMiddlewares<RequestHandler>(UsersController.prototype.getUserProfile)),
-
-            async function UsersController_getUserProfile(request: ExRequest, response: ExResponse, next: any) {
-            const args: Record<string, TsoaRoute.ParameterSchema> = {
-                    userId: {"in":"path","name":"userId","required":true,"dataType":"string"},
-            };
-
-            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-
-            let validatedArgs: any[] = [];
-            try {
-                validatedArgs = templateService.getValidatedArgs({ args, request, response });
-
-                const controller = new UsersController();
-
-              await templateService.apiHandler({
-                methodName: 'getUserProfile',
+                methodName: 'verifyUser',
                 controller,
                 response,
                 next,
@@ -182,14 +129,13 @@ export function RegisterRoutes(app: Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        app.put('/v1/users/:userId',
-            ...(fetchMiddlewares<RequestHandler>(UsersController)),
-            ...(fetchMiddlewares<RequestHandler>(UsersController.prototype.updateUserById)),
+        app.post('/v1/auth/login',
+            ...(fetchMiddlewares<RequestHandler>(ProductController)),
+            ...(fetchMiddlewares<RequestHandler>(ProductController.prototype.login)),
 
-            async function UsersController_updateUserById(request: ExRequest, response: ExResponse, next: any) {
+            async function ProductController_login(request: ExRequest, response: ExResponse, next: any) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
-                    userId: {"in":"path","name":"userId","required":true,"dataType":"string"},
-                    updateUserInfo: {"in":"body","name":"updateUserInfo","required":true,"ref":"UserUpdateRequestParams"},
+                    body: {"in":"body","name":"body","required":true,"ref":"LoginRequest"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -198,10 +144,10 @@ export function RegisterRoutes(app: Router) {
             try {
                 validatedArgs = templateService.getValidatedArgs({ args, request, response });
 
-                const controller = new UsersController();
+                const controller = new ProductController();
 
               await templateService.apiHandler({
-                methodName: 'updateUserById',
+                methodName: 'login',
                 controller,
                 response,
                 next,
@@ -213,13 +159,13 @@ export function RegisterRoutes(app: Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        app.delete('/v1/users/:userId',
-            ...(fetchMiddlewares<RequestHandler>(UsersController)),
-            ...(fetchMiddlewares<RequestHandler>(UsersController.prototype.deleteUserById)),
+        app.get('/v1/auth/google',
+            ...(fetchMiddlewares<RequestHandler>(ProductController)),
+            ...(fetchMiddlewares<RequestHandler>(ProductController.prototype.loginWithGoogle)),
 
-            async function UsersController_deleteUserById(request: ExRequest, response: ExResponse, next: any) {
+            async function ProductController_loginWithGoogle(request: ExRequest, response: ExResponse, next: any) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
-                    userId: {"in":"path","name":"userId","required":true,"dataType":"string"},
+                    request: {"in":"request","name":"request","required":true,"dataType":"object"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -228,15 +174,46 @@ export function RegisterRoutes(app: Router) {
             try {
                 validatedArgs = templateService.getValidatedArgs({ args, request, response });
 
-                const controller = new UsersController();
+                const controller = new ProductController();
 
               await templateService.apiHandler({
-                methodName: 'deleteUserById',
+                methodName: 'loginWithGoogle',
                 controller,
                 response,
                 next,
                 validatedArgs,
-                successStatus: 204,
+                successStatus: 302,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.get('/v1/auth/google/callback',
+            ...(fetchMiddlewares<RequestHandler>(ProductController)),
+            ...(fetchMiddlewares<RequestHandler>(ProductController.prototype.googleCallback)),
+
+            async function ProductController_googleCallback(request: ExRequest, response: ExResponse, next: any) {
+            const args: Record<string, TsoaRoute.ParameterSchema> = {
+                    request: {"in":"request","name":"request","required":true,"dataType":"object"},
+                    query: {"in":"queries","name":"query","required":true,"ref":"GoogleCallbackRequest"},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args, request, response });
+
+                const controller = new ProductController();
+
+              await templateService.apiHandler({
+                methodName: 'googleCallback',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
               });
             } catch (err) {
                 return next(err);

@@ -1,0 +1,23 @@
+# Use the correct Node.js 20 Alpine image tag
+FROM node:20-alpine3.19
+
+# Set the working directory
+WORKDIR /app
+
+# Copy package.json
+COPY package.json ./
+
+# Install dependencies
+RUN npm install && npm install -g nodemon
+
+# Copy other files
+COPY tsconfig.json ./
+COPY nodemon.json ./
+COPY src ./src
+COPY tsoa.json ./
+
+# Expose the application's port
+EXPOSE 4003
+
+# Command to run the application
+CMD ["npm", "run", "dev"]

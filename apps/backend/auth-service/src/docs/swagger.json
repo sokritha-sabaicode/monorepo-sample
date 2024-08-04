@@ -1,0 +1,276 @@
+{
+	"openapi": "3.0.0",
+	"components": {
+		"examples": {},
+		"headers": {},
+		"parameters": {},
+		"requestBodies": {},
+		"responses": {},
+		"schemas": {
+			"SignupRequest": {
+				"properties": {
+					"name": {
+						"type": "string"
+					},
+					"email": {
+						"type": "string"
+					},
+					"phone_number": {
+						"type": "string"
+					},
+					"password": {
+						"type": "string"
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
+			"VerifyUserRequest": {
+				"properties": {
+					"email": {
+						"type": "string"
+					},
+					"phone_number": {
+						"type": "string"
+					},
+					"code": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"code"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"LoginRequest": {
+				"properties": {
+					"email": {
+						"type": "string"
+					},
+					"phone_number": {
+						"type": "string"
+					},
+					"password": {
+						"type": "string"
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
+			"GoogleCallbackRequest": {
+				"properties": {
+					"code": {
+						"type": "string"
+					},
+					"state": {
+						"type": "string"
+					},
+					"error": {
+						"type": "string"
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			}
+		},
+		"securitySchemes": {}
+	},
+	"info": {
+		"title": "auth-service",
+		"version": "1.0.0",
+		"license": {
+			"name": "MIT"
+		},
+		"contact": {}
+	},
+	"paths": {
+		"/v1/auth/signup": {
+			"post": {
+				"operationId": "Signup",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										}
+									},
+									"required": [
+										"message"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/SignupRequest"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/v1/auth/verify": {
+			"post": {
+				"operationId": "VerifyUser",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"data": {},
+										"message": {
+											"type": "string"
+										}
+									},
+									"required": [
+										"data",
+										"message"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/VerifyUserRequest"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/v1/auth/login": {
+			"post": {
+				"operationId": "Login",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"data": {
+											"properties": {
+												"refreshToken": {
+													"type": "string"
+												},
+												"idToken": {
+													"type": "string"
+												},
+												"accessToken": {
+													"type": "string"
+												}
+											},
+											"required": [
+												"refreshToken",
+												"idToken",
+												"accessToken"
+											],
+											"type": "object"
+										},
+										"message": {
+											"type": "string"
+										}
+									},
+									"required": [
+										"data",
+										"message"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/LoginRequest"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/v1/auth/google": {
+			"get": {
+				"operationId": "LoginWithGoogle",
+				"responses": {
+					"302": {
+						"description": "Redirect"
+					}
+				},
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/v1/auth/google/callback": {
+			"get": {
+				"operationId": "GoogleCallback",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "code",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "state",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "error",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		}
+	},
+	"servers": [
+		{
+			"url": "/"
+		}
+	]
+}

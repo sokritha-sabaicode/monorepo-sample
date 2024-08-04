@@ -176,15 +176,6 @@
 						"schema": {
 							"type": "string"
 						}
-					},
-					{
-						"in": "query",
-						"name": "price",
-						"required": false,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
 					}
 				]
 			}

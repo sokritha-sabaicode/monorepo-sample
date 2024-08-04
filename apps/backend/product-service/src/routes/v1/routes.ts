@@ -46,11 +46,18 @@ const templateService = new ExpressTemplateService(models, {"noImplicitAdditiona
 
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 
+
+
+
 export function RegisterRoutes(app: Router) {
+
     // ###########################################################################################################
     //  NOTE: If you do not see routes for all of your controllers in this file, then you might not have informed tsoa of where to look
     //      Please look into the "controllerPathGlobs" config option described in the readme: https://github.com/lukeautry/tsoa
     // ###########################################################################################################
+
+
+    
         app.post('/v1/products',
             ...(fetchMiddlewares<RequestHandler>(ProductController)),
             ...(fetchMiddlewares<RequestHandler>(ProductController.prototype.createItem)),
@@ -119,7 +126,7 @@ export function RegisterRoutes(app: Router) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
                     page: {"default":1,"in":"query","name":"page","dataType":"double"},
                     limit: {"default":10,"in":"query","name":"limit","dataType":"double"},
-                    price: {"in":"query","name":"price","dataType":"double"},
+                    price: {"in":"query","name":"price","dataType":"union","subSchemas":[{"dataType":"enum","enums":["asc"]},{"dataType":"enum","enums":["desc"]}]},
                     productName: {"in":"query","name":"productName","dataType":"union","subSchemas":[{"dataType":"enum","enums":["asc"]},{"dataType":"enum","enums":["desc"]}]},
                     category: {"in":"query","name":"category","dataType":"string"},
             };

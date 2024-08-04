@@ -1,4 +1,4 @@
-import { UserProfileResponse, UserCreationRequestParams, UserUpdateRequestParams, UsersPaginatedResponse } from 'ms-libs/types';
+import { UserProfileResponse, UserCreationRequestParams, UserUpdateRequestParams, UsersPaginatedResponse, UserGetAllControllerParams } from 'ms-libs/types';
 import {
   Controller,
   Get,
@@ -15,7 +15,6 @@ import {
 import UserService from '@/src/services/user.service';
 import sendResponse from '@/src/utils/send-response';
 import { prettyObject } from 'ms-libs/utils/logger';
-import { UserGetAllControllerParams } from '@/src/controllers/types/user-controller.type';
 import { IUser } from '@/src/database/models/user.model';
 import validateRequest from '@/src/middewares/validate-input';
 import userJoiSchema from '@/src/schemas/user.schema';
