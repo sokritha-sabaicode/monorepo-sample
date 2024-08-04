@@ -1,6 +1,6 @@
-import app from "@/src/app"
-import MongoDBConnector from "@/src/database/connector"
+import app from "@/src/app";
 import configs from "@/src/config";
+import MongoDBConnector from "@/src/database/connector";
 
 async function run() {
   try {

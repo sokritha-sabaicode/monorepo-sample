@@ -1,9 +1,7 @@
 import UserModel from "@/src/database/models/user.model";
 import { MongoError, UserCreationRepoParams, UserGetAllRepoParams, UserSortParams, UserUpdateRepoParams } from "@/src/database/repositories/types/user-repository.type";
 import mongoose, { SortOrder } from "mongoose";
-import { APP_ERROR_MESSAGE } from "ms-libs/constants/app-error-message";
-import { InvalidInputError, NotFoundError, ResourceConflictError } from "ms-libs/utils/errors";
-import { prettyObject } from 'ms-libs/utils/logger';
+import { APP_ERROR_MESSAGE, InvalidInputError, NotFoundError, ResourceConflictError, prettyObject } from "@sokritha-sabaicode/ms-libs";
 
 class UserRepository {
   async getAll(queries: UserGetAllRepoParams) {
