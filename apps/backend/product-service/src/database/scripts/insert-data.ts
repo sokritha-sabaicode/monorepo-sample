@@ -1,5 +1,5 @@
 import ItemModel from '@/src/database/models/product.model';
-import configs from '@/src/utils/config';
+import configs from '@/src/config';
 import mongoose from 'mongoose';
 
 // Sample user data

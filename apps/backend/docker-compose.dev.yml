@@ -1,0 +1,43 @@
+version: '3.8'
+services:
+  auth:
+    container_name: auth_service_container
+    build:
+      context: .
+      dockerfile: ./auth-service/Dockerfile.dev
+    restart: always
+    ports:
+      - 4001:4001
+    env_file: ./auth-service/src/configs/.env.development
+    environment:
+      - DOCKER_ENV=true
+    volumes:
+      - ./auth-service/src:/app/src # HOT RELOADING
+  user:
+    container_name: user_service_container
+    build:
+      context: .
+      dockerfile: ./user-service/Dockerfile.dev
+    restart: always
+    ports:
+      - 4002:4002
+    env_file: ./user-service/src/configs/.env.development
+    environment:
+      - DOCKER_ENV=true
+    volumes:
+      - ./user-service/src:/app/src # HOT RELOADING
+  product:
+    container_name: product_service_container
+    build:
+      context: .
+      dockerfile: ./product-service/Dockerfile.dev
+    restart: always
+    ports:
+      - 4003:4003
+    env_file: ./product-service/src/configs/.env.development
+    environment:
+      - DOCKER_ENV=true
+    volumes:
+      - ./product-service/src:/app/src # HOT RELOADING
+      
+  

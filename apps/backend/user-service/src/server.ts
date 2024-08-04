@@ -5,7 +5,7 @@ import configs from "@/src/config";
 async function run() {
   try {
     // Activate MongoDB!
-    const mongodb = MongoDBConnector.getInstance(configs.env);
+    const mongodb = MongoDBConnector.getInstance(process.env.NODE_ENV);
     await mongodb.connect({ url: configs.mongodbUrl });
 
     app.listen(configs.port, () => {

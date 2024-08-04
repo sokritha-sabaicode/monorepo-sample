@@ -1,0 +1,40 @@
+name: CI/CD Pipeline for MS Libs
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "packages/libs/**"
+  push:
+    branches:
+      - main
+    paths:
+      - "packages/libs/**"
+
+defaults:
+  run:
+    working-directory: "packages/libs"
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm install
+      - run: npm run build
+      - run: |
+          echo @sokritha-sabaicode:https://npm.pkg.github.com/ > build/.npmrc
+          echo '//npm.pkg.github.com/:_authToken=${{ secrets.NPM_TOKEN }}' >> build/.npmrc
+      - run: npm publish
+        working-directory: ./build
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

@@ -39,6 +39,10 @@ esbuild.build({
   resolveExtensions: ['.ts', '.js'],
   define: {
     'process.env.NODE_ENV': '"production"'
+  },
+  alias: {
+    '@': path.resolve(__dirname, '.'),
+    'ms-libs': path.resolve(__dirname, '../../../packages/libs')
   }
 }).then(() => {
   // (1) Solve: Copy swagger.json after successful build
