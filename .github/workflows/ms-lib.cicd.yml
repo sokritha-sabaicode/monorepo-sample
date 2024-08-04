@@ -48,9 +48,8 @@ jobs:
       - run: npm install
       - run: npm run build
       - run: |
-          echo @sokritha-sabaicode:https://npm.pkg.github.com/ > build/.npmrc
-          echo '//npm.pkg.github.com/:_authToken=${{ secrets.NPM_TOKEN }}' >> build/.npmrc
+          echo @sokritha-sabaicode:registry=https://npm.pkg.github.com/ > .npmrc
+          echo '//npm.pkg.github.com/:_authToken=${{ secrets.NPM_TOKEN }}' >> .npmrc
       - run: npm publish
-        working-directory: ./packages/libs/build
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
