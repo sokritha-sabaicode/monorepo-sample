@@ -1,5 +1,9 @@
 import { HTTP_STATUS_CODE } from '../constants/status-code';
 
+// ========================
+// Base Error
+// ========================
+
 export class ApplicationError extends Error {
   public readonly status: number;
   public errors?: {};
