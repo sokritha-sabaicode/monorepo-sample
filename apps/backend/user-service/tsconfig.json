@@ -21,9 +21,7 @@
       "@/*": [
         "*",
       ],
-      "@sokritha-sabaicode/ms-libs": [
-        "../../../node_modules/@sokritha-sabaicode/ms-libs"
-      ]
+      
     }
   },
   "include": [
