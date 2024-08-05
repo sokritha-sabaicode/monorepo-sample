@@ -3,13 +3,13 @@
   "version": "0.0.1",
   "main": "index.js",
   "license": "MIT",
+  "types": "./src/index.d.ts",
   "dependencies": {
     "@base2/pretty-print-object": "^1.0.2",
     "cross-env": "^7.0.3",
     "express": "^4.19.2",
     "tslib": "^2.6.3"
   },
-  "types": "./src/index.d.ts",
   "engines": {
     "node": ">=20"
   },
@@ -28,7 +28,7 @@
   "author": "sokritha",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/sokritha-sabaicode/monorepo-sample.git"
+    "url": "https://git@github.com:sokritha-sabaicode/monorepo-sample.git"
   },
   "publishConfig": {
     "registry": "https://npm.pkg.github.com"
