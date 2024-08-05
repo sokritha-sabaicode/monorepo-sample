@@ -9,7 +9,11 @@ const config: Config.InitialOptions = {
   testPathIgnorePatterns: ['/node_modules'],
   transform: {
     '^.+\\.ts?$': 'ts-jest',
+    '^.+\\.jsx?$': 'babel-jest',
   },
+  transformIgnorePatterns: [
+    'node_modules/(?!(yaml|@tsoa)/)', // Add other modules as needed
+  ],
   testMatch: ['<rootDir>/src/**/__test__/*.ts'],
   collectCoverageFrom: [
     'src/**/*.ts',
