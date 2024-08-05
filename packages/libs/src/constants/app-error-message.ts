@@ -10,5 +10,4 @@ export const APP_ERROR_MESSAGE = {
   existedEmail: "Email is already existed.", // REMOVE LATER
   existedAccount: "User already exists. Please use a different email or phone number.",
   verifyFail: "Your provided code is not correct. Please try again!"
-  // Product Resource Message Error
 };
