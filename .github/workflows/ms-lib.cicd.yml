@@ -33,7 +33,7 @@ jobs:
 
       - name: Configure npm to use GitHub Packages
         run: |
-          echo "@sokritha-sabaicode:registry=https://npm.pkg.github.com" > ~/.npmrc
+          echo "@sokritha-sabaicode:registry=https://npm.pkg.github.com/" > ~/.npmrc
           echo "//npm.pkg.github.com/:_authToken=${{ secrets.NPM_TOKEN }}" >> ~/.npmrc
 
       - name: Clear npm cache
@@ -65,7 +65,7 @@ jobs:
 
       - name: Configure npm to use GitHub Packages
         run: |
-          echo "@sokritha-sabaicode:registry=https://npm.pkg.github.com" > ~/.npmrc
+          echo "@sokritha-sabaicode:registry=https://npm.pkg.github.com/" > ~/.npmrc
           echo "//npm.pkg.github.com/:_authToken=${{ secrets.NPM_TOKEN }}" >> ~/.npmrc
 
       - name: Install dependencies
