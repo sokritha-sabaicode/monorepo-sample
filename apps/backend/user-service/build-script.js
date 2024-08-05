@@ -42,6 +42,8 @@ esbuild.build({
   },
   alias: {
     '@': path.resolve(__dirname, '.'),
+    '@sokritha-sabaicode/ms-libs': path.resolve(__dirname, '../../../node_modules/@sokritha-sabaicode/ms-libs')
+
   }
 }).then(() => {
   // (1) Solve: Copy swagger.json after successful build

@@ -19,8 +19,11 @@
     // Import Files From The Root Directory Using `@` prefix
     "paths": {
       "@/*": [
-        "*"
+        "*",
       ],
+      "@sokritha-sabaicode/ms-libs": [
+        "../../../node_modules/@sokritha-sabaicode/ms-libs"
+      ]
     }
   },
   "include": [
