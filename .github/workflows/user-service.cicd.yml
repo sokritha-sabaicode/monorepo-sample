@@ -30,9 +30,11 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "20" # Use the version of Node.js that your project requires
-      
-      - name: clear cache
-        run: npm cache clean --force
+
+      - name: Remove existing ms-libs symlink
+        run: |
+          cd ../../../
+          rm -rf node_modules/@sokritha-sabaicode/ms-libs
 
       - name: Configure npm to use GitHub Packages
         run: |
