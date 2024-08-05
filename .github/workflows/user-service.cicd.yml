@@ -31,11 +31,6 @@ jobs:
         with:
           node-version: "20" # Use the version of Node.js that your project requires
 
-      - name: Remove existing ms-libs symlink
-        run: |
-          cd ../../../
-          rm -rf node_modules/@sokritha-sabaicode/ms-libs
-
       - name: Configure npm to use GitHub Packages
         run: |
           echo "@sokritha-sabaicode:registry=https://npm.pkg.github.com/" > ~/.npmrc

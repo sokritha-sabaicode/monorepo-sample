@@ -7,7 +7,8 @@
   "workspaces": [
     "apps/*",
     "apps/backend/*",
-    "packages/*"
+    "packages/*",
+    "!packages/libs"
   ],
   "scripts": {
     "start": "concurrently \"yarn workspace ms-ui-components watch\" \"yarn workspace frontend-client dev\" \"yarn workspace frontend-dashboard dev\" \"yarn workspace user-service dev\"  \"yarn workspace product-service dev\"  \"yarn workspace auth-service dev\"",
