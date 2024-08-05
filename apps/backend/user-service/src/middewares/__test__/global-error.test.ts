@@ -1,7 +1,6 @@
 import { globalErrorHandler } from "@/src/middewares/global-error";
+import { NotFoundError, HTTP_STATUS_CODE, InvalidInputError } from "@sokritha-sabaicode/ms-libs";
 import { NextFunction, Request, Response } from "express";
-import { HTTP_STATUS_CODE } from "ms-libs/constants/status-code";
-import { InvalidInputError, NotFoundError } from "ms-libs/utils/errors";
 
 
 describe("errorHandler middleware", () => {

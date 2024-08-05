@@ -16,6 +16,9 @@ const config: Config.InitialOptions = {
     '!src/**/__test__/*.ts?(x)',
     '!**/node_modules/**',
   ],
+  transformIgnorePatterns: [
+    '/node_modules/(?!@sokritha-sabaicode/ms-libs|@tsoa/cli|yaml)', // Adjust this line
+  ],
   coverageThreshold: {
     global: {
       branches: 1, // conditional

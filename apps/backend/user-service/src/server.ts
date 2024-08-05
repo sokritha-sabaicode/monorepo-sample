@@ -1,11 +1,11 @@
-import app from "@/src/app"
-import MongoDBConnector from "@/src/database/connector"
+import app from "@/src/app";
 import configs from "@/src/config";
+import MongoDBConnector from "@/src/database/connector";
 
 async function run() {
   try {
     // Activate MongoDB!
-    const mongodb = MongoDBConnector.getInstance(process.env.NODE_ENV);
+    const mongodb = MongoDBConnector.getInstance(configs.env);
     await mongodb.connect({ url: configs.mongodbUrl });
 
     app.listen(configs.port, () => {

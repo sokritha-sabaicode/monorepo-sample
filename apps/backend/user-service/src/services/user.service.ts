@@ -1,7 +1,7 @@
 import { UserGetAllControllerParams } from "@/src/controllers/types/user-controller.type";
 import { UserCreationRepoParams, UserUpdateRepoParams } from "@/src/database/repositories/types/user-repository.type";
 import UserRepository from "@/src/database/repositories/user.repository";
-import { prettyObject } from 'ms-libs/utils/logger';
+import { prettyObject } from '@sokritha-sabaicode/ms-libs';
 
 class UserService {
   async getAllUsers(queries: UserGetAllControllerParams) {

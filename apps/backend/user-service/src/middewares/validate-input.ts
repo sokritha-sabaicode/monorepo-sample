@@ -1,6 +1,7 @@
 import Joi from 'joi';
 import { Request, Response, NextFunction } from 'express';
-import { InvalidInputError } from 'ms-libs/utils/errors';
+import { InvalidInputError } from '@sokritha-sabaicode/ms-libs';
+
 
 
 const validateRequest = (schema: Joi.ObjectSchema) => {
