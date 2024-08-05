@@ -41,10 +41,12 @@ jobs:
 
       - name: Verify ms-libs Installation
         run: |
+          ls -la node_modules
+
+      - name: Verify ms-libs Installation
+        run: |
           cd ../../../
-          ls -la node_modules/@sokritha-sabaicode
-          ls -la node_modules/@sokritha-sabaicode/ms-libs
-          cat node_modules/@sokritha-sabaicode/ms-libs/package.json
+          ls -la node_modules
 
       - name: Run build
         run: yarn build
