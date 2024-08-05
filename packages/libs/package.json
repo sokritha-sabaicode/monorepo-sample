@@ -1,6 +1,6 @@
 {
   "name": "@sokritha-sabaicode/ms-libs",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "main": "./build/src/index.js",
   "license": "MIT",
   "types": "./build/src/index.d.ts",
@@ -39,8 +39,8 @@
   ],
   "exports": {
     ".": {
-      "import": "./src/index.js",
-      "require": "./src/index.js"
+      "import": "./build/src/index.js",
+      "require": "./build/src/index.js"
     }
   },
   "devDependencies": {
