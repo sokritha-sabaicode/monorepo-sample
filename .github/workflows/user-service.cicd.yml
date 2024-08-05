@@ -30,6 +30,9 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "20" # Use the version of Node.js that your project requires
+      
+      - name: clear cache
+        run: npm cache clean --force
 
       - name: Configure npm to use GitHub Packages
         run: |
