@@ -28,7 +28,7 @@
   "author": "sokritha",
   "repository": {
     "type": "git",
-    "url": "https://git@github.com:sokritha-sabaicode/monorepo-sample.git"
+    "url": "git+https://github.com/sokritha-sabaicode/monorepo-sample.git"
   },
   "publishConfig": {
     "registry": "https://npm.pkg.github.com"
