@@ -41,12 +41,8 @@ jobs:
 
       - name: Verify ms-libs Installation
         run: |
-          ls -la node_modules
-
-      - name: Verify ms-libs Installation
-        run: |
           cd ../../../
-          ls -la node_modules
+          ls -la node_modules/@sokritha-sabaicode/ms-libs
 
       - name: Run build
         run: yarn build
