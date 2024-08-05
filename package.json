@@ -4,12 +4,17 @@
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
-  "workspaces": [
-    "apps/*",
-    "apps/backend/*",
-    "packages/*",
-    "!packages/libs"
-  ],
+  "workspaces": {
+    "packages": [
+      "apps/*",
+      "apps/backend/*",
+      "packages/*"
+    ],
+    "nohoist": [
+      "**/@sokritha-sabaicode/ms-libs",
+      "**/@sokritha-sabaicode/ms-libs/**"
+    ]
+  },
   "scripts": {
     "start": "concurrently \"yarn workspace ms-ui-components watch\" \"yarn workspace frontend-client dev\" \"yarn workspace frontend-dashboard dev\" \"yarn workspace user-service dev\"  \"yarn workspace product-service dev\"  \"yarn workspace auth-service dev\"",
     "start:client": "concurrently \"yarn workspace ms-ui-components watch\" \"yarn workspace frontend-client dev\"",
