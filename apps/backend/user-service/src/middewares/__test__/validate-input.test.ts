@@ -1,7 +1,7 @@
 import validateRequest from '@/src/middewares/validate-input';
 import { Request, Response, NextFunction } from 'express';
 import Joi from 'joi';
-import { InvalidInputError } from 'ms-libs/utils/errors';
+import { InvalidInputError } from '@sokritha-sabaicode/ms-libs';
 
 describe('validateRequest Middleware', () => {
   let nextFunction: NextFunction;
