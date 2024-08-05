@@ -1,9 +1,8 @@
 import request from 'supertest'
 import app from '@/src/app'
-import { UserCreationRequestParams } from 'ms-libs/types';
-import { HTTP_STATUS_CODE } from 'ms-libs/constants/status-code';
 import MongoDBConnector from '@/src/database/connector';
 import configs from '@/src/config';
+import { UserCreationRequestParams, HTTP_STATUS_CODE } from '@sokritha-sabaicode/ms-libs';
 
 let createdUserId: string;
 
