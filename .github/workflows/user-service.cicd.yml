@@ -31,16 +31,9 @@ jobs:
         with:
           node-version: "20" # Use the version of Node.js that your project requires
 
-      - name: Remove existing ms-libs symlink and clear Yarn cache
+      - name: Remove existing node_modules and clear Yarn cache
         run: |
-          rm -rf node_modules
-          yarn cache clean
-
-      - name: Remove existing ms-libs symlink and clear Yarn cache
-        run: |
-          cd ../../../
-          rm -rf node_modules
-          yarn cache clean
+          rm -rf ../../../packages/libs # Remove the local package
 
       - name: Configure npm to use GitHub Packages
         run: |
@@ -48,7 +41,7 @@ jobs:
           echo "//npm.pkg.github.com/:_authToken=${{ secrets.NPM_TOKEN }}" >> ~/.npmrc
 
       - name: Install dependencies
-        run: yarn install --no-immutable
+        run: yarn install
 
       - name: Verify ms-libs Installation
         run: |

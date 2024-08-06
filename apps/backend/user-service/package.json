@@ -26,9 +26,6 @@
     "swagger-ui-express": "^5.0.1",
     "tsoa": "^6.3.1"
   },
-  "resolutions": {
-    "@sokritha-sabaicode/ms-libs": "0.0.3"
-  },
   "devDependencies": {
     "@babel/preset-env": "^7.25.3",
     "@babel/preset-typescript": "^7.24.7",
