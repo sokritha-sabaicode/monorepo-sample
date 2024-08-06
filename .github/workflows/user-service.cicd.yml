@@ -44,7 +44,10 @@ jobs:
           echo "//npm.pkg.github.com/:_authToken=${{ secrets.NPM_TOKEN }}" >> ~/.npmrc
 
       - name: Copy .npmrc to user-service
-        run: cp ~/.npmrc apps/backend/user-service/.npmrc
+        run: cp ~/.npmrc ./.npmrc
+
+      - name: list directory
+        run: ls -la
 
       - name: Install dependencies
         run: yarn install
