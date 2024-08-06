@@ -42,6 +42,7 @@ esbuild.build({
   },
   alias: {
     '@': path.resolve(__dirname, '.'),
+
   }
 }).then(() => {
   // (1) Solve: Copy swagger.json after successful build

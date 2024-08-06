@@ -1,9 +1,9 @@
 {
   "name": "@sokritha-sabaicode/ms-libs",
-  "version": "0.0.3",
-  "main": "./build/src/index.js",
+  "version": "0.0.4",
+  "main": "./src/index.js",
+  "types": "./src/index.d.ts",
   "license": "MIT",
-  "types": "./build/src/index.d.ts",
   "dependencies": {
     "@base2/pretty-print-object": "^1.0.2",
     "cross-env": "^7.0.3",
@@ -39,8 +39,8 @@
   ],
   "exports": {
     ".": {
-      "import": "./build/src/index.js",
-      "require": "./build/src/index.js"
+      "import": "./src/index.js",
+      "require": "./src/index.js"
     }
   },
   "devDependencies": {

@@ -19,8 +19,9 @@
     // Import Files From The Root Directory Using `@` prefix
     "paths": {
       "@/*": [
-        "*"
+        "*",
       ],
+      
     }
   },
   "include": [
