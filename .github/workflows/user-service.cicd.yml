@@ -39,16 +39,17 @@ jobs:
       - name: Copy .npmrc to user-service
         run: cp ~/.npmrc ./.npmrc
 
+      - name: Create or update .yarnrc.yml
+        run: |
+          echo "enableTransparentWorkspaces: false" > ../../../.yarnrc.yml
+
       - name: Install dependencies
-        run: cd apps/backend/user-service && yarn install
+        run: yarn install
 
       - name: Verify ms-libs Installation
         run: |
           cd ../../../
           ls -la node_modules/@sokritha-sabaicode/ms-libs
-
-      - name: Verify ms-libs Installation
-        run: ls -la node_modules
 
       - name: Run build
         run: yarn build
