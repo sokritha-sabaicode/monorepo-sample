@@ -31,11 +31,6 @@ jobs:
         with:
           node-version: "20" # Use the version of Node.js that your project requires
 
-      - name: Remove existing ms-libs symlink and clear Yarn cache
-        run: |
-          cd ../../../
-          rm -rf node_modules
-          yarn cache clean
 
       - name: Remove existing ms-libs symlink and clear Yarn cache
         run: |
@@ -54,6 +49,9 @@ jobs:
         run: |
           cd ../../../
           ls -la node_modules/@sokritha-sabaicode/ms-libs
+
+      - name: Verify .npmrc Configuration
+        run: cat ~/.npmrc
 
       - name: Run build
         run: yarn build
