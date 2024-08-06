@@ -40,12 +40,15 @@ jobs:
         run: cp ~/.npmrc ./.npmrc
 
       - name: Install dependencies
-        run: yarn install
+        run: cd apps/backend/user-service && yarn install
 
       - name: Verify ms-libs Installation
         run: |
           cd ../../../
           ls -la node_modules/@sokritha-sabaicode/ms-libs
+
+      - name: Verify ms-libs Installation
+        run: ls -la node_modules
 
       - name: Run build
         run: yarn build
