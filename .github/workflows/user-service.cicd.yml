@@ -36,18 +36,19 @@ jobs:
           echo "@sokritha-sabaicode:registry=https://npm.pkg.github.com/" > ~/.npmrc
           echo "//npm.pkg.github.com/:_authToken=${{ secrets.NPM_TOKEN }}" >> ~/.npmrc
 
-      - name: Configure npm to use GitHub Packages
+      - name: Remove ms-libs local
         run: |
-          echo "@sokritha-sabaicode:registry=https://npm.pkg.github.com/" > ./.npmrc
-          echo "//npm.pkg.github.com/:_authToken=${{ secrets.NPM_TOKEN }}" >> ./.npmrc
+          cd ../../../
+          rm -rf packages/libs
 
       - name: Install dependencies
-        run: yarn install --frozen-lockfile
+        run: yarn install
 
       - name: Verify ms-libs Installation
         run: |
           cd ../../../
           ls -la node_modules/@sokritha-sabaicode/ms-libs
+          ls -la node_modules/@sokritha-sabaicode/ms-libs/src
 
       - name: Run build
         run: yarn build
