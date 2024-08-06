@@ -39,8 +39,8 @@
   ],
   "exports": {
     ".": {
-      "import": "./build/src/index.js",
-      "require": "./build/src/index.js"
+      "import": "./src/index.js",
+      "require": "./src/index.js"
     }
   },
   "devDependencies": {
