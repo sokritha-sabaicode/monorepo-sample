@@ -31,22 +31,18 @@ jobs:
         with:
           node-version: "20" # Use the version of Node.js that your project requires
 
-      - name: Clear local packages and Yarn cache
-        run: |
-          rm -rf node_modules
-          rm -rf ../../../node_modules
-          yarn cache clean
-
-      - name: Remove Package Libs
-        run: rm -rf ../../../packages/libs
-
       - name: Configure npm to use GitHub Packages
         run: |
           echo "@sokritha-sabaicode:registry=https://npm.pkg.github.com/" > ~/.npmrc
           echo "//npm.pkg.github.com/:_authToken=${{ secrets.NPM_TOKEN }}" >> ~/.npmrc
 
+      - name: Configure npm to use GitHub Packages
+        run: |
+          echo "@sokritha-sabaicode:registry=https://npm.pkg.github.com/" > ./.npmrc
+          echo "//npm.pkg.github.com/:_authToken=${{ secrets.NPM_TOKEN }}" >> ./.npmrc
+
       - name: Install dependencies
-        run: yarn install
+        run: yarn install --frozen-lockfile
 
       - name: Verify ms-libs Installation
         run: |
