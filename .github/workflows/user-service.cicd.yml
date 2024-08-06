@@ -37,6 +37,9 @@ jobs:
           rm -rf ../../../node_modules
           yarn cache clean
 
+      - name: Remove Package Libs
+        run: rm -rf ../../../packages/libs
+
       - name: Configure npm to use GitHub Packages
         run: |
           echo "@sokritha-sabaicode:registry=https://npm.pkg.github.com/" > ~/.npmrc
