@@ -31,6 +31,9 @@ jobs:
         with:
           node-version: "20" # Use the version of Node.js that your project requires
 
+      - name: list directory
+        run: ls -la
+
       - name: Remove existing node_modules and clear Yarn cache
         run: |
           rm -rf ../../../packages/libs # Remove the local package
@@ -39,7 +42,9 @@ jobs:
         run: |
           echo "@sokritha-sabaicode:registry=https://npm.pkg.github.com/" > ~/.npmrc
           echo "//npm.pkg.github.com/:_authToken=${{ secrets.NPM_TOKEN }}" >> ~/.npmrc
-          cp ~/.npmrc apps/backend/user-service/.npmrc
+
+      - name: Copy .npmrc to user-service
+        run: cp ~/.npmrc apps/backend/user-service/.npmrc
 
       - name: Install dependencies
         run: yarn install
