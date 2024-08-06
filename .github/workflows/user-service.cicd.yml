@@ -36,13 +36,19 @@ jobs:
           rm -rf node_modules
           yarn cache clean
 
+      - name: Remove existing ms-libs symlink and clear Yarn cache
+        run: |
+          cd ../../../
+          rm -rf node_modules
+          yarn cache clean
+
       - name: Configure npm to use GitHub Packages
         run: |
           echo "@sokritha-sabaicode:registry=https://npm.pkg.github.com/" > ~/.npmrc
           echo "//npm.pkg.github.com/:_authToken=${{ secrets.NPM_TOKEN }}" >> ~/.npmrc
 
       - name: Install dependencies
-        run: yarn install --frozen-lockfile --no-immutable
+        run: yarn install --no-immutable
 
       - name: Verify ms-libs Installation
         run: |
