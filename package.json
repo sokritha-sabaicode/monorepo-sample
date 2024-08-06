@@ -22,8 +22,5 @@
   },
   "devDependencies": {
     "concurrently": "^8.2.2"
-  },
-  "resolutions": {
-    "@sokritha-sabaicode/ms-libs": "0.0.3"
   }
 }
