@@ -39,6 +39,7 @@ jobs:
         run: |
           echo "@sokritha-sabaicode:registry=https://npm.pkg.github.com/" > ~/.npmrc
           echo "//npm.pkg.github.com/:_authToken=${{ secrets.NPM_TOKEN }}" >> ~/.npmrc
+          cp ~/.npmrc apps/backend/user-service/.npmrc
 
       - name: Install dependencies
         run: yarn install
