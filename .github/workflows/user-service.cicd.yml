@@ -36,8 +36,7 @@ jobs:
           echo "@sokritha-sabaicode:registry=https://npm.pkg.github.com/" > ~/.npmrc
           echo "//npm.pkg.github.com/:_authToken=${{ secrets.NPM_TOKEN }}" >> ~/.npmrc
 
-      - name: Remove local libs folder to force registry installation
-        run: rm -rf ../../../packages/libs
+     
 
       - name: Install dependencies
         run: yarn install
