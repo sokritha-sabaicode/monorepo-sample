@@ -39,12 +39,8 @@ jobs:
       - name: Copy .npmrc to user-service
         run: cp ~/.npmrc ./.npmrc
 
-      - name: Create or update .yarnrc.yml
-        run: |
-          echo "enableTransparentWorkspaces: false" > ../../../.yarnrc.yml
-
       - name: Install dependencies
-        run: yarn install
+        run: yarn install --force --check-files
 
       - name: Verify ms-libs Installation
         run: |
