@@ -31,7 +31,6 @@ jobs:
         with:
           node-version: "20" # Use the version of Node.js that your project requires
 
-
       - name: Remove existing ms-libs symlink and clear Yarn cache
         run: |
           rm -rf node_modules
@@ -43,7 +42,7 @@ jobs:
           echo "//npm.pkg.github.com/:_authToken=${{ secrets.NPM_TOKEN }}" >> ~/.npmrc
 
       - name: Install dependencies
-        run: yarn install --frozen-lockfile
+        run: yarn install --frozen-lockfile --no-immutable
 
       - name: Verify ms-libs Installation
         run: |
