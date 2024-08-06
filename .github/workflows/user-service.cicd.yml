@@ -31,6 +31,19 @@ jobs:
         with:
           node-version: "20" # Use the version of Node.js that your project requires
 
+      - name: Remove existing ms-libs symlink and clear Yarn cache
+        run: |
+          cd ../../../
+          rm -rf node_modules
+          yarn cache clean
+
+
+      - name: Remove existing ms-libs symlink and clear Yarn cache
+        run: |
+          rm -rf node_modules
+          yarn cache clean
+
+
       - name: Configure npm to use GitHub Packages
         run: |
           echo "@sokritha-sabaicode:registry=https://npm.pkg.github.com/" > ~/.npmrc
