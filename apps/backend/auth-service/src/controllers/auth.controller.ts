@@ -48,7 +48,16 @@ export class ProductController extends Controller {
     response.redirect(cognitoOAuthURL);
   }
 
-  @Get("/google/callback")
+  @Get("/facebook")
+  @SuccessResponse(302, "Redirect")
+  public loginWithFacebook(@Request() request: Express.Request) {
+    const response = (request as any).res as Response;
+    const cognitoOAuthURL = AuthService.loginWithFacebook();
+
+    response.redirect(cognitoOAuthURL);
+  }
+
+  @Get("/oauth/callback")
   public async googleCallback(@Request() request: Express.Request, @Queries() query: GoogleCallbackRequest) {
     try {
       const response = (request as any).res as Response;

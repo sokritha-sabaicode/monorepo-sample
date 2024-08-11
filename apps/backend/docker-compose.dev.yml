@@ -1,10 +1,26 @@
 version: '3.8'
 services:
+  api-gateway:
+    container_name: api_gateway_service_container
+    build:
+      context: ./api-gateway
+      dockerfile: Dockerfile.dev
+    restart: always
+    ports:
+      - 4000:4000
+    env_file: ./api-gateway/src/configs/.env.development
+    environment:
+      - DOCKER_ENV=true
+      - AUTH_SERVICE_URL=http://auth:4001
+      - USER_SERVICE_URL=http://user:4002
+      - PRODUCT_SERVICE_URL=http://product:4003
+    volumes:
+      - ./api-gateway/src:/app/src # HOT RELOADING
   auth:
     container_name: auth_service_container
     build:
-      context: .
-      dockerfile: ./auth-service/Dockerfile.dev
+      context: ./auth-service
+      dockerfile: Dockerfile.dev
     restart: always
     ports:
       - 4001:4001
@@ -16,8 +32,8 @@ services:
   user:
     container_name: user_service_container
     build:
-      context: .
-      dockerfile: ./user-service/Dockerfile.dev
+      context: ./user-service
+      dockerfile: Dockerfile.dev
     restart: always
     ports:
       - 4002:4002
@@ -29,8 +45,8 @@ services:
   product:
     container_name: product_service_container
     build:
-      context: .
-      dockerfile: ./product-service/Dockerfile.dev
+      context: ./product-service
+      dockerfile: Dockerfile.dev
     restart: always
     ports:
       - 4003:4003

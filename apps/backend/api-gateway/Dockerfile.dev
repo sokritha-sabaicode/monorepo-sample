@@ -8,19 +8,17 @@ WORKDIR /app
 COPY package.json ./
 COPY .npmrc ./
 
+
 # Install dependencies
 RUN npm install && npm install -g nodemon
 
 # Copy other files
 COPY tsconfig.json ./
 COPY nodemon.json ./
-COPY tsoa.json ./
-
-# Copy source code folder
 COPY src ./src
 
 # Expose the application's port
-EXPOSE 4002
+EXPOSE 4000
 
 # Command to run the application
 CMD ["npm", "run", "dev"]

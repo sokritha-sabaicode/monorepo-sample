@@ -2,9 +2,8 @@ import configs from "@/src/config";
 import { CognitoIdentityProviderClient, ConfirmSignUpCommand, InitiateAuthCommand, InitiateAuthCommandInput, SignUpCommand, SignUpCommandInput } from "@aws-sdk/client-cognito-identity-provider";
 import { GoogleCallbackRequest, LoginRequest, SignupRequest, VerifyUserRequest } from "@/src/controllers/types/auth-request.type";
 import crypto from 'crypto';
-import { InvalidInputError, ResourceConflictError } from "ms-libs/utils/errors";
-import { APP_ERROR_MESSAGE } from "ms-libs/constants/app-error-message";
 import axios from "axios";
+import { APP_ERROR_MESSAGE, InvalidInputError, ResourceConflictError } from "@sokritha-sabaicode/ms-libs";
 
 const client = new CognitoIdentityProviderClient({ region: configs.awsCognitoRegion })
 
@@ -120,6 +119,23 @@ class AuthService {
       client_id: configs.awsCognitoClientId,
       redirect_uri: configs.awsRedirectUri,
       identity_provider: 'Google',
+      scope: 'profile email openid',
+      state: state,
+      prompt: 'select_account'
+    })
+    const cognitoOAuthURL = `${configs.awsCognitoDomain}/oauth2/authorize?${params.toString()}`
+
+    return cognitoOAuthURL;
+  }
+
+  loginWithFacebook(): string {
+    const state = crypto.randomBytes(16).toString('hex')
+
+    const params = new URLSearchParams({
+      response_type: 'code',
+      client_id: configs.awsCognitoClientId,
+      redirect_uri: configs.awsRedirectUri,
+      identity_provider: 'Facebook',
       scope: 'profile email openid',
       state: state,
       prompt: 'select_account'

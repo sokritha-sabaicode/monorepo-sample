@@ -11,12 +11,27 @@ const swaggerDocument = JSON.parse(fs.readFileSync(path.join(__dirname, 'docs/sw
 // ========================
 // Initialize App Express
 // ========================
+
 const app = express();
+
+
+// =======================
+// Security Middlewares
+// =======================
+app.set("trust proxy", 1);
+
 
 // ========================
 // Global Middleware
 // ========================
-app.use(express.json())
+app.use(express.json({ limit: '50mb' }));
+
+
+
+app.use((req, _res, next) => {
+  console.log('Parsed body:', req.body);
+  next();
+});
 
 
 // ========================

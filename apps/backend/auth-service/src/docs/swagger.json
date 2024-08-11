@@ -230,7 +230,19 @@
 				"parameters": []
 			}
 		},
-		"/v1/auth/google/callback": {
+		"/v1/auth/facebook": {
+			"get": {
+				"operationId": "LoginWithFacebook",
+				"responses": {
+					"302": {
+						"description": "Redirect"
+					}
+				},
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/v1/auth/oauth/callback": {
 			"get": {
 				"operationId": "GoogleCallback",
 				"responses": {
