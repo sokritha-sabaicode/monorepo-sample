@@ -1,11 +1,18 @@
 import configs from "@/src/config";
-import { CognitoIdentityProviderClient, ConfirmSignUpCommand, InitiateAuthCommand, InitiateAuthCommandInput, SignUpCommand, SignUpCommandInput } from "@aws-sdk/client-cognito-identity-provider";
+import { AdminAddUserToGroupCommand, AdminGetUserCommand, AdminLinkProviderForUserCommand, CognitoIdentityProviderClient, ConfirmSignUpCommand, InitiateAuthCommand, InitiateAuthCommandInput, ListUsersCommand, SignUpCommand, SignUpCommandInput, UserType } from "@aws-sdk/client-cognito-identity-provider";
 import { GoogleCallbackRequest, LoginRequest, SignupRequest, VerifyUserRequest } from "@/src/controllers/types/auth-request.type";
 import crypto from 'crypto';
 import axios from "axios";
 import { APP_ERROR_MESSAGE, InvalidInputError, ResourceConflictError } from "@sokritha-sabaicode/ms-libs";
+import { jwtDecode } from "jwt-decode";
+import { CognitoToken } from "@/src/services/types/auth-service.type";
 
-const client = new CognitoIdentityProviderClient({ region: configs.awsCognitoRegion })
+const client = new CognitoIdentityProviderClient({
+  region: configs.awsCognitoRegion, credentials: {
+    accessKeyId: configs.awsAccessKeyId,
+    secretAccessKey: configs.awsSecretAccessKey
+  }
+})
 
 class AuthService {
   // Generate the SECRET_HASH
@@ -17,12 +24,12 @@ class AuthService {
   }
 
   async signup(body: SignupRequest): Promise<string> {
-    const allowedAttributes = ['email', 'phone_number', 'name'];
+    const allowedAttributes = ['email', 'phone_number', 'name', 'custom:role'];
 
     const attributes = Object.keys(body)
-      .filter(key => allowedAttributes.includes(key))
+      .filter(key => allowedAttributes.includes(key) || key === 'role')
       .map(key => ({
-        Name: key,
+        Name: key === 'role' ? 'custom:role' : key,
         Value: body[key as keyof SignupRequest]
       }));
 
@@ -55,7 +62,7 @@ class AuthService {
     }
   }
 
-  async verifyUser(body: VerifyUserRequest) {
+  async verifyUser(body: VerifyUserRequest): Promise<void> {
     const username = (body.email || body.phone_number) as string;
 
     const params = {
@@ -67,8 +74,17 @@ class AuthService {
 
     try {
       const command = new ConfirmSignUpCommand(params);
-      const result = await client.send(command);
-      console.log("User verified successfully:", result);
+      await client.send(command);
+      console.log("AuthService verifyUser() method: User verified successfully");
+
+      // Retrieve the user to get the `role` attribute
+      const userInfo = await this.getUserByUsername(username);
+      console.log('UserInfo: ', userInfo);
+      const role = userInfo.UserAttributes?.find(attr => attr.Name === 'custom:role')?.Value || 'user';
+
+      // Add the user to the group based on the `role` attribute
+      await this.addToGroup(username, role);
+      console.log(`AuthService verifyUser() method: User added to ${role} group`);
     } catch (error) {
       console.error("AuthService verifyUser() method error:", error);
 
@@ -83,7 +99,7 @@ class AuthService {
     }
   }
 
-  async login(body: LoginRequest) {
+  async login(body: LoginRequest): Promise<CognitoToken> {
     const username = (body.email || body.phone_number) as string;
 
     const params: InitiateAuthCommandInput = {
@@ -101,9 +117,9 @@ class AuthService {
       const result = await client.send(command);
 
       return {
-        accessToken: result.AuthenticationResult?.AccessToken,
-        idToken: result.AuthenticationResult?.IdToken,
-        refreshToken: result.AuthenticationResult?.RefreshToken
+        accessToken: result.AuthenticationResult?.AccessToken!,
+        idToken: result.AuthenticationResult?.IdToken!,
+        refreshToken: result.AuthenticationResult?.RefreshToken!
       };
     } catch (error) {
       console.error("AuthService verifyUser() method error:", error);
@@ -145,10 +161,9 @@ class AuthService {
     return cognitoOAuthURL;
   }
 
-  async getOAuthToken(query: GoogleCallbackRequest) {
+  async getOAuthToken(query: GoogleCallbackRequest): Promise<CognitoToken> {
     try {
       const { code, error } = query;
-
 
       if (error || !code) {
         throw new InvalidInputError({ message: error });
@@ -173,12 +188,98 @@ class AuthService {
           }
         })
 
-      return {
+      const token = {
         accessToken: res.data.access_token,
         idToken: res.data.id_token,
         refreshToken: res.data.refresh_token
+      }
+
+      return {
+        accessToken: token.accessToken,
+        idToken: token.idToken,
+        refreshToken: token.refreshToken
       };
     } catch (error) {
+      throw error;
+    }
+  }
+
+  getUserInfoFromToken(token: string) {
+    const decodedToken = jwtDecode(token);
+
+    return decodedToken;
+  }
+
+  async addToGroup(username: string, groupName: string) {
+    const params = {
+      GroupName: groupName,
+      Username: username,
+      UserPoolId: configs.awsCognitoUserPoolId
+    }
+
+    try {
+      const command = new AdminAddUserToGroupCommand(params);
+      await client.send(command);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getUserByUsername(username: string) {
+    const params = {
+      Username: username,
+      UserPoolId: configs.awsCognitoUserPoolId
+    }
+
+    try {
+      const command = new AdminGetUserCommand(params);
+      const userInfo = await client.send(command);
+      return userInfo;
+    } catch (error) {
+      console.error("AuthService getUserByUsername() method error:", error);
+      throw error;
+    }
+  }
+
+  async getUserByEmail(email: string): Promise<UserType | undefined> {
+    const params = {
+      Filter: `email = "${email}"`,
+      UserPoolId: configs.awsCognitoUserPoolId,
+      Limit: 1
+    }
+
+    try {
+      const listUsersCommand = new ListUsersCommand(params);
+      const response = await client.send(listUsersCommand);
+      return response.Users && response.Users[0];
+    } catch (error) {
+      console.error("AuthService getUserByEmail() method error:", error);
+      throw error;
+    }
+  }
+
+  async linkAccount({ sourceUserId, providerName, destinationUserId }: { sourceUserId: string, providerName: string, destinationUserId: string }): Promise<void> {
+    const params = {
+      // DestinationUser is the existing cognito user that you want to assign to the external Idp user account (COULD BE a cognito user or a federated user)
+      DestinationUser: {
+        ProviderName: "Cognito",
+        ProviderAttributeValue: destinationUserId,
+      },
+      // SourceUser is the user who is linking to the destination user (MUST BE a federated user like Google or Facebook, etc.)
+      SourceUser: {
+        ProviderName: providerName, // Google, Facebook, etc.
+        ProviderAttributeName: "Cognito_Subject",
+        ProviderAttributeValue: sourceUserId
+      },
+      UserPoolId: configs.awsCognitoUserPoolId
+    }
+
+    try {
+      const command = new AdminLinkProviderForUserCommand(params);
+      await client.send(command);
+
+    } catch (error) {
+      console.error(`AuthService linkAccount() method error: `, error);
       throw error;
     }
   }

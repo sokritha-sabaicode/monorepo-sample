@@ -3,6 +3,7 @@ export interface SignupRequest {
   email?: string;
   phone_number?: string;
   password?: string;
+  role?: "admin" | "user";
 }
 
 export interface VerifyUserRequest {

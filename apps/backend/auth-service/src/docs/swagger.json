@@ -20,6 +20,13 @@
 					},
 					"password": {
 						"type": "string"
+					},
+					"role": {
+						"type": "string",
+						"enum": [
+							"admin",
+							"user"
+						]
 					}
 				},
 				"type": "object",
@@ -171,25 +178,7 @@
 							"application/json": {
 								"schema": {
 									"properties": {
-										"data": {
-											"properties": {
-												"refreshToken": {
-													"type": "string"
-												},
-												"idToken": {
-													"type": "string"
-												},
-												"accessToken": {
-													"type": "string"
-												}
-											},
-											"required": [
-												"refreshToken",
-												"idToken",
-												"accessToken"
-											],
-											"type": "object"
-										},
+										"data": {},
 										"message": {
 											"type": "string"
 										}

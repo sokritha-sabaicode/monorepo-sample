@@ -29,11 +29,16 @@ export class ProductController extends Controller {
   }
 
   @Post("/login")
-  public async login(@Body() body: LoginRequest) {
+  public async login(@Request() request: Express.Request, @Body() body: LoginRequest) {
     try {
+      const response = (request as any).res as Response;
       const result = await AuthService.login(body);
 
-      return sendResponse({ message: `User login successfully.`, data: result })
+      response.cookie('id_token', result.idToken);
+      response.cookie('access_token', result.accessToken);
+      response.cookie('refresh_token', result.refreshToken)
+
+      return sendResponse({ message: 'Login successfully' })
     } catch (error) {
       throw error;
     }

@@ -14,6 +14,7 @@ type Config = {
   awsCloudwatchLogsGroupName: string;
   awsCognitoUserPoolId: string;
   awsCognitoClientId: string;
+  apiGatewayHeader: string;
 };
 
 // Function to load and validate environment variables
@@ -35,7 +36,8 @@ function loadConfig(): Config {
     AWS_SECRET_ACCESS_KEY: Joi.string().required(),
     AWS_CLOUDWATCH_LOGS_GROUP_NAME: Joi.string().required(),
     AWS_COGNITO_USER_POOL_ID: Joi.string().required(),
-    AWS_COGNITO_CLIENT_ID: Joi.string().required()
+    AWS_COGNITO_CLIENT_ID: Joi.string().required(),
+    API_GATEWAY_HEADER: Joi.string().required()
   }).unknown().required();
 
   // Validate the environment variables
@@ -55,7 +57,8 @@ function loadConfig(): Config {
     awsSecretAccessKey: envVars.AWS_SECRET_ACCESS_KEY,
     awsCloudwatchLogsGroupName: envVars.AWS_CLOUDWATCH_LOGS_GROUP_NAME,
     awsCognitoUserPoolId: envVars.AWS_COGNITO_USER_POOL_ID,
-    awsCognitoClientId: envVars.AWS_COGNITO_CLIENT_ID
+    awsCognitoClientId: envVars.AWS_COGNITO_CLIENT_ID,
+    apiGatewayHeader: envVars.API_GATEWAY_HEADER
   };
 }
 

@@ -20,14 +20,6 @@ const ROUTE_PATHS: RoutesConfig = {
   AUTH_SERVICE: {
     path: "/v1/auth",
     target: configs.authServiceUrl,
-    methods: {
-      POST: {
-        authRequired: false
-      },
-      GET: {
-        authRequired: false
-      }
-    },
     nestedRoutes: [
       {
         path: "/signup",
@@ -44,7 +36,47 @@ const ROUTE_PATHS: RoutesConfig = {
             authRequired: false,
           }
         }
-      }
+      },
+      {
+        path: "/verify",
+        methods: {
+          POST: {
+            authRequired: false,
+          }
+        }
+      },
+      {
+        path: '/login',
+        methods: {
+          POST: {
+            authRequired: false,
+          }
+        }
+      },
+      {
+        path: '/google',
+        methods: {
+          GET: {
+            authRequired: false,
+          }
+        }
+      },
+      {
+        path: '/facebook',
+        methods: {
+          GET: {
+            authRequired: false,
+          }
+        }
+      },
+      {
+        path: '/oauth/callback',
+        methods: {
+          GET: {
+            authRequired: false,
+          }
+        }
+      },
     ]
   },
   USER_SERVICE: {
@@ -64,7 +96,8 @@ const ROUTE_PATHS: RoutesConfig = {
     target: configs.productServiceUrl,
     methods: {
       GET: {
-        authRequired: false
+        authRequired: true,
+        roles: ["user"]
       }
     }
   }

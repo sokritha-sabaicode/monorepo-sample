@@ -18,6 +18,7 @@ const models: TsoaRoute.Models = {
             "email": {"dataType":"string"},
             "phone_number": {"dataType":"string"},
             "password": {"dataType":"string"},
+            "role": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["admin"]},{"dataType":"enum","enums":["user"]}]},
         },
         "additionalProperties": false,
     },
@@ -135,6 +136,7 @@ export function RegisterRoutes(app: Router) {
 
             async function ProductController_login(request: ExRequest, response: ExResponse, next: any) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
+                    request: {"in":"request","name":"request","required":true,"dataType":"object"},
                     body: {"in":"body","name":"body","required":true,"ref":"LoginRequest"},
             };
 

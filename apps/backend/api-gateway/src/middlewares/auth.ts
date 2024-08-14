@@ -7,7 +7,10 @@ import ROUTE_PATHS, { RouteConfig } from '@/src/route-defs';
 declare global {
   namespace Express {
     interface Request {
-      currentUser: any;
+      currentUser: {
+        username: string;
+        role: string[] | undefined;
+      };
       routeConfig: RouteConfig;
       methodConfig: {
         authRequired: boolean;
@@ -48,7 +51,10 @@ const authenticateToken = async (req: Request, _res: Response, next: NextFunctio
         throw new AuthenticationError();
       }
 
-      req.currentUser = payload;
+      req.currentUser = {
+        username: payload.username,
+        role: payload['cognito:groups']
+      };
     }
 
     // Step 4
@@ -68,37 +74,57 @@ const authenticateToken = async (req: Request, _res: Response, next: NextFunctio
 const authorizeRole = (req: Request, _res: Response, next: NextFunction) => {
   const { methodConfig, currentUser } = req;
 
-  if (methodConfig.roles && (!currentUser || !methodConfig.roles.includes(currentUser.role))) {
-    next(new AuthorizationError());
+  console.log('methodConfig', methodConfig)
+  console.log('currentUser', currentUser)
+  // Check if the route requires specific roles
+  if (methodConfig.roles) {
+    // If the user is not authenticated or does not have any of the required roles, throw an error
+    if (!currentUser || !Array.isArray(currentUser.role) || !currentUser.role.some(role => methodConfig.roles!.includes(role))) {
+      return next(new AuthorizationError());
+    }
   }
 
   next();
 };
 
-const findRouteConfig = (path: string, routeConfigs: RouteConfig): RouteConfig | null => {
-  // Check if the requested path starts with the current route's path
-  if (path.startsWith(routeConfigs.path)) {
-    // If there are nested routes, check if any match the remaining path
-    if (routeConfigs.nestedRoutes) {
-      for (const nestedRouteKey in routeConfigs.nestedRoutes) {
-        // Example: If routeConfig.path is "/v1/users" and path is "/v1/users/profile"
-        // The remaining path after "/v1/users" would be "/profile"
-        const remainingPath = path.slice(routeConfigs.path.length);
 
-        // Recursively call findRouteConfig on the nested route
-        const nestedResult = findRouteConfig(remainingPath, routeConfigs.nestedRoutes[nestedRouteKey]);
-        if (nestedResult) {
-          return nestedResult;
-        }
-      }
-    }
+// TODO: implement the findRouteConfig function
+// STEP 1: Check if the requested path starts with the current route's path
+// Step 2: If there are no nested routes, return the current routeConfig
+// Step 3: Calculate the remaining path after the base path
+// Step 4: Check if any nested routes match the remaining path
+// Step 5: If a nested route matches, recursively call findRouteConfig on the nested route
+// Step 6: If no nested route matches, return null
+const findRouteConfig = (path: string, routeConfigs: RouteConfig): RouteConfig | null => {
+  // STEP 1
+  if (!path.startsWith(routeConfigs.path)) {
+    return null; // If the path does not start with routeConfig.path, return null (no match)
+  }
+
+  // STEP 2
+  if (!routeConfigs.nestedRoutes) {
     return routeConfigs;
   }
 
-  // If the path does not start with routeConfig.path, return null (no match)
-  return null;
-}
+  // STEP 3
+  const remainingPath = path.slice(routeConfigs.path.length);
 
+  // STEP 4
+  for (const nestedRouteKey in routeConfigs.nestedRoutes) {
+    const nestedRouteConfig = routeConfigs.nestedRoutes[nestedRouteKey];
+
+    // STEP 5
+    if (remainingPath.startsWith(nestedRouteConfig.path)) {
+      const nestedResult = findRouteConfig(remainingPath, nestedRouteConfig);
+      if (nestedResult) {
+        return nestedResult;
+      }
+    }
+  }
+
+  // STEP 6
+  return null;
+};
 
 // TODO: implement the routeConfigMiddleware function
 // Step 1: Find the route config for the requested path
@@ -110,6 +136,7 @@ const routeConfigMiddleware = (req: Request, _res: Response, next: NextFunction)
   let routeConfig = null;
   for (const key in ROUTE_PATHS) {
     routeConfig = findRouteConfig(path, ROUTE_PATHS[key]);
+    console.log('routeConfig', routeConfig)
     if (routeConfig) break;
   }
 
@@ -121,9 +148,6 @@ const routeConfigMiddleware = (req: Request, _res: Response, next: NextFunction)
   if (!methodConfig) {
     return next(new NotFoundError('Method not allowed'));
   }
-
-  console.log('routeConfig', routeConfig)
-  console.log('methodConfig', methodConfig)
 
   // Attach the route configuration and method config to the request object
   req.routeConfig = routeConfig;

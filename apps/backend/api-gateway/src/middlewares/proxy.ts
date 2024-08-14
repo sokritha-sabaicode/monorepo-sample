@@ -4,6 +4,7 @@ import express, { Response } from "express"
 import { ClientRequest, IncomingMessage } from "http"
 import { createProxyMiddleware, Options } from "http-proxy-middleware"
 import { gatewayLogger } from "@/src/server"
+import configs from "@/src/config"
 
 interface ProxyConfig {
   [context: string]: Options<IncomingMessage, Response>
@@ -11,10 +12,16 @@ interface ProxyConfig {
 
 const proxyConfigs: ProxyConfig = {
   [ROUTE_PATHS.AUTH_SERVICE.path]: {
-    target: ROUTE_PATHS.AUTH_SERVICE.target,
-    pathRewrite: (path, _req) => `${ROUTE_PATHS.AUTH_SERVICE}${path}`,
+    target: ROUTE_PATHS.AUTH_SERVICE.target, // http://localhost:4001
+    pathRewrite: (path, _req) => {
+      console.log('path', path)
+      return `${ROUTE_PATHS.AUTH_SERVICE.path}${path}` // v1/auth/signup
+    },
     on: {
       proxyReq: (proxyReq: ClientRequest, _req: IncomingMessage, _res: Response) => {
+        // Add the custom header to the request
+        proxyReq.setHeader('x-api-gateway', configs.apiGatewayHeader);
+
         // @ts-ignore
         logRequest(gatewayLogger, proxyReq, {
           protocol: proxyReq.protocol,
@@ -26,9 +33,27 @@ const proxyConfigs: ProxyConfig = {
   },
   [ROUTE_PATHS.USER_SERVICE.path]: {
     target: ROUTE_PATHS.USER_SERVICE.target,
-    pathRewrite: (path, _req) => `${ROUTE_PATHS.USER_SERVICE}${path}`,
+    pathRewrite: (path, _req) => `${ROUTE_PATHS.USER_SERVICE.path}${path}`,
     on: {
       proxyReq: (proxyReq: ClientRequest, _req: IncomingMessage, _res: Response) => {
+        proxyReq.setHeader('x-api-gateway', configs.apiGatewayHeader);
+
+        // @ts-ignore
+        logRequest(gatewayLogger, proxyReq, {
+          protocol: proxyReq.protocol,
+          host: proxyReq.getHeader('host'),
+          path: proxyReq.path
+        });
+      }
+    }
+  },
+  [ROUTE_PATHS.PRODUCT_SERVICE.path]: {
+    target: ROUTE_PATHS.PRODUCT_SERVICE.target,
+    pathRewrite: (path, _req) => `${ROUTE_PATHS.PRODUCT_SERVICE.path}${path}`,
+    on: {
+      proxyReq: (proxyReq: ClientRequest, _req: IncomingMessage, _res: Response) => {
+        proxyReq.setHeader('x-api-gateway', configs.apiGatewayHeader);
+
         // @ts-ignore
         logRequest(gatewayLogger, proxyReq, {
           protocol: proxyReq.protocol,
@@ -46,5 +71,6 @@ const applyProxy = (app: express.Application) => {
     app.use(context, createProxyMiddleware(proxyConfigs[context]))
   })
 }
+
 
 export default applyProxy
