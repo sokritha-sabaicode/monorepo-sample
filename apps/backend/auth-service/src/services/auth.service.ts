@@ -1,5 +1,5 @@
 import configs from "@/src/config";
-import { AdminAddUserToGroupCommand, AdminGetUserCommand, AdminLinkProviderForUserCommand, CognitoIdentityProviderClient, ConfirmSignUpCommand, InitiateAuthCommand, InitiateAuthCommandInput, ListUsersCommand, SignUpCommand, SignUpCommandInput, UserType } from "@aws-sdk/client-cognito-identity-provider";
+import { AdminAddUserToGroupCommand, AdminGetUserCommand, AdminLinkProviderForUserCommand, AuthFlowType, CognitoIdentityProviderClient, ConfirmSignUpCommand, InitiateAuthCommand, InitiateAuthCommandInput, ListUsersCommand, SignUpCommand, SignUpCommandInput, UserType } from "@aws-sdk/client-cognito-identity-provider";
 import { GoogleCallbackRequest, LoginRequest, SignupRequest, VerifyUserRequest } from "@/src/controllers/types/auth-request.type";
 import crypto from 'crypto';
 import axios from "axios";
@@ -24,13 +24,21 @@ class AuthService {
   }
 
   async signup(body: SignupRequest): Promise<string> {
+    const inputBody = {
+      name: `${body.sur_name} ${body.last_name}`,
+      ...Object.keys(body).filter(key => key !== 'sur_name' && key !== 'last_name').reduce<Record<string, any>>((obj, key) => {
+        obj[key] = body[key as keyof SignupRequest];
+        return obj;
+      }, {})
+    }
+
     const allowedAttributes = ['email', 'phone_number', 'name', 'custom:role'];
 
-    const attributes = Object.keys(body)
+    const attributes = Object.keys(inputBody)
       .filter(key => allowedAttributes.includes(key) || key === 'role')
       .map(key => ({
         Name: key === 'role' ? 'custom:role' : key,
-        Value: body[key as keyof SignupRequest]
+        Value: inputBody[key as keyof typeof inputBody]
       }));
 
     const username = (body.email || body.phone_number) as string;
@@ -206,7 +214,7 @@ class AuthService {
 
   getUserInfoFromToken(token: string) {
     const decodedToken = jwtDecode(token);
-
+    console.log('decodedToken: ', decodedToken);
     return decodedToken;
   }
 
@@ -281,6 +289,34 @@ class AuthService {
     } catch (error) {
       console.error(`AuthService linkAccount() method error: `, error);
       throw error;
+    }
+  }
+
+  async refreshToken({ refreshToken, idToken }: { refreshToken: string, idToken: string }) {
+    const decodedToken = this.getUserInfoFromToken(idToken);
+
+    const params = {
+      AuthFlow: AuthFlowType.REFRESH_TOKEN_AUTH,
+      ClientId: configs.awsCognitoClientId,
+      AuthParameters: {
+        REFRESH_TOKEN: refreshToken,
+        // @ts-ignore
+        SECRET_HASH: this.generateSecretHash(decodedToken["cognito:username"] as string)
+      }
+    }
+
+    try {
+      const command = new InitiateAuthCommand(params);
+      const result = await client.send(command);
+
+      return {
+        accessToken: result.AuthenticationResult?.AccessToken!,
+        idToken: result.AuthenticationResult?.IdToken!,
+        refreshToken: result.AuthenticationResult?.RefreshToken || refreshToken, // Reuse the old refresh token if a new one isn't provided
+      };
+    } catch (error) {
+      console.error("AuthService refreshToken() method error:", error);
+      throw new Error(`Error refreshing token: ${error}`);
     }
   }
 }

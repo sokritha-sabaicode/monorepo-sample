@@ -3,6 +3,7 @@ import path from 'path';
 import Joi from 'joi';
 
 type Config = {
+  env: string;
   port: number;
   clientUrl: string;
   authServiceUrl: string;
@@ -26,6 +27,7 @@ function loadConfig(): Config {
 
   // Define a schema for the environment variables
   const envVarsSchema = Joi.object({
+    NODE_ENV: Joi.string().required(),
     PORT: Joi.number().default(3000),
     CLIENT_URL: Joi.string().required(),
     AUTH_SERVICE_URL: Joi.string().required(),
@@ -47,6 +49,7 @@ function loadConfig(): Config {
   }
 
   return {
+    env: envVars.NODE_ENV,
     port: envVars.PORT,
     clientUrl: envVars.CLIENT_URL,
     authServiceUrl: envVars.AUTH_SERVICE_URL,

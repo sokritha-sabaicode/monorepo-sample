@@ -47,6 +47,7 @@ const authenticateToken = async (req: Request, _res: Response, next: NextFunctio
 
       // Step 3
       const payload = await verifier.verify(token);
+      console.log(payload)
       if (!payload) {
         throw new AuthenticationError();
       }
@@ -144,7 +145,7 @@ const routeConfigMiddleware = (req: Request, _res: Response, next: NextFunction)
     return next(new NotFoundError('Route not found'));
   }
   // Step 2
-  const methodConfig = routeConfig.methods?.[method as keyof typeof routeConfig.methods];
+  const methodConfig = routeConfig.methods?.[method];
   if (!methodConfig) {
     return next(new NotFoundError('Method not allowed'));
   }
@@ -152,6 +153,9 @@ const routeConfigMiddleware = (req: Request, _res: Response, next: NextFunction)
   // Attach the route configuration and method config to the request object
   req.routeConfig = routeConfig;
   req.methodConfig = methodConfig;
+
+  console.log('req.routeConfig', routeConfig);
+  console.log('req.methodConfig', methodConfig);
 
   next();
 }

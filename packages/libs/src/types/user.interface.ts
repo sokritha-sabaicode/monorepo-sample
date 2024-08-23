@@ -1,26 +1,29 @@
-// =======================================
-// User Model Interfaces
-// =======================================
+import { PaginationResponse } from "./common.interface";
 
 export interface IUser {
-  _id: string;
-  username: string;
-  email: string;
-  gender: string;
-  age: number;
-  createdAt: Date;
-  updatedAt: Date;
+  _id?: string;
+  username?: string;
+  email?: string;
+  gender?: string;
+  age?: number;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
-// =======================================
-// User Request Interfaces
-// =======================================
+export interface UserProfileResponse {
+  message: string;
+  data: IUser;
+}
+
+export interface UsersPaginatedResponse {
+  message: string;
+  data: PaginationResponse<IUser>;
+}
 
 export interface UserCreationRequestParams {
-  email: string;
+  email?: string;
+  phone_number?: string;
   username: string;
-  gender: string;
-  age: number;
 }
 
 export interface UserUpdateRequestParams {
@@ -29,29 +32,8 @@ export interface UserUpdateRequestParams {
   age?: number;
 }
 
-export interface UserGetAllControllerParams {
-  page?: number;
-  limit?: number;
-  filter?: string;
-  sort?: string;
-}
 
-// =======================================
-// User Response Interfaces
-// =======================================
 
-export interface UsersPaginatedResponse {
-  message: string;
-  data: {
-    [key: string]: IUser[] | number;
-    totalItems: number;
-    totalPages: number;
-    currentPage: number;
-  }
-}
 
-export interface UserProfileResponse {
-  message: string;
-  data: IUser
-}
+
 

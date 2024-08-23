@@ -9,7 +9,10 @@
 		"schemas": {
 			"SignupRequest": {
 				"properties": {
-					"name": {
+					"sur_name": {
+						"type": "string"
+					},
+					"last_name": {
 						"type": "string"
 					},
 					"email": {
@@ -233,7 +236,7 @@
 		},
 		"/v1/auth/oauth/callback": {
 			"get": {
-				"operationId": "GoogleCallback",
+				"operationId": "OauthCallback",
 				"responses": {
 					"204": {
 						"description": "No content"
@@ -266,6 +269,35 @@
 						}
 					}
 				]
+			}
+		},
+		"/v1/auth/refresh-token": {
+			"post": {
+				"operationId": "RefreshToken",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"data": {},
+										"message": {
+											"type": "string"
+										}
+									},
+									"required": [
+										"data",
+										"message"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": []
 			}
 		}
 	},

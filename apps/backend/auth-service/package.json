@@ -19,6 +19,7 @@
     "@aws-sdk/client-cognito-identity-provider": "^3.620.0",
     "@sokritha-sabaicode/ms-libs": "0.0.4",
     "axios": "^1.7.2",
+    "cookie-parser": "^1.4.6",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "fs-extra": "^11.2.0",
@@ -30,6 +31,7 @@
     "tsoa": "^6.3.1"
   },
   "devDependencies": {
+    "@types/cookie-parser": "^1.4.7",
     "@types/express": "^4.17.21",
     "@types/jest": "^29.5.12",
     "@types/jsonapi-serializer": "^3.6.8",

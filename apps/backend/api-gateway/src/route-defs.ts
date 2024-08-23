@@ -70,6 +70,14 @@ const ROUTE_PATHS: RoutesConfig = {
         }
       },
       {
+        path: '/refresh-token',
+        methods: {
+          POST: {
+            authRequired: true,
+          }
+        }
+      },
+      {
         path: '/oauth/callback',
         methods: {
           GET: {
@@ -97,7 +105,7 @@ const ROUTE_PATHS: RoutesConfig = {
     methods: {
       GET: {
         authRequired: true,
-        roles: ["user"]
+        roles: ["admin"]
       }
     }
   }

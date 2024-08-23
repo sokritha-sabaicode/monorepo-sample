@@ -14,7 +14,8 @@ const models: TsoaRoute.Models = {
     "SignupRequest": {
         "dataType": "refObject",
         "properties": {
-            "name": {"dataType":"string"},
+            "sur_name": {"dataType":"string"},
+            "last_name": {"dataType":"string"},
             "email": {"dataType":"string"},
             "phone_number": {"dataType":"string"},
             "password": {"dataType":"string"},
@@ -223,9 +224,9 @@ export function RegisterRoutes(app: Router) {
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         app.get('/v1/auth/oauth/callback',
             ...(fetchMiddlewares<RequestHandler>(ProductController)),
-            ...(fetchMiddlewares<RequestHandler>(ProductController.prototype.googleCallback)),
+            ...(fetchMiddlewares<RequestHandler>(ProductController.prototype.oauthCallback)),
 
-            async function ProductController_googleCallback(request: ExRequest, response: ExResponse, next: any) {
+            async function ProductController_oauthCallback(request: ExRequest, response: ExResponse, next: any) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
                     request: {"in":"request","name":"request","required":true,"dataType":"object"},
                     query: {"in":"queries","name":"query","required":true,"ref":"GoogleCallbackRequest"},
@@ -240,7 +241,37 @@ export function RegisterRoutes(app: Router) {
                 const controller = new ProductController();
 
               await templateService.apiHandler({
-                methodName: 'googleCallback',
+                methodName: 'oauthCallback',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.post('/v1/auth/refresh-token',
+            ...(fetchMiddlewares<RequestHandler>(ProductController)),
+            ...(fetchMiddlewares<RequestHandler>(ProductController.prototype.refreshToken)),
+
+            async function ProductController_refreshToken(request: ExRequest, response: ExResponse, next: any) {
+            const args: Record<string, TsoaRoute.ParameterSchema> = {
+                    request: {"in":"request","name":"request","required":true,"dataType":"object"},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args, request, response });
+
+                const controller = new ProductController();
+
+              await templateService.apiHandler({
+                methodName: 'refreshToken',
                 controller,
                 response,
                 next,
