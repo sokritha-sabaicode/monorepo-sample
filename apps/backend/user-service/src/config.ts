@@ -6,6 +6,7 @@ type Config = {
   env: string;
   port: number;
   mongodbUrl: string;
+  apiGatewayHeader: string;
 };
 
 // Function to load and validate environment variables
@@ -20,6 +21,7 @@ function loadConfig(): Config {
     NODE_ENV: Joi.string().required(),
     PORT: Joi.number().default(3000),
     MONGODB_URL: Joi.string().required(),
+    API_GATEWAY_HEADER: Joi.string().required()
   }).unknown().required();
 
   // Validate the environment variables
@@ -32,6 +34,7 @@ function loadConfig(): Config {
     env: envVars.NODE_ENV,
     port: envVars.PORT,
     mongodbUrl: envVars.MONGODB_URL,
+    apiGatewayHeader: envVars.API_GATEWAY_HEADER
   };
 }
 

@@ -1,3 +1,4 @@
+import { gatewayLogger } from "@/src/server";
 import { APP_ERROR_MESSAGE, ApplicationError, HTTP_STATUS_CODE, prettyObject } from "@sokritha-sabaicode/ms-libs";
 import { NextFunction, Request, Response } from "express";
 
@@ -10,11 +11,11 @@ export function globalErrorHandler(error: unknown, _req: Request, res: Response,
     const message = error.message;
     const errors = error.errors;
 
-    console.error(`$UserService - globalErrorHandler() method error: `, prettyObject(error))
+    gatewayLogger.error(`$UserService - globalErrorHandler() method error: ${prettyObject(error)}`)
     return res.status(status).json({ message, error: errors })
   }
 
   // Unhandle Error
-  console.error(`$UserService - globalErrorHandler() method unexpected error: `, prettyObject(error as {}))
+  gatewayLogger.error(`$UserService - globalErrorHandler() unexpected method error: ${prettyObject(error as {})}`)
   res.status(HTTP_STATUS_CODE.SERVER_ERROR).json({ message: APP_ERROR_MESSAGE.serverError })
 }

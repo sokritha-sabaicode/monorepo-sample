@@ -9,7 +9,10 @@
 		"schemas": {
 			"SignupRequest": {
 				"properties": {
-					"name": {
+					"sur_name": {
+						"type": "string"
+					},
+					"last_name": {
 						"type": "string"
 					},
 					"email": {
@@ -20,6 +23,13 @@
 					},
 					"password": {
 						"type": "string"
+					},
+					"role": {
+						"type": "string",
+						"enum": [
+							"admin",
+							"user"
+						]
 					}
 				},
 				"type": "object",
@@ -171,25 +181,7 @@
 							"application/json": {
 								"schema": {
 									"properties": {
-										"data": {
-											"properties": {
-												"refreshToken": {
-													"type": "string"
-												},
-												"idToken": {
-													"type": "string"
-												},
-												"accessToken": {
-													"type": "string"
-												}
-											},
-											"required": [
-												"refreshToken",
-												"idToken",
-												"accessToken"
-											],
-											"type": "object"
-										},
+										"data": {},
 										"message": {
 											"type": "string"
 										}
@@ -230,9 +222,21 @@
 				"parameters": []
 			}
 		},
-		"/v1/auth/google/callback": {
+		"/v1/auth/facebook": {
 			"get": {
-				"operationId": "GoogleCallback",
+				"operationId": "LoginWithFacebook",
+				"responses": {
+					"302": {
+						"description": "Redirect"
+					}
+				},
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/v1/auth/oauth/callback": {
+			"get": {
+				"operationId": "OauthCallback",
 				"responses": {
 					"204": {
 						"description": "No content"
@@ -265,6 +269,35 @@
 						}
 					}
 				]
+			}
+		},
+		"/v1/auth/refresh-token": {
+			"post": {
+				"operationId": "RefreshToken",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"data": {},
+										"message": {
+											"type": "string"
+										}
+									},
+									"required": [
+										"data",
+										"message"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": []
 			}
 		}
 	},

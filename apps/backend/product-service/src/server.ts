@@ -1,11 +1,12 @@
 import app from '@/src/app';
+import configs from '@/src/config';
 import connectToMongoDB from '@/src/database/connection';
 
 async function run() {
   try {
     await connectToMongoDB()
-    app.listen(3000, () => {
-      console.log('server running port 3000');
+    app.listen(configs.port, () => {
+      console.log(`server running port ${configs.port}`);
     })
   } catch (error) {
     console.error(error);

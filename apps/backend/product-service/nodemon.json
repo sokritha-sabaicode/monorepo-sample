@@ -3,5 +3,6 @@
     "src"
   ],
   "ext": "ts",
-  "exec": "ts-node src/server.ts"
+  "exec": "nodemon --legacy-watch --exec ts-node src/server.ts"
+
 }

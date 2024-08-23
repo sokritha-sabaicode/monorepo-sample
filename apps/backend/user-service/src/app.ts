@@ -4,6 +4,7 @@ import { RegisterRoutes } from '@/src/routes/v1/routes';
 import fs from 'fs';
 import path from 'path'
 import { globalErrorHandler } from '@/src/middewares/global-error';
+import { blockAccess } from '@/src/middewares/block-access';
 
 // Dynamically load swagger.json
 const swaggerDocument = JSON.parse(fs.readFileSync(path.join(__dirname, 'docs/swagger.json'), 'utf8'));
@@ -14,13 +15,17 @@ const swaggerDocument = JSON.parse(fs.readFileSync(path.join(__dirname, 'docs/sw
 const app = express();
 
 // ========================
+// Security Middleware
+// ========================
+app.use(blockAccess)
+
+
+// ========================
 // Global Middleware
 // ========================
 app.use(express.json())
 
-app.get('/test', (_req, res) => {
-  res.json({ message: 'Test route works' });
-});
+
 // ========================
 // Global API V1
 // ========================

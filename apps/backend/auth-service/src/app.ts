@@ -4,6 +4,8 @@ import { RegisterRoutes } from '@/src/routes/v1/routes';
 import fs from 'fs';
 import path from 'path'
 import { globalErrorHandler } from '@/src/middlewares/global-error';
+import { blockAccess } from '@/src/middlewares/block-access';
+import cookieParser from 'cookie-parser';
 
 // Dynamically load swagger.json
 const swaggerDocument = JSON.parse(fs.readFileSync(path.join(__dirname, 'docs/swagger.json'), 'utf8'));
@@ -13,10 +15,18 @@ const swaggerDocument = JSON.parse(fs.readFileSync(path.join(__dirname, 'docs/sw
 // ========================
 const app = express();
 
+
+// =======================
+// Security Middlewares
+// =======================
+app.use(blockAccess);
+app.use(cookieParser())
+
+
 // ========================
-// Global Middleware
+// Commons Middleware
 // ========================
-app.use(express.json())
+app.use(express.json());
 
 
 // ========================
@@ -24,10 +34,12 @@ app.use(express.json())
 // ========================
 RegisterRoutes(app)
 
+
 // ========================
 // API Documentations
 // ========================
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
 
 // ========================
 // ERROR Handler
