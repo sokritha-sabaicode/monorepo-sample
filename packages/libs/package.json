@@ -1,6 +1,6 @@
 {
   "name": "@sokritha-sabaicode/ms-libs",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "main": "./src/index.js",
   "types": "./src/index.d.ts",
   "license": "MIT",
