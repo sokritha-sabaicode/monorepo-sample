@@ -12,15 +12,13 @@ interface ProxyConfig {
 
 const proxyConfigs: ProxyConfig = {
   [ROUTE_PATHS.AUTH_SERVICE.path]: {
-    target: ROUTE_PATHS.AUTH_SERVICE.target, // http://localhost:4001
+    target: ROUTE_PATHS.AUTH_SERVICE.target,
     pathRewrite: (path, _req) => {
       console.log('path', path)
-      return `${ROUTE_PATHS.AUTH_SERVICE.path}${path}` // v1/auth/signup
+      return `${ROUTE_PATHS.AUTH_SERVICE.path}${path}`
     },
     on: {
       proxyReq: (proxyReq: ClientRequest, _req: IncomingMessage, _res: Response) => {
-        // Add the custom header to the request
-        proxyReq.setHeader('x-api-gateway', configs.apiGatewayHeader);
 
         // @ts-ignore
         logRequest(gatewayLogger, proxyReq, {

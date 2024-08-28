@@ -13,8 +13,8 @@ function setCookie(response: Response, name: string, value: string, options: Coo
   const defaultOptions: CookieOptions = {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production', // Secure in production only
-    sameSite: 'strict',
-    maxAge: 3600000,  // 1 hour expiration
+    sameSite: 'lax',
+    maxAge: 3600 * 5,  // 5 minutes expiration
     ...options,       // Override defaults with provided options
   };
   response.cookie(name, value, defaultOptions);

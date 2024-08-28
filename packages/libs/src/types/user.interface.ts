@@ -21,6 +21,9 @@ export interface UsersPaginatedResponse {
 }
 
 export interface UserCreationRequestParams {
+  sub?: string;
+  googleSub?: string;
+  facebookSub?: string;
   email?: string;
   phone_number?: string;
   username: string;

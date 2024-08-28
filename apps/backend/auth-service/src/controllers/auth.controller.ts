@@ -38,6 +38,7 @@ export class ProductController extends Controller {
       setCookie(response, 'id_token', result.idToken);
       setCookie(response, 'access_token', result.accessToken);
       setCookie(response, 'refresh_token', result.refreshToken, { maxAge: 30 * 24 * 60 * 60 * 1000 });
+      setCookie(response, 'username', result.username!, { maxAge: 30 * 24 * 60 * 60 * 1000 });
 
       return sendResponse({ message: 'Login successfully' })
     } catch (error) {
@@ -80,14 +81,11 @@ export class ProductController extends Controller {
   }
 
   @Post("/refresh-token")
-  public async refreshToken(@Request() request: ExpressRequest) {
+  public async refreshToken(@Request() request: ExpressRequest, @Body() body: { refreshToken: string, username: string }) {
     try {
       const response = (request as any).res as Response;
 
-      const refreshToken = request.cookies['refresh_token'];
-      const idToken = request.cookies['id_token'];
-
-      const result = await AuthService.refreshToken({ refreshToken, idToken });
+      const result = await AuthService.refreshToken({ refreshToken: body.refreshToken, username: body.username });
 
       setCookie(response, 'id_token', result.idToken);
       setCookie(response, 'access_token', result.accessToken);

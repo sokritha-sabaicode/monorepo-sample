@@ -1,8 +1,6 @@
 import { APP_ERROR_MESSAGE, ApplicationError, HTTP_STATUS_CODE, prettyObject } from "@sokritha-sabaicode/ms-libs";
 import { NextFunction, Request, Response } from "express";
 
-
-
 export function globalErrorHandler(error: unknown, _req: Request, res: Response, _next: NextFunction) {
   // Handle Error
   if (error instanceof ApplicationError) {

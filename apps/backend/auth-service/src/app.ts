@@ -4,7 +4,6 @@ import { RegisterRoutes } from '@/src/routes/v1/routes';
 import fs from 'fs';
 import path from 'path'
 import { globalErrorHandler } from '@/src/middlewares/global-error';
-import { blockAccess } from '@/src/middlewares/block-access';
 import cookieParser from 'cookie-parser';
 
 // Dynamically load swagger.json
@@ -19,7 +18,6 @@ const app = express();
 // =======================
 // Security Middlewares
 // =======================
-app.use(blockAccess);
 app.use(cookieParser())
 
 

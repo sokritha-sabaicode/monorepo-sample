@@ -27,6 +27,7 @@ services:
     env_file: ./auth-service/src/configs/.env.development
     environment:
       - DOCKER_ENV=true
+      - USER_SERVICE_URL=http://user:4002
     volumes:
       - ./auth-service/src:/app/src # HOT RELOADING
   user:
