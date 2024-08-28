@@ -1,4 +1,3 @@
-import { UserProfileResponse, UserCreationRequestParams, UserUpdateRequestParams, UsersPaginatedResponse, UserGetAllControllerParams, prettyObject } from '@sokritha-sabaicode/ms-libs';
 import {
   Controller,
   Get,
@@ -17,6 +16,8 @@ import sendResponse from '@/src/utils/send-response';
 import { IUser } from '@/src/database/models/user.model';
 import validateRequest from '@/src/middewares/validate-input';
 import userJoiSchema from '@/src/schemas/user.schema';
+import { UserGetAllControllerParams } from "@/src/controllers/types/user-controller.type";
+import { UsersPaginatedResponse, prettyObject, UserCreationRequestParams, UserProfileResponse, UserUpdateRequestParams } from "@sokritha-sabaicode/ms-libs";
 
 
 @Route("v1/users")
@@ -40,6 +41,7 @@ export class UsersController extends Controller {
     @Body() requestBody: UserCreationRequestParams
   ): Promise<UserProfileResponse> {
     try {
+      console.log('requestBody', requestBody)
       const response = await UserService.createNewUser(requestBody);
 
       this.setStatus(201); // set return status 201

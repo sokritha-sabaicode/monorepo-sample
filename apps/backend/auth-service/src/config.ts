@@ -12,6 +12,7 @@ type Config = {
   awsCognitoDomain: string;
   awsRedirectUri: string;
   clientUrl: string;
+  userServiceUrl: string;
   apiGatewayHeader: string;
   awsAccessKeyId: string;
   awsSecretAccessKey: string;
@@ -35,6 +36,7 @@ function loadConfig(): Config {
     AWS_COGNITO_DOMAIN: Joi.string().required(),
     AWS_REDIRECT_URI: Joi.string().required(),
     CLIENT_URL: Joi.string().required(),
+    USER_SERVICE_URL: Joi.string().required(),
     API_GATEWAY_HEADER: Joi.string().required(),
     AWS_ACCESS_KEY_ID: Joi.string().required(),
     AWS_SECRET_ACCESS_KEY: Joi.string().required()
@@ -56,6 +58,7 @@ function loadConfig(): Config {
     awsCognitoDomain: envVars.AWS_COGNITO_DOMAIN,
     awsRedirectUri: envVars.AWS_REDIRECT_URI,
     clientUrl: envVars.CLIENT_URL,
+    userServiceUrl: envVars.USER_SERVICE_URL,
     apiGatewayHeader: envVars.API_GATEWAY_HEADER,
     awsAccessKeyId: envVars.AWS_ACCESS_KEY_ID,
     awsSecretAccessKey: envVars.AWS_SECRET_ACCESS_KEY

@@ -73,7 +73,7 @@ const ROUTE_PATHS: RoutesConfig = {
         path: '/refresh-token',
         methods: {
           POST: {
-            authRequired: true,
+            authRequired: false,
           }
         }
       },

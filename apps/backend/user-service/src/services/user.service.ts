@@ -36,6 +36,7 @@ class UserService {
 
   async createNewUser(userInfo: UserCreationRepoParams) {
     try {
+      console.log('userInfo', userInfo)
       const newUser = await UserRepository.create(userInfo);
 
       return newUser;

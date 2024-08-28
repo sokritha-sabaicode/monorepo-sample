@@ -3,7 +3,7 @@ import { AdminAddUserToGroupCommand, AdminGetUserCommand, AdminLinkProviderForUs
 import { GoogleCallbackRequest, LoginRequest, SignupRequest, VerifyUserRequest } from "@/src/controllers/types/auth-request.type";
 import crypto from 'crypto';
 import axios from "axios";
-import { APP_ERROR_MESSAGE, InvalidInputError, ResourceConflictError } from "@sokritha-sabaicode/ms-libs";
+import { APP_ERROR_MESSAGE, InternalServerError, InvalidInputError, ResourceConflictError } from "@sokritha-sabaicode/ms-libs";
 import { jwtDecode } from "jwt-decode";
 import { CognitoToken } from "@/src/services/types/auth-service.type";
 
@@ -93,6 +93,15 @@ class AuthService {
       // Add the user to the group based on the `role` attribute
       await this.addToGroup(username, role);
       console.log(`AuthService verifyUser() method: User added to ${role} group`);
+
+      // Send user info to the `User Service`
+      await axios.post(`${configs.userServiceUrl}/v1/users`, {
+        sub: userInfo.Username,
+        email: body.email,
+        phone_number: body.phone_number,
+        username: userInfo.UserAttributes?.find(attr => attr.Name === 'name')?.Value
+      });
+
     } catch (error) {
       console.error("AuthService verifyUser() method error:", error);
 
@@ -124,13 +133,31 @@ class AuthService {
       const command = new InitiateAuthCommand(params);
       const result = await client.send(command);
 
+      // Get the user info
+      const congitoUsername = await this.getUserInfoFromToken(result.AuthenticationResult?.IdToken!);
+
       return {
         accessToken: result.AuthenticationResult?.AccessToken!,
         idToken: result.AuthenticationResult?.IdToken!,
-        refreshToken: result.AuthenticationResult?.RefreshToken!
+        refreshToken: result.AuthenticationResult?.RefreshToken!,
+        username: congitoUsername.sub
       };
     } catch (error) {
-      console.error("AuthService verifyUser() method error:", error);
+      // Mismatch Password | Email or Phone Number
+      if (typeof error === 'object' && error !== null && 'name' in error) {
+        if ((error as { name: string }).name === 'NotAuthorizedException') {
+          throw new InvalidInputError({ message: APP_ERROR_MESSAGE.invalidCredentials });
+        }
+      }
+
+      // Cognito Service Error
+      if (typeof error === 'object' && error !== null && 'name' in error) {
+        if ((error as { name: string }).name === 'InternalErrorException') {
+          throw new InternalServerError({ message: APP_ERROR_MESSAGE.serverError });
+        }
+      }
+
+      console.error("AuthService login() method error:", error);
       throw new Error(`Error verifying user: ${error}`);
     }
   }
@@ -292,16 +319,13 @@ class AuthService {
     }
   }
 
-  async refreshToken({ refreshToken, idToken }: { refreshToken: string, idToken: string }) {
-    const decodedToken = this.getUserInfoFromToken(idToken);
-
+  async refreshToken({ refreshToken, username }: { refreshToken: string, username: string }) {
     const params = {
       AuthFlow: AuthFlowType.REFRESH_TOKEN_AUTH,
       ClientId: configs.awsCognitoClientId,
       AuthParameters: {
         REFRESH_TOKEN: refreshToken,
-        // @ts-ignore
-        SECRET_HASH: this.generateSecretHash(decodedToken["cognito:username"] as string)
+        SECRET_HASH: this.generateSecretHash(username)
       }
     }
 

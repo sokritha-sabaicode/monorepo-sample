@@ -297,7 +297,29 @@
 					}
 				},
 				"security": [],
-				"parameters": []
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"username": {
+										"type": "string"
+									},
+									"refreshToken": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"username",
+									"refreshToken"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
 			}
 		}
 	},
