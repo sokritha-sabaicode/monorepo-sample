@@ -2,6 +2,9 @@ import { PaginationResponse } from "./common.interface";
 
 export interface IUser {
   _id?: string;
+  sub?: string;
+  googleSub?: string;
+  facebookSub?: string;
   username?: string;
   email?: string;
   gender?: string;
@@ -30,6 +33,9 @@ export interface UserCreationRequestParams {
 }
 
 export interface UserUpdateRequestParams {
+  sub?: string;
+  googleSub?: string;
+  facebookSub?: string;
   username?: string;
   gender?: string;
   age?: number;
