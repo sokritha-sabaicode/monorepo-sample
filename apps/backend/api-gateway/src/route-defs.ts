@@ -88,14 +88,11 @@ const ROUTE_PATHS: RoutesConfig = {
     ]
   },
   USER_SERVICE: {
-    path: "/v1/users",
+    path: "/v1/users/me",
     target: configs.userServiceUrl,
     methods: {
       GET: {
         authRequired: true, roles: ["admin", "user"]
-      },
-      POST: {
-        authRequired: true, roles: ["admin"]
       }
     }
   },

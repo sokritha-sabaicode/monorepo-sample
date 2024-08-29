@@ -3,7 +3,7 @@ import { AdminAddUserToGroupCommand, AdminGetUserCommand, AdminLinkProviderForUs
 import { GoogleCallbackRequest, LoginRequest, SignupRequest, VerifyUserRequest } from "@/src/controllers/types/auth-request.type";
 import crypto from 'crypto';
 import axios from "axios";
-import { APP_ERROR_MESSAGE, InternalServerError, InvalidInputError, ResourceConflictError } from "@sokritha-sabaicode/ms-libs";
+import { APP_ERROR_MESSAGE, ApplicationError, InternalServerError, InvalidInputError, ResourceConflictError } from "@sokritha-sabaicode/ms-libs";
 import { jwtDecode } from "jwt-decode";
 import { CognitoToken } from "@/src/services/types/auth-service.type";
 
@@ -24,6 +24,11 @@ class AuthService {
   }
 
   async signup(body: SignupRequest): Promise<string> {
+    const existingUser = await this.getUserByEmail((body.email || body.phone_number) as string);
+    if (existingUser) {
+      throw new ResourceConflictError(`This email is already registered with Google. Please use Google login to access your account.`);
+    }
+
     const inputBody = {
       name: `${body.sur_name} ${body.last_name}`,
       ...Object.keys(body).filter(key => key !== 'sur_name' && key !== 'last_name').reduce<Record<string, any>>((obj, key) => {
@@ -64,6 +69,10 @@ class AuthService {
         if ((error as { name: string }).name === 'UsernameExistsException') {
           throw new ResourceConflictError(APP_ERROR_MESSAGE.existedAccount);
         }
+      }
+
+      if (error instanceof ApplicationError) {
+        throw error;
       }
 
       throw new Error(`Error signing up user: ${error}`)
@@ -213,6 +222,7 @@ class AuthService {
         redirect_uri: configs.awsRedirectUri
       })
 
+      // Step 1: Get the token from Cognito
       const res = await axios.post(`${configs.awsCognitoDomain}/oauth2/token`,
         params,
         {
@@ -227,6 +237,33 @@ class AuthService {
         accessToken: res.data.access_token,
         idToken: res.data.id_token,
         refreshToken: res.data.refresh_token
+      }
+
+      // Step 2: Get the user info from token
+      const userInfo = this.getUserInfoFromToken(token.idToken);
+      // @ts-ignore
+      const email = userInfo.email;
+      const existingUser = await this.getUserByEmail(email);
+
+      // Step 3: Link the user to the existing Cognito user
+      if (existingUser) {
+        const isLinked = existingUser.Attributes?.some(
+          (attr) => attr.Name === 'identities' && attr.Value?.includes('Google')
+        );
+
+        if (!isLinked) {
+          // Step 4: Link the user to the existing Cognito user if not already linked
+          await this.linkAccount({
+            sourceUserId: userInfo.sub!,
+            providerName: 'Google',
+            destinationUserId: existingUser.Username!,
+          });
+
+          // Step 5: Update user info in user service
+          await axios.put(`${configs.userServiceUrl}/v1/users/${existingUser.Username}`, {
+            googleSub: userInfo.sub // Update the Google sub
+          });
+        }
       }
 
       return {

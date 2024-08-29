@@ -34,17 +34,44 @@
 						"format": "date-time"
 					}
 				},
-				"required": [
-					"_id",
-					"username",
-					"email",
-					"gender",
-					"age",
-					"createdAt",
-					"updatedAt"
-				],
 				"type": "object",
 				"additionalProperties": false
+			},
+			"PaginationResponse_IUser_": {
+				"properties": {
+					"totalItems": {
+						"type": "number",
+						"format": "double"
+					},
+					"totalPages": {
+						"type": "number",
+						"format": "double"
+					},
+					"currentPage": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"totalItems",
+					"totalPages",
+					"currentPage"
+				],
+				"type": "object",
+				"additionalProperties": {
+					"anyOf": [
+						{
+							"items": {
+								"$ref": "#/components/schemas/IUser"
+							},
+							"type": "array"
+						},
+						{
+							"type": "number",
+							"format": "double"
+						}
+					]
+				}
 			},
 			"UsersPaginatedResponse": {
 				"properties": {
@@ -52,40 +79,7 @@
 						"type": "string"
 					},
 					"data": {
-						"properties": {
-							"currentPage": {
-								"type": "number",
-								"format": "double"
-							},
-							"totalPages": {
-								"type": "number",
-								"format": "double"
-							},
-							"totalItems": {
-								"type": "number",
-								"format": "double"
-							}
-						},
-						"additionalProperties": {
-							"anyOf": [
-								{
-									"items": {
-										"$ref": "#/components/schemas/IUser"
-									},
-									"type": "array"
-								},
-								{
-									"type": "number",
-									"format": "double"
-								}
-							]
-						},
-						"required": [
-							"currentPage",
-							"totalPages",
-							"totalItems"
-						],
-						"type": "object"
+						"$ref": "#/components/schemas/PaginationResponse_IUser_"
 					}
 				},
 				"required": [
@@ -133,25 +127,27 @@
 			},
 			"UserCreationRequestParams": {
 				"properties": {
+					"sub": {
+						"type": "string"
+					},
+					"googleSub": {
+						"type": "string"
+					},
+					"facebookSub": {
+						"type": "string"
+					},
 					"email": {
+						"type": "string"
+					},
+					"phone_number": {
 						"type": "string"
 					},
 					"username": {
 						"type": "string"
-					},
-					"gender": {
-						"type": "string"
-					},
-					"age": {
-						"type": "number",
-						"format": "double"
 					}
 				},
 				"required": [
-					"email",
-					"username",
-					"gender",
-					"age"
+					"username"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -263,6 +259,25 @@
 						}
 					}
 				}
+			}
+		},
+		"/v1/users/me": {
+			"get": {
+				"operationId": "GetMe",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/UserProfileResponse"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": []
 			}
 		},
 		"/v1/users/{userId}": {

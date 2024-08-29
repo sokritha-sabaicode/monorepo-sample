@@ -47,12 +47,10 @@ export class ProductController extends Controller {
   }
 
   @Get("/google")
-  @SuccessResponse(302, "Redirect")
-  public loginWithGoogle(@Request() request: Express.Request) {
-    const response = (request as any).res as Response;
+  public loginWithGoogle() {
     const cognitoOAuthURL = AuthService.loginWithGoogle();
 
-    response.redirect(cognitoOAuthURL);
+    return sendResponse({ message: 'Login with Google successfully', data: cognitoOAuthURL })
   }
 
   @Get("/facebook")

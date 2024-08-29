@@ -16,6 +16,8 @@ export interface IUser {
 // Define the User schema
 const userSchema = new mongoose.Schema({
   sub: { type: String },
+  googleSub: { type: String },
+  facebookSub: { type: String },
   username: { type: String, required: true },
   email: { type: String, unique: true },
   phone_number: { type: String },
