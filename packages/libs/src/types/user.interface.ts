@@ -7,6 +7,8 @@ export interface IUser {
   facebookSub?: string;
   username?: string;
   email?: string;
+  phone_number?: string;
+  profile?: string;
   gender?: string;
   age?: number;
   createdAt?: Date;
@@ -29,6 +31,7 @@ export interface UserCreationRequestParams {
   facebookSub?: string;
   email?: string;
   phone_number?: string;
+  profile?: string;
   username: string;
 }
 
@@ -37,6 +40,7 @@ export interface UserUpdateRequestParams {
   googleSub?: string;
   facebookSub?: string;
   username?: string;
+  profile?: string;
   gender?: string;
   age?: number;
 }
