@@ -15,6 +15,9 @@ const models: TsoaRoute.Models = {
         "dataType": "refObject",
         "properties": {
             "_id": {"dataType":"string"},
+            "sub": {"dataType":"string"},
+            "googleSub": {"dataType":"string"},
+            "facebookSub": {"dataType":"string"},
             "username": {"dataType":"string"},
             "email": {"dataType":"string"},
             "gender": {"dataType":"string"},
@@ -80,6 +83,9 @@ const models: TsoaRoute.Models = {
     "UserUpdateRequestParams": {
         "dataType": "refObject",
         "properties": {
+            "sub": {"dataType":"string"},
+            "googleSub": {"dataType":"string"},
+            "facebookSub": {"dataType":"string"},
             "username": {"dataType":"string"},
             "gender": {"dataType":"string"},
             "age": {"dataType":"double"},

@@ -12,6 +12,15 @@
 					"_id": {
 						"type": "string"
 					},
+					"sub": {
+						"type": "string"
+					},
+					"googleSub": {
+						"type": "string"
+					},
+					"facebookSub": {
+						"type": "string"
+					},
 					"username": {
 						"type": "string"
 					},
@@ -154,6 +163,15 @@
 			},
 			"UserUpdateRequestParams": {
 				"properties": {
+					"sub": {
+						"type": "string"
+					},
+					"googleSub": {
+						"type": "string"
+					},
+					"facebookSub": {
+						"type": "string"
+					},
 					"username": {
 						"type": "string"
 					},

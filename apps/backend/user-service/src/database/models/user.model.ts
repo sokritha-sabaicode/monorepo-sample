@@ -4,9 +4,12 @@ import mongoose from 'mongoose';
 export interface IUser {
   _id: string;
   sub: string;
+  googleSub: string;
+  facebookSub: string;
   username: string;
   email: string;
   phone_number: string;
+  profile: string;
   gender: string;
   age: number;
   createdAt: Date;
@@ -21,6 +24,7 @@ const userSchema = new mongoose.Schema({
   username: { type: String, required: true },
   email: { type: String, unique: true },
   phone_number: { type: String },
+  profile: { type: String, default: 'https://postimg.cc/Mn1MzLLT' },
   gender: { type: String },
   age: { type: Number }
 }, {

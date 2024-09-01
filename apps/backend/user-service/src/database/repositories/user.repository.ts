@@ -79,7 +79,13 @@ class UserRepository {
 
   async findBySub(sub: string) {
     try {
-      const result = await UserModel.findOne({ sub });
+      const result = await UserModel.findOne({
+        $or: [
+          { sub: sub },
+          { googleSub: sub },
+          { facebookSub: sub },
+        ],
+      });
 
       if (!result) {
         throw new NotFoundError();

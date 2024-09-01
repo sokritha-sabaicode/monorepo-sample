@@ -145,11 +145,16 @@ class AuthService {
       // Get the user info
       const congitoUsername = await this.getUserInfoFromToken(result.AuthenticationResult?.IdToken!);
 
+      // Get the user info from the user service
+      const userInfo = await axios.get(`${configs.userServiceUrl}/v1/users/${congitoUsername.sub}`);
+      console.log('userInfo: ', userInfo);
+
       return {
         accessToken: result.AuthenticationResult?.AccessToken!,
         idToken: result.AuthenticationResult?.IdToken!,
         refreshToken: result.AuthenticationResult?.RefreshToken!,
-        username: congitoUsername.sub
+        username: congitoUsername.sub,
+        userId: userInfo.data.data._id
       };
     } catch (error) {
       // Mismatch Password | Email or Phone Number
@@ -245,6 +250,8 @@ class AuthService {
       const email = userInfo.email;
       const existingUser = await this.getUserByEmail(email);
 
+      let userId: string;
+
       // Step 3: Link the user to the existing Cognito user
       if (existingUser) {
         const isLinked = existingUser.Attributes?.some(
@@ -252,24 +259,45 @@ class AuthService {
         );
 
         if (!isLinked) {
-          // Step 4: Link the user to the existing Cognito user if not already linked
+          // Step 3.1: Link the user to the existing Cognito user if not already linked
           await this.linkAccount({
             sourceUserId: userInfo.sub!,
             providerName: 'Google',
             destinationUserId: existingUser.Username!,
           });
 
-          // Step 5: Update user info in user service
-          await axios.put(`${configs.userServiceUrl}/v1/users/${existingUser.Username}`, {
+          // Step 3.2: Update user info in user service
+          const user = await axios.put(`${configs.userServiceUrl}/v1/users/${existingUser.Username}`, {
             googleSub: userInfo.sub // Update the Google sub
           });
+
+          console.log('user1: ', user);
+
+          userId = user.data.data._id;
+        } else {
+          const user = await axios.get(`${configs.userServiceUrl}/v1/users/${existingUser.Username}`);
+          console.log('user2: ', user);
+
+          userId = user.data.data._id;
         }
+      } else {
+        // Step 4: Create a new user in user service
+        const user = await axios.post(`${configs.userServiceUrl}/v1/users`, {
+          googleSub: userInfo.sub,
+          email
+        });
+
+        console.log('user3: ', user);
+
+        userId = user.data.data._id;
       }
 
       return {
         accessToken: token.accessToken,
         idToken: token.idToken,
-        refreshToken: token.refreshToken
+        refreshToken: token.refreshToken,
+        username: userInfo.sub,
+        userId
       };
     } catch (error) {
       throw error;

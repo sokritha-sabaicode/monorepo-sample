@@ -14,10 +14,9 @@ import {
 } from "tsoa";
 import UserService from '@/src/services/user.service';
 import sendResponse from '@/src/utils/send-response';
-import { IUser } from '@/src/database/models/user.model';
 import validateRequest from '@/src/middewares/validate-input';
 import userJoiSchema from '@/src/schemas/user.schema';
-import { UsersPaginatedResponse, prettyObject, UserCreationRequestParams, UserProfileResponse, UserUpdateRequestParams } from "@sokritha-sabaicode/ms-libs";
+import { UsersPaginatedResponse, prettyObject, UserCreationRequestParams, UserProfileResponse, UserUpdateRequestParams, IUser } from "@sokritha-sabaicode/ms-libs";
 import { UserGetAllControllerParams } from "@/src/controllers/types/user-controller.type";
 import { Request as ExpressRequest } from 'express';
 
@@ -76,7 +75,7 @@ export class UsersController extends Controller {
     @Path() userId: string
   ): Promise<UserProfileResponse> {
     try {
-      const response = await UserService.getUserById(userId);
+      const response = await UserService.getUserBySub(userId);
 
       return sendResponse<IUser>({ message: 'success', data: response })
     } catch (error) {

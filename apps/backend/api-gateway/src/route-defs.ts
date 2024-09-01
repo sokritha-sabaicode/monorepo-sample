@@ -88,13 +88,26 @@ const ROUTE_PATHS: RoutesConfig = {
     ]
   },
   USER_SERVICE: {
-    path: "/v1/users/me",
+    path: "/v1/users",
     target: configs.userServiceUrl,
     methods: {
       GET: {
-        authRequired: true, roles: ["admin", "user"]
+        authRequired: true, roles: ["user"]
+      },
+      POST: {
+        authRequired: true, roles: ["user"]
       }
-    }
+    },
+    nestedRoutes: [
+      {
+        path: "/me",
+        methods: {
+          GET: {
+            authRequired: true, roles: ["user"]
+          }
+        }
+      }
+    ]
   },
   PRODUCT_SERVICE: {
     path: "/v1/products",
