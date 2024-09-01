@@ -64,6 +64,10 @@ class AuthService {
     } catch (error) {
       console.error(`AuthService signup() method error: `, error);
 
+      if (error instanceof ApplicationError) {
+        throw error;
+      }
+
       // Duplicate Account
       if (typeof error === 'object' && error !== null && 'name' in error) {
         if ((error as { name: string }).name === 'UsernameExistsException') {
@@ -71,9 +75,7 @@ class AuthService {
         }
       }
 
-      if (error instanceof ApplicationError) {
-        throw error;
-      }
+
 
       throw new Error(`Error signing up user: ${error}`)
     }
@@ -176,8 +178,8 @@ class AuthService {
     }
   }
 
-  loginWithGoogle(): string {
-    const state = crypto.randomBytes(16).toString('hex')
+  loginWithGoogle(state: string): string {
+    // const state = crypto.randomBytes(16).toString('hex')
 
     const params = new URLSearchParams({
       response_type: 'code',
@@ -212,7 +214,7 @@ class AuthService {
 
   async getOAuthToken(query: GoogleCallbackRequest): Promise<CognitoToken> {
     try {
-      const { code, error } = query;
+      const { code, error, state } = query;
 
       if (error || !code) {
         throw new InvalidInputError({ message: error });
@@ -249,14 +251,16 @@ class AuthService {
       // @ts-ignore
       const email = userInfo.email;
       const existingUser = await this.getUserByEmail(email);
+      console.log('existingUser: ', existingUser);
 
       let userId: string;
 
-      // Step 3: Link the user to the existing Cognito user
-      if (existingUser) {
+      // Step 3: Case User is already signin with Email | Phone Number / Password, but they try to signin with Google | Facebook
+      if (existingUser && existingUser.UserStatus !== 'EXTERNAL_PROVIDER') {
         const isLinked = existingUser.Attributes?.some(
           (attr) => attr.Name === 'identities' && attr.Value?.includes('Google')
         );
+        console.log('isLinked: ', isLinked);
 
         if (!isLinked) {
           // Step 3.1: Link the user to the existing Cognito user if not already linked
@@ -271,25 +275,44 @@ class AuthService {
             googleSub: userInfo.sub // Update the Google sub
           });
 
-          console.log('user1: ', user);
-
           userId = user.data.data._id;
+
         } else {
           const user = await axios.get(`${configs.userServiceUrl}/v1/users/${existingUser.Username}`);
-          console.log('user2: ', user);
 
           userId = user.data.data._id;
         }
-      } else {
-        // Step 4: Create a new user in user service
-        const user = await axios.post(`${configs.userServiceUrl}/v1/users`, {
-          googleSub: userInfo.sub,
-          email
-        });
+      }
+      // Step 4: Case User is never signin with Google | Facebook
+      else {
+        try {
+          const user = await axios.post(`${configs.userServiceUrl}/v1/users`, {
+            googleSub: userInfo.sub,
+            email,
+            // @ts-ignore
+            username: userInfo.name,
+            // @ts-ignore
+            profile: userInfo.profile
+          });
 
-        console.log('user3: ', user);
+          userId = user.data.data._id;
+        } catch (error) {
+          if (axios.isAxiosError(error) && error.response?.status === 409) {
+            // If the user already exists in the user service, handle it gracefully
+            console.log('User already exists in user service, retrieving existing user info.');
+            const existingUserResponse = await axios.get(`${configs.userServiceUrl}/v1/users/${userInfo.sub}`);
+            userId = existingUserResponse.data.data._id;
+          } else {
+            throw error; // Re-throw if it's a different error
+          }
+        }
+      }
 
-        userId = user.data.data._id;
+      // Step 5: Check if the user is already in the group before adding
+      const groupExists = await this.checkUserInGroup(userInfo.sub!, state!);
+      if (!groupExists) {
+        await this.addToGroup(userInfo.sub!, state!);
+        console.log(`User ${userInfo.sub} added to group ${state}`);
       }
 
       return {
@@ -380,6 +403,23 @@ class AuthService {
 
     } catch (error) {
       console.error(`AuthService linkAccount() method error: `, error);
+      throw error;
+    }
+  }
+
+  async checkUserInGroup(username: string, groupName: string): Promise<boolean | undefined> {
+    try {
+      const params = {
+        GroupName: groupName,
+        Username: username,
+        UserPoolId: configs.awsCognitoUserPoolId
+      };
+      const command = new AdminGetUserCommand(params);
+      const user = await client.send(command);
+
+      return user.UserAttributes?.map((attr) => attr.Value).includes(groupName);
+    } catch (error) {
+      console.error(`Error checking if user ${username} is in group ${groupName}:`, error);
       throw error;
     }
   }

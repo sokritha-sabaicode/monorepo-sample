@@ -4,7 +4,7 @@ import AuthService from "@/src/services/auth.service";
 import setCookie from "@/src/utils/cookie";
 import sendResponse from "@/src/utils/send-response";
 import { Response, Request as ExpressRequest } from "express";
-import { Body, Controller, Get, Post, Queries, Request, Route, SuccessResponse } from "tsoa";
+import { Body, Controller, Get, Post, Queries, Query, Request, Route, SuccessResponse } from "tsoa";
 
 @Route('v1/auth')
 export class ProductController extends Controller {
@@ -48,8 +48,9 @@ export class ProductController extends Controller {
   }
 
   @Get("/google")
-  public loginWithGoogle() {
-    const cognitoOAuthURL = AuthService.loginWithGoogle();
+  public loginWithGoogle(@Query() state: string) {
+    console.log('state: ', state);
+    const cognitoOAuthURL = AuthService.loginWithGoogle(state);
 
     return sendResponse({ message: 'Login with Google successfully', data: cognitoOAuthURL })
   }
@@ -88,6 +89,9 @@ export class ProductController extends Controller {
 
       const refreshToken = request.cookies['refresh_token'];
       const username = request.cookies['username'];
+
+      console.log('refreshToken: ', body.refreshToken || refreshToken);
+      console.log('username: ', body.username || username);
 
       const result = await AuthService.refreshToken({ refreshToken: body.refreshToken || refreshToken, username: body.username || username });
 

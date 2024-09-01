@@ -37,6 +37,23 @@ const userSchema = new mongoose.Schema({
   }
 });
 
+// Add custom validation to ensure that either email or phone_number is present
+userSchema.path('email').validate(function (value) {
+  // If email is not provided, phone_number must be present
+  if (!value && !this.phone_number) {
+    return false;
+  }
+  return true;
+}, 'Either email or phone_number must be provided.');
+
+userSchema.path('phone_number').validate(function (value) {
+  // If phone_number is not provided, email must be present
+  if (!value && !this.email) {
+    return false;
+  }
+  return true;
+}, 'Either phone_number or email must be provided.');
+
 // Create a Mongoose model
 const UserModel = mongoose.model<IUser>('User', userSchema);
 

@@ -27,6 +27,12 @@
 					"email": {
 						"type": "string"
 					},
+					"phone_number": {
+						"type": "string"
+					},
+					"profile": {
+						"type": "string"
+					},
 					"gender": {
 						"type": "string"
 					},
@@ -151,6 +157,9 @@
 					"phone_number": {
 						"type": "string"
 					},
+					"profile": {
+						"type": "string"
+					},
 					"username": {
 						"type": "string"
 					}
@@ -173,6 +182,9 @@
 						"type": "string"
 					},
 					"username": {
+						"type": "string"
+					},
+					"profile": {
 						"type": "string"
 					},
 					"gender": {
