@@ -3,6 +3,7 @@ import { CognitoJwtVerifier } from 'aws-jwt-verify';
 import configs from '@/src/config';
 import { AuthenticationError, AuthorizationError, NotFoundError } from '@sokritha-sabaicode/ms-libs';
 import ROUTE_PATHS, { RouteConfig } from '@/src/route-defs';
+import { jwtDecode } from 'jwt-decode';
 
 declare global {
   namespace Express {
@@ -31,7 +32,7 @@ const verifier = CognitoJwtVerifier.create({
 // Step 1: Check if the method config requires authentication
 // Step 2: If authentication is required, check if the user is authenticated
 // Step 3: If authentication is required and the user is authenticated, attach the user to the request object
-// Step 4: If authentication is not required, call next()
+// Step 5: If authentication is not required, call next()
 
 const authenticateToken = async (req: Request, _res: Response, next: NextFunction) => {
   try {
@@ -39,7 +40,6 @@ const authenticateToken = async (req: Request, _res: Response, next: NextFunctio
 
     // Step 1
     if (methodConfig.authRequired) {
-      console.log('req.cookies', req.cookies)
       // Step 2
       const token = req.cookies?.["access_token"];
       if (!token) {
@@ -48,10 +48,14 @@ const authenticateToken = async (req: Request, _res: Response, next: NextFunctio
 
       // Step 3
       const payload = await verifier.verify(token);
-      console.log(payload)
+
       if (!payload) {
         throw new AuthenticationError();
       }
+
+      const userPayload = jwtDecode(req.cookies?.["id_token"]);
+
+      console.log('userPayload', userPayload)
 
       req.currentUser = {
         username: payload.username,
