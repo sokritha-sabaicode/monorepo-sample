@@ -11,6 +11,7 @@ export interface IUser {
   profile?: string;
   gender?: string;
   age?: number;
+  role?: string;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -33,6 +34,7 @@ export interface UserCreationRequestParams {
   phone_number?: string;
   profile?: string;
   username: string;
+  role?: string;
 }
 
 export interface UserUpdateRequestParams {
