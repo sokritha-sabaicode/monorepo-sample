@@ -1,9 +1,9 @@
 import configs from "@/src/config";
-import { AdminAddUserToGroupCommand, AdminGetUserCommand, AdminLinkProviderForUserCommand, AuthFlowType, CognitoIdentityProviderClient, ConfirmSignUpCommand, InitiateAuthCommand, InitiateAuthCommandInput, ListUsersCommand, SignUpCommand, SignUpCommandInput, UserType } from "@aws-sdk/client-cognito-identity-provider";
+import { AdminAddUserToGroupCommand, AdminGetUserCommand, AdminLinkProviderForUserCommand, AdminUpdateUserAttributesCommand, AuthFlowType, CognitoIdentityProviderClient, ConfirmSignUpCommand, InitiateAuthCommand, InitiateAuthCommandInput, ListUsersCommand, SignUpCommand, SignUpCommandInput, UserType } from "@aws-sdk/client-cognito-identity-provider";
 import { GoogleCallbackRequest, LoginRequest, SignupRequest, VerifyUserRequest } from "@/src/controllers/types/auth-request.type";
 import crypto from 'crypto';
 import axios from "axios";
-import { APP_ERROR_MESSAGE, ApplicationError, InternalServerError, InvalidInputError, ResourceConflictError } from "@sokritha-sabaicode/ms-libs";
+import { APP_ERROR_MESSAGE, ApplicationError, AuthenticationError, InternalServerError, InvalidInputError, ResourceConflictError } from "@sokritha-sabaicode/ms-libs";
 import { jwtDecode } from "jwt-decode";
 import { CognitoToken } from "@/src/services/types/auth-service.type";
 
@@ -110,7 +110,8 @@ class AuthService {
         sub: userInfo.Username,
         email: body.email,
         phone_number: body.phone_number,
-        username: userInfo.UserAttributes?.find(attr => attr.Name === 'name')?.Value
+        username: userInfo.UserAttributes?.find(attr => attr.Name === 'name')?.Value,
+        role
       });
 
     } catch (error) {
@@ -272,7 +273,13 @@ class AuthService {
 
           // Step 3.2: Update user info in user service
           const user = await axios.put(`${configs.userServiceUrl}/v1/users/${existingUser.Username}`, {
-            googleSub: userInfo.sub // Update the Google sub
+            googleSub: userInfo.sub, // Update the Google sub
+            role: state
+          });
+
+          // Step 3.3: Update user info in Cognito
+          await this.updateUserCongitoAttributes(existingUser.Username!, {
+            'custom:role': state!
           });
 
           userId = user.data.data._id;
@@ -292,7 +299,13 @@ class AuthService {
             // @ts-ignore
             username: userInfo.name,
             // @ts-ignore
-            profile: userInfo.profile
+            profile: userInfo.profile,
+            role: state
+          });
+
+          // Step 4.1: Update user info in Cognito
+          await this.updateUserCongitoAttributes(userInfo.sub!, {
+            'custom:role': state!
           });
 
           userId = user.data.data._id;
@@ -381,6 +394,22 @@ class AuthService {
     }
   }
 
+  async updateUserCongitoAttributes(username: string, attributes: { [key: string]: string }): Promise<void> {
+    const params = {
+      Username: username,
+      UserPoolId: configs.awsCognitoUserPoolId,
+      UserAttributes: Object.entries(attributes).map(([key, value]) => ({ Name: key, Value: value }))
+    };
+
+    try {
+      const command = new AdminUpdateUserAttributesCommand(params);
+      await client.send(command);
+    } catch (error) {
+      console.error("AuthService updateUserCongitoAttributes() method error:", error);
+      throw error;
+    }
+  }
+
   async linkAccount({ sourceUserId, providerName, destinationUserId }: { sourceUserId: string, providerName: string, destinationUserId: string }): Promise<void> {
     const params = {
       // DestinationUser is the existing cognito user that you want to assign to the external Idp user account (COULD BE a cognito user or a federated user)
@@ -425,6 +454,12 @@ class AuthService {
   }
 
   async refreshToken({ refreshToken, username }: { refreshToken: string, username: string }) {
+
+
+    if (!refreshToken || !username) {
+      throw new AuthenticationError();
+    }
+
     const params = {
       AuthFlow: AuthFlowType.REFRESH_TOKEN_AUTH,
       ClientId: configs.awsCognitoClientId,
@@ -444,6 +479,10 @@ class AuthService {
         refreshToken: result.AuthenticationResult?.RefreshToken || refreshToken, // Reuse the old refresh token if a new one isn't provided
       };
     } catch (error) {
+      if (error instanceof ApplicationError) {
+        throw error;
+      }
+
       console.error("AuthService refreshToken() method error:", error);
       throw new Error(`Error refreshing token: ${error}`);
     }

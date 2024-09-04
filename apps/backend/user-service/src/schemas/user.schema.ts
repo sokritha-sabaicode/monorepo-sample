@@ -8,6 +8,7 @@ const userJoiSchema = Joi.object({
   email: Joi.string().email(), // Email must be a valid email if provided
   profile: Joi.string(),
   phone_number: Joi.string(),
+  role: Joi.string()
 }).xor('email', 'phone_number'); // Either email or phone_number must be present
 
 export default userJoiSchema;

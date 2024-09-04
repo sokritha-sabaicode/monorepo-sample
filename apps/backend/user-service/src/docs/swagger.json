@@ -40,6 +40,9 @@
 						"type": "number",
 						"format": "double"
 					},
+					"role": {
+						"type": "string"
+					},
 					"createdAt": {
 						"type": "string",
 						"format": "date-time"
@@ -161,6 +164,9 @@
 						"type": "string"
 					},
 					"username": {
+						"type": "string"
+					},
+					"role": {
 						"type": "string"
 					}
 				},

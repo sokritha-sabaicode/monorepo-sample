@@ -12,6 +12,7 @@ export interface IUser {
   profile: string;
   gender: string;
   age: number;
+  role: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -26,7 +27,8 @@ const userSchema = new mongoose.Schema({
   phone_number: { type: String },
   profile: { type: String, default: 'https://postimg.cc/Mn1MzLLT' },
   gender: { type: String },
-  age: { type: Number }
+  age: { type: Number },
+  role: { type: String, default: 'user' }
 }, {
   timestamps: true,
   toObject: {

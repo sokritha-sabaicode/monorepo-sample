@@ -90,8 +90,7 @@ export class ProductController extends Controller {
       const refreshToken = request.cookies['refresh_token'];
       const username = request.cookies['username'];
 
-      console.log('refreshToken: ', body.refreshToken || refreshToken);
-      console.log('username: ', body.username || username);
+      
 
       const result = await AuthService.refreshToken({ refreshToken: body.refreshToken || refreshToken, username: body.username || username });
 
