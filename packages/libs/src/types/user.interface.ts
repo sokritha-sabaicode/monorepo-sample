@@ -45,6 +45,7 @@ export interface UserUpdateRequestParams {
   profile?: string;
   gender?: string;
   age?: number;
+  role?: string;
 }
 
 
