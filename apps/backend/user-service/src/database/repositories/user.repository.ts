@@ -87,6 +87,8 @@ class UserRepository {
         ],
       });
 
+      console.log('result', result)
+
       if (!result) {
         throw new NotFoundError();
       }
