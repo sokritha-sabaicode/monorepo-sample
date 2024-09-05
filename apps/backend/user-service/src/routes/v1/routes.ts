@@ -95,6 +95,7 @@ const models: TsoaRoute.Models = {
             "profile": {"dataType":"string"},
             "gender": {"dataType":"string"},
             "age": {"dataType":"double"},
+            "role": {"dataType":"string"},
         },
         "additionalProperties": false,
     },

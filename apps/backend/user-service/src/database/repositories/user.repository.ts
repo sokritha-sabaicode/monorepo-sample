@@ -135,6 +135,7 @@ class UserRepository {
   async updateBySub(updateInfo: UserUpdateRepoParams) {
     try {
       const { id, ...newUpdateInfo } = updateInfo
+     
       const result = await UserModel.findOneAndUpdate({
         $or: [
           { sub: id },
@@ -142,6 +143,7 @@ class UserRepository {
           { facebookSub: id },
         ],
       }, newUpdateInfo, { new: true });
+
 
       if (!result) {
         throw new NotFoundError();

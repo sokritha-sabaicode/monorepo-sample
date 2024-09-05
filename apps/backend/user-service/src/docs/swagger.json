@@ -199,6 +199,9 @@
 					"age": {
 						"type": "number",
 						"format": "double"
+					},
+					"role": {
+						"type": "string"
 					}
 				},
 				"type": "object",
