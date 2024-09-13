@@ -57,8 +57,26 @@ const proxyConfigs: ProxyConfig = {
         });
       }
     }
+  },
+  [ROUTE_PATHS.NOTIFICATION_SERVICE.path]: {
+    target: ROUTE_PATHS.NOTIFICATION_SERVICE.target,
+    pathRewrite: (_path, _req) => {
+      return `${ROUTE_PATHS.NOTIFICATION_SERVICE.path}${_path}`
+    },
+    on: {
+      proxyReq: (proxyReq: ClientRequest, _req: IncomingMessage, _res: Response) => {
+        // @ts-ignore
+        logRequest(gatewayLogger, proxyReq, {
+          protocol: proxyReq.protocol,
+          host: proxyReq.getHeader('host'),
+          path: proxyReq.path
+        });
+      },
+
+    }
   }
 }
+
 
 const applyProxy = (app: express.Application) => {
   Object.keys(proxyConfigs).forEach((context: string) => {

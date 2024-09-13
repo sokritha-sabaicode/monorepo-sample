@@ -1,0 +1,197 @@
+{
+	"openapi": "3.0.0",
+	"components": {
+		"examples": {},
+		"headers": {},
+		"parameters": {},
+		"requestBodies": {},
+		"responses": {},
+		"schemas": {
+			"INotification": {
+				"properties": {
+					"userId": {
+						"type": "string"
+					},
+					"endpoint": {
+						"type": "string"
+					},
+					"keys": {
+						"properties": {
+							"auth": {
+								"type": "string"
+							},
+							"p256dh": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"auth",
+							"p256dh"
+						],
+						"type": "object"
+					}
+				},
+				"required": [
+					"userId",
+					"endpoint",
+					"keys"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"SubscriptionNotificationResponse": {
+				"properties": {
+					"message": {
+						"type": "string"
+					},
+					"data": {
+						"$ref": "#/components/schemas/INotification"
+					}
+				},
+				"required": [
+					"message",
+					"data"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"PushSubscriptionParams": {
+				"properties": {
+					"endpoint": {
+						"type": "string"
+					},
+					"keys": {
+						"properties": {
+							"auth": {
+								"type": "string"
+							},
+							"p256dh": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"auth",
+							"p256dh"
+						],
+						"type": "object"
+					}
+				},
+				"required": [
+					"endpoint",
+					"keys"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"NotificationPayload": {
+				"properties": {
+					"title": {
+						"type": "string"
+					},
+					"body": {
+						"type": "string"
+					},
+					"data": {
+						"properties": {},
+						"type": "object"
+					}
+				},
+				"required": [
+					"title",
+					"body"
+				],
+				"type": "object",
+				"additionalProperties": false
+			}
+		},
+		"securitySchemes": {}
+	},
+	"info": {
+		"title": "notification-service",
+		"version": "1.0.0",
+		"license": {
+			"name": "MIT"
+		},
+		"contact": {}
+	},
+	"paths": {
+		"/v1/notifications/subscribe": {
+			"post": {
+				"operationId": "Subscribe",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SubscriptionNotificationResponse"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/PushSubscriptionParams"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/v1/notifications/push-notification": {
+			"post": {
+				"operationId": "PushNotification",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/NotificationPayload"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/v1/notifications/unsubscribe": {
+			"delete": {
+				"operationId": "Unsubscribe",
+				"responses": {
+					"204": {
+						"description": "Unsubscribed"
+					}
+				},
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "string"
+							}
+						}
+					}
+				}
+			}
+		}
+	},
+	"servers": [
+		{
+			"url": "/"
+		}
+	]
+}

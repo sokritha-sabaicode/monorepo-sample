@@ -1,5 +1,6 @@
 import configs from "@/src/config"
 
+
 export interface RouteConfig {
   path: string;
   target?: string;
@@ -118,7 +119,21 @@ const ROUTE_PATHS: RoutesConfig = {
         roles: ["admin"]
       }
     }
-  }
+  },
+  NOTIFICATION_SERVICE: {
+    path: "/v1/notifications",
+    target: configs.notificationServiceUrl,
+    nestedRoutes: [
+      {
+        path: "/subscribe",
+        methods: {
+          POST: {
+            authRequired: false
+          }
+        }
+      }
+    ]
+  },
 }
 
 export default ROUTE_PATHS
