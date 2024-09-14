@@ -1,20 +1,20 @@
-name: CI/CD Pipeline for User Service
+name: CI/CD Pipeline for Notification Service
 
 on:
   pull_request:
     branches:
       - main
     paths:
-      - "apps/backend/user-service/**"
+      - "apps/backend/notification-service/**"
   push:
     branches:
       - main
     paths:
-      - "apps/backend/user-service/**"
+      - "apps/backend/notification-service/**"
 
 defaults:
   run:
-    working-directory: apps/backend/user-service
+    working-directory: apps/backend/notification-service
 
 jobs:
   build:
@@ -51,7 +51,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: build
-          path: ./apps/backend/user-service/build
+          path: ./apps/backend/notification-service/build
 
   deploy:
     runs-on: ubuntu-latest
@@ -71,7 +71,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: build
-          path: ./apps/backend/user-service/build
+          path: ./apps/backend/notification-service/build
 
       - name: Prepare Deployment Directories
         uses: appleboy/ssh-action@master
@@ -81,8 +81,8 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 22
           script: |
-            mkdir -p /home/ubuntu/apps/user-service/build
-            mkdir -p /home/ubuntu/apps/user-service/build/configs
+            mkdir -p /home/ubuntu/apps/notification-service/build
+            mkdir -p /home/ubuntu/apps/notification-service/build/configs
 
       - name: Copy files to EC2
         uses: appleboy/scp-action@master
@@ -91,8 +91,8 @@ jobs:
           username: ${{ secrets.EC2_USERNAME }} # Update as per your setup
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 22
-          source: "./apps/backend/user-service/build/*"
-          target: "/home/ubuntu/apps/user-service/build"
+          source: "./apps/backend/notification-service/build/*"
+          target: "/home/ubuntu/apps/notification-service/build"
           strip_components: 4
 
       - name: Create .env File
@@ -103,9 +103,11 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 22
           script: |
-            echo "NODE_ENV=${{ secrets.NODE_ENV }}" >> /home/ubuntu/apps/user-service/build/configs/.env.production
-            echo "PORT=${{ secrets.USER_PORT }}" >> /home/ubuntu/apps/user-service/build/configs/.env.production
-            echo "MONGODB_URL=${{ secrets.USER_MONGODB_URL }}" >> /home/ubuntu/apps/user-service/build/configs/.env.production
+            echo "NODE_ENV=${{ secrets.NODE_ENV }}" >> /home/ubuntu/apps/notification-service/build/configs/.env.production
+            echo "PORT=${{ secrets.NOTIFICATION_PORT }}" >> /home/ubuntu/apps/notification-service/build/configs/.env.production
+            echo "MONGODB_URL=${{ secrets.NOTIFICATION_MONGODB_URL }}" >> /home/ubuntu/apps/notification-service/build/configs/.env.production
+            echo "VAPID_PUBLIC_KEY=${{ secrets.VAPID_PUBLIC_KEY }}" >> /home/ubuntu/apps/notification-service/build/configs/.env.production
+            echo "VAPID_PRIVATE_KEY=${{ secrets.VAPID_PRIVATE_KEY }}" >> /home/ubuntu/apps/notification-service/build/configs/.env.production
 
       - name: Install Dependencies and Restart PM2
         uses: appleboy/ssh-action@master
@@ -119,7 +121,7 @@ jobs:
             source /home/ubuntu/.nvm/nvm.sh
             source /home/ubuntu/.profile
 
-            cd /home/ubuntu/apps/user-service/build
+            cd /home/ubuntu/apps/notification-service/build
             yarn install --production
 
             # Check if the PM2 process is running

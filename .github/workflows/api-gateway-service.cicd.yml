@@ -1,20 +1,20 @@
-name: CI/CD Pipeline for User Service
+name: CI/CD Pipeline for API Gateway Service
 
 on:
   pull_request:
     branches:
       - main
     paths:
-      - "apps/backend/user-service/**"
+      - "apps/backend/api-gateway-service/**"
   push:
     branches:
       - main
     paths:
-      - "apps/backend/user-service/**"
+      - "apps/backend/api-gateway-service/**"
 
 defaults:
   run:
-    working-directory: apps/backend/user-service
+    working-directory: apps/backend/api-gateway-service
 
 jobs:
   build:
@@ -42,16 +42,11 @@ jobs:
       - name: Run build
         run: yarn build
 
-      - name: Run tests
-        env:
-          MONGODB_URL: ${{ secrets.TEST_MONGODB_URL}}
-        run: yarn test
-
       - name: Archive build artifacts
         uses: actions/upload-artifact@v4
         with:
           name: build
-          path: ./apps/backend/user-service/build
+          path: ./apps/backend/api-gateway-service/build
 
   deploy:
     runs-on: ubuntu-latest
@@ -71,7 +66,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: build
-          path: ./apps/backend/user-service/build
+          path: ./apps/backend/api-gateway-service/build
 
       - name: Prepare Deployment Directories
         uses: appleboy/ssh-action@master
@@ -81,8 +76,8 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 22
           script: |
-            mkdir -p /home/ubuntu/apps/user-service/build
-            mkdir -p /home/ubuntu/apps/user-service/build/configs
+            mkdir -p /home/ubuntu/apps/api-gateway-service/build
+            mkdir -p /home/ubuntu/apps/api-gateway-service/build/configs
 
       - name: Copy files to EC2
         uses: appleboy/scp-action@master
@@ -91,8 +86,8 @@ jobs:
           username: ${{ secrets.EC2_USERNAME }} # Update as per your setup
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 22
-          source: "./apps/backend/user-service/build/*"
-          target: "/home/ubuntu/apps/user-service/build"
+          source: "./apps/backend/api-gateway-service/build/*"
+          target: "/home/ubuntu/apps/api-gateway-service/build"
           strip_components: 4
 
       - name: Create .env File
@@ -103,9 +98,19 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 22
           script: |
-            echo "NODE_ENV=${{ secrets.NODE_ENV }}" >> /home/ubuntu/apps/user-service/build/configs/.env.production
-            echo "PORT=${{ secrets.USER_PORT }}" >> /home/ubuntu/apps/user-service/build/configs/.env.production
-            echo "MONGODB_URL=${{ secrets.USER_MONGODB_URL }}" >> /home/ubuntu/apps/user-service/build/configs/.env.production
+            echo "NODE_ENV=${{ secrets.NODE_ENV }}" >> /home/ubuntu/apps/api-gateway-service/build/configs/.env.production
+            echo "PORT=${{ secrets.API_GATEWAY_PORT }}" >> /home/ubuntu/apps/api-gateway-service/build/configs/.env.production
+            echo "AWS_COGNITO_USER_POOL_ID=${{ secrets.AWS_COGNITO_USER_POOL_ID }}" >> /home/ubuntu/apps/api-gateway-service/build/configs/.env.production
+            echo "AWS_COGNITO_CLIENT_ID=${{ secrets.AWS_COGNITO_CLIENT_ID }}" >> /home/ubuntu/apps/api-gateway-service/build/configs/.env.production
+            echo "CLIENT_URL=${{ secrets.CLIENT_URL }}" >> /home/ubuntu/apps/api-gateway-service/build/configs/.env.production
+            echo "USER_SERVICE_URL=${{ secrets.USER_SERVICE_URL }}" >> /home/ubuntu/apps/api-gateway-service/build/configs/.env.production
+            echo "AUTH_SERVICE_URL=${{ secrets.AUTH_SERVICE_URL }}" >> /home/ubuntu/apps/api-gateway-service/build/configs/.env.production
+            echo "PRODUCT_SERVICE_URL=${{ secrets.PRODUCT_SERVICE_URL }}" >> /home/ubuntu/apps/api-gateway-service/build/configs/.env.production
+            echo "NOTIFICATION_SERVICE_URL=${{ secrets.NOTIFICATION_SERVICE_URL }}" >> /home/ubuntu/apps/api-gateway-service/build/configs/.env.production
+            echo "AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}" >> /home/ubuntu/apps/api-gateway-service/build/configs/.env.production
+            echo "AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}" >> /home/ubuntu/apps/api-gateway-service/build/configs/.env.production
+            echo "AWS_CLOUDWATCH_LOGS_REGION=${{ secrets.AWS_CLOUDWATCH_LOGS_REGION }}" >> /home/ubuntu/apps/api-gateway-service/build/configs/.env.production
+            echo "AWS_CLOUDWATCH_LOGS_GROUP_NAME=${{ secrets.AWS_CLOUDWATCH_LOGS_GROUP_NAME }}" >> /home/ubuntu/apps/api-gateway-service/build/configs/.env.production
 
       - name: Install Dependencies and Restart PM2
         uses: appleboy/ssh-action@master
@@ -119,11 +124,11 @@ jobs:
             source /home/ubuntu/.nvm/nvm.sh
             source /home/ubuntu/.profile
 
-            cd /home/ubuntu/apps/user-service/build
+            cd /home/ubuntu/apps/api-gateway-service/build
             yarn install --production
 
             # Check if the PM2 process is running
-            if pm2 show auth > /dev/null; then
+            if pm2 show api-gateway > /dev/null; then
               echo "Application is running. Restarting..."
               yarn restart
             else
