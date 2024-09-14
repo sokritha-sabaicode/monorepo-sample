@@ -42,7 +42,6 @@ export class UsersController extends Controller {
     @Body() requestBody: UserCreationRequestParams
   ): Promise<UserProfileResponse> {
     try {
-      console.log('requestBody', requestBody)
       const response = await UserService.createNewUser(requestBody);
 
       this.setStatus(201); // set return status 201

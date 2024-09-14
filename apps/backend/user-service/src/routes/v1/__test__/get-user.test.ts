@@ -26,9 +26,7 @@ describe("GET /v1/users/{userId}", () => {
   beforeAll(async () => {
     const userData: UserCreationRequestParams = {
       email: 'test@example.com',
-      username: 'test user',
-      age: 18,
-      gender: "Female"
+      username: 'test user'
     }
 
     const response = await request(app).post('/v1/users').send(userData)

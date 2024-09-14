@@ -84,10 +84,9 @@ class UserRepository {
           { sub: sub },
           { googleSub: sub },
           { facebookSub: sub },
+          { _id: sub}
         ],
       });
-
-      console.log('result', result)
 
       if (!result) {
         throw new NotFoundError();
