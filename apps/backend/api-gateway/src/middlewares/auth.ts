@@ -3,6 +3,8 @@ import { CognitoJwtVerifier } from 'aws-jwt-verify';
 import configs from '@/src/config';
 import { AuthenticationError, AuthorizationError, NotFoundError } from '@sokritha-sabaicode/ms-libs';
 import ROUTE_PATHS, { RouteConfig } from '@/src/route-defs';
+import { jwtDecode } from 'jwt-decode';
+import axios from 'axios';
 
 declare global {
   namespace Express {
@@ -47,20 +49,45 @@ const authenticateToken = async (req: Request, _res: Response, next: NextFunctio
 
       // Step 3
       const payload = await verifier.verify(token);
-      console.log(payload)
+
       if (!payload) {
         throw new AuthenticationError();
       }
 
+      let role: string[] = [];
+      const userPayload = await jwtDecode(req.cookies?.["id_token"]);
+      console.log('userPayload', userPayload)
+
+      // @ts-ignore
+      if (userPayload['cognito:username'].includes('google')) {
+        // @ts-ignore
+        if (!userPayload['custom:role']) {
+          const { data } = await axios.get(`${configs.userServiceUrl}/v1/users/me`, {
+            headers: {
+              'Cookie': `username=${userPayload.sub}`
+            }
+          });
+          console.log('data', data.data.role)
+          role.push(data.data.role);
+        } else {
+          // @ts-ignore
+          role.push(userPayload['custom:role']);
+        }
+      } else {
+        role = payload['cognito:groups'] || []
+      }
+      console.log('role', role)
+
       req.currentUser = {
         username: payload.username,
-        role: payload['cognito:groups']
+        role
       };
     }
 
     // Step 4
     next()
   } catch (error) {
+    console.log('error', error)
     next(error);
   }
 }
@@ -75,8 +102,6 @@ const authenticateToken = async (req: Request, _res: Response, next: NextFunctio
 const authorizeRole = (req: Request, _res: Response, next: NextFunction) => {
   const { methodConfig, currentUser } = req;
 
-  console.log('methodConfig', methodConfig)
-  console.log('currentUser', currentUser)
   // Check if the route requires specific roles
   if (methodConfig.roles) {
     // If the user is not authenticated or does not have any of the required roles, throw an error

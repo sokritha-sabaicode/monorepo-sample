@@ -10,14 +10,15 @@ import {
   Delete,
   Queries,
   Middlewares,
+  Request
 } from "tsoa";
 import UserService from '@/src/services/user.service';
 import sendResponse from '@/src/utils/send-response';
-import { IUser } from '@/src/database/models/user.model';
 import validateRequest from '@/src/middewares/validate-input';
 import userJoiSchema from '@/src/schemas/user.schema';
+import { UsersPaginatedResponse, prettyObject, UserCreationRequestParams, UserProfileResponse, UserUpdateRequestParams, IUser } from "@sokritha-sabaicode/ms-libs";
 import { UserGetAllControllerParams } from "@/src/controllers/types/user-controller.type";
-import { UsersPaginatedResponse, prettyObject, UserCreationRequestParams, UserProfileResponse, UserUpdateRequestParams } from "@sokritha-sabaicode/ms-libs";
+import { Request as ExpressRequest } from 'express';
 
 
 @Route("v1/users")
@@ -52,12 +53,28 @@ export class UsersController extends Controller {
     }
   }
 
+  @Get("/me")
+  public async getMe(
+    @Request() request: ExpressRequest
+  ): Promise<UserProfileResponse> {
+    try {
+      const sub = request.cookies['username']
+
+      const response = await UserService.getUserBySub(sub);
+
+      return sendResponse<IUser>({ message: 'success', data: response })
+    } catch (error) {
+      console.error(`UsersController - getUserProfile() method error: `, prettyObject(error as {}))
+      throw error;
+    }
+  }
+
   @Get("{userId}")
   public async getUserProfile(
     @Path() userId: string
   ): Promise<UserProfileResponse> {
     try {
-      const response = await UserService.getUserById(userId);
+      const response = await UserService.getUserBySub(userId);
 
       return sendResponse<IUser>({ message: 'success', data: response })
     } catch (error) {
@@ -73,7 +90,7 @@ export class UsersController extends Controller {
   ): Promise<UserProfileResponse> {
     try {
       const newUpdateUserInfo = { id: userId, ...updateUserInfo }
-      const response = await UserService.updateUserById(newUpdateUserInfo);
+      const response = await UserService.updateUserBySub(newUpdateUserInfo);
 
       return sendResponse<IUser>({ message: 'success', data: response })
     } catch (error) {
@@ -95,4 +112,6 @@ export class UsersController extends Controller {
       throw error;
     }
   }
+
+
 }

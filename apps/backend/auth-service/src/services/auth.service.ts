@@ -1,9 +1,9 @@
 import configs from "@/src/config";
-import { AdminAddUserToGroupCommand, AdminGetUserCommand, AdminLinkProviderForUserCommand, AuthFlowType, CognitoIdentityProviderClient, ConfirmSignUpCommand, InitiateAuthCommand, InitiateAuthCommandInput, ListUsersCommand, SignUpCommand, SignUpCommandInput, UserType } from "@aws-sdk/client-cognito-identity-provider";
+import { AdminAddUserToGroupCommand, AdminGetUserCommand, AdminLinkProviderForUserCommand, AdminUpdateUserAttributesCommand, AuthFlowType, CognitoIdentityProviderClient, ConfirmSignUpCommand, InitiateAuthCommand, InitiateAuthCommandInput, ListUsersCommand, SignUpCommand, SignUpCommandInput, UserType } from "@aws-sdk/client-cognito-identity-provider";
 import { GoogleCallbackRequest, LoginRequest, SignupRequest, VerifyUserRequest } from "@/src/controllers/types/auth-request.type";
 import crypto from 'crypto';
 import axios from "axios";
-import { APP_ERROR_MESSAGE, InternalServerError, InvalidInputError, ResourceConflictError } from "@sokritha-sabaicode/ms-libs";
+import { APP_ERROR_MESSAGE, ApplicationError, AuthenticationError, InternalServerError, InvalidInputError, ResourceConflictError } from "@sokritha-sabaicode/ms-libs";
 import { jwtDecode } from "jwt-decode";
 import { CognitoToken } from "@/src/services/types/auth-service.type";
 
@@ -24,6 +24,11 @@ class AuthService {
   }
 
   async signup(body: SignupRequest): Promise<string> {
+    const existingUser = await this.getUserByEmail((body.email || body.phone_number) as string);
+    if (existingUser) {
+      throw new ResourceConflictError(`This email is already registered with Google. Please use Google login to access your account.`);
+    }
+
     const inputBody = {
       name: `${body.sur_name} ${body.last_name}`,
       ...Object.keys(body).filter(key => key !== 'sur_name' && key !== 'last_name').reduce<Record<string, any>>((obj, key) => {
@@ -59,12 +64,18 @@ class AuthService {
     } catch (error) {
       console.error(`AuthService signup() method error: `, error);
 
+      if (error instanceof ApplicationError) {
+        throw error;
+      }
+
       // Duplicate Account
       if (typeof error === 'object' && error !== null && 'name' in error) {
         if ((error as { name: string }).name === 'UsernameExistsException') {
           throw new ResourceConflictError(APP_ERROR_MESSAGE.existedAccount);
         }
       }
+
+
 
       throw new Error(`Error signing up user: ${error}`)
     }
@@ -99,7 +110,8 @@ class AuthService {
         sub: userInfo.Username,
         email: body.email,
         phone_number: body.phone_number,
-        username: userInfo.UserAttributes?.find(attr => attr.Name === 'name')?.Value
+        username: userInfo.UserAttributes?.find(attr => attr.Name === 'name')?.Value,
+        role
       });
 
     } catch (error) {
@@ -136,11 +148,16 @@ class AuthService {
       // Get the user info
       const congitoUsername = await this.getUserInfoFromToken(result.AuthenticationResult?.IdToken!);
 
+      // Get the user info from the user service
+      const userInfo = await axios.get(`${configs.userServiceUrl}/v1/users/${congitoUsername.sub}`);
+      console.log('userInfo: ', userInfo);
+
       return {
         accessToken: result.AuthenticationResult?.AccessToken!,
         idToken: result.AuthenticationResult?.IdToken!,
         refreshToken: result.AuthenticationResult?.RefreshToken!,
-        username: congitoUsername.sub
+        username: congitoUsername.sub,
+        userId: userInfo.data.data._id
       };
     } catch (error) {
       // Mismatch Password | Email or Phone Number
@@ -162,8 +179,8 @@ class AuthService {
     }
   }
 
-  loginWithGoogle(): string {
-    const state = crypto.randomBytes(16).toString('hex')
+  loginWithGoogle(state: string): string {
+    // const state = crypto.randomBytes(16).toString('hex')
 
     const params = new URLSearchParams({
       response_type: 'code',
@@ -198,7 +215,7 @@ class AuthService {
 
   async getOAuthToken(query: GoogleCallbackRequest): Promise<CognitoToken> {
     try {
-      const { code, error } = query;
+      const { code, error, state } = query;
 
       if (error || !code) {
         throw new InvalidInputError({ message: error });
@@ -213,6 +230,7 @@ class AuthService {
         redirect_uri: configs.awsRedirectUri
       })
 
+      // Step 1: Get the token from Cognito
       const res = await axios.post(`${configs.awsCognitoDomain}/oauth2/token`,
         params,
         {
@@ -229,10 +247,93 @@ class AuthService {
         refreshToken: res.data.refresh_token
       }
 
+      // Step 2: Get the user info from token
+      const userInfo = this.getUserInfoFromToken(token.idToken);
+      // @ts-ignore
+      const email = userInfo.email;
+      const existingUser = await this.getUserByEmail(email);
+      console.log('existingUser: ', existingUser);
+
+      let userId: string;
+
+      // Step 3: Case User is already signin with Email | Phone Number / Password, but they try to signin with Google | Facebook
+      if (existingUser && existingUser.UserStatus !== 'EXTERNAL_PROVIDER') {
+        const isLinked = existingUser.Attributes?.some(
+          (attr) => attr.Name === 'identities' && attr.Value?.includes('Google')
+        );
+        console.log('isLinked: ', isLinked);
+
+        if (!isLinked) {
+          // Step 3.1: Link the user to the existing Cognito user if not already linked
+          await this.linkAccount({
+            sourceUserId: userInfo.sub!,
+            providerName: 'Google',
+            destinationUserId: existingUser.Username!,
+          });
+
+          // Step 3.2: Update user info in user service
+          const user = await axios.put(`${configs.userServiceUrl}/v1/users/${existingUser.Username}`, {
+            googleSub: userInfo.sub, // Update the Google sub
+            role: state
+          });
+
+          // Step 3.3: Update user info in Cognito
+          await this.updateUserCongitoAttributes(existingUser.Username!, {
+            'custom:role': state!
+          });
+
+          userId = user.data.data._id;
+
+        } else {
+          const user = await axios.get(`${configs.userServiceUrl}/v1/users/${existingUser.Username}`);
+
+          userId = user.data.data._id;
+        }
+      }
+      // Step 4: Case User is never signin with Google | Facebook
+      else {
+        try {
+          const user = await axios.post(`${configs.userServiceUrl}/v1/users`, {
+            googleSub: userInfo.sub,
+            email,
+            // @ts-ignore
+            username: userInfo.name,
+            // @ts-ignore
+            profile: userInfo.profile,
+            role: state
+          });
+
+          // Step 4.1: Update user info in Cognito
+          await this.updateUserCongitoAttributes(userInfo.sub!, {
+            'custom:role': state!
+          });
+
+          userId = user.data.data._id;
+        } catch (error) {
+          if (axios.isAxiosError(error) && error.response?.status === 409) {
+            // If the user already exists in the user service, handle it gracefully
+            console.log('User already exists in user service, retrieving existing user info.');
+            const existingUserResponse = await axios.get(`${configs.userServiceUrl}/v1/users/${userInfo.sub}`);
+            userId = existingUserResponse.data.data._id;
+          } else {
+            throw error; // Re-throw if it's a different error
+          }
+        }
+      }
+
+      // Step 5: Check if the user is already in the group before adding
+      const groupExists = await this.checkUserInGroup(userInfo.sub!, state!);
+      if (!groupExists) {
+        await this.addToGroup(userInfo.sub!, state!);
+        console.log(`User ${userInfo.sub} added to group ${state}`);
+      }
+
       return {
         accessToken: token.accessToken,
         idToken: token.idToken,
-        refreshToken: token.refreshToken
+        refreshToken: token.refreshToken,
+        username: userInfo.sub,
+        userId
       };
     } catch (error) {
       throw error;
@@ -293,6 +394,22 @@ class AuthService {
     }
   }
 
+  async updateUserCongitoAttributes(username: string, attributes: { [key: string]: string }): Promise<void> {
+    const params = {
+      Username: username,
+      UserPoolId: configs.awsCognitoUserPoolId,
+      UserAttributes: Object.entries(attributes).map(([key, value]) => ({ Name: key, Value: value }))
+    };
+
+    try {
+      const command = new AdminUpdateUserAttributesCommand(params);
+      await client.send(command);
+    } catch (error) {
+      console.error("AuthService updateUserCongitoAttributes() method error:", error);
+      throw error;
+    }
+  }
+
   async linkAccount({ sourceUserId, providerName, destinationUserId }: { sourceUserId: string, providerName: string, destinationUserId: string }): Promise<void> {
     const params = {
       // DestinationUser is the existing cognito user that you want to assign to the external Idp user account (COULD BE a cognito user or a federated user)
@@ -319,7 +436,30 @@ class AuthService {
     }
   }
 
+  async checkUserInGroup(username: string, groupName: string): Promise<boolean | undefined> {
+    try {
+      const params = {
+        GroupName: groupName,
+        Username: username,
+        UserPoolId: configs.awsCognitoUserPoolId
+      };
+      const command = new AdminGetUserCommand(params);
+      const user = await client.send(command);
+
+      return user.UserAttributes?.map((attr) => attr.Value).includes(groupName);
+    } catch (error) {
+      console.error(`Error checking if user ${username} is in group ${groupName}:`, error);
+      throw error;
+    }
+  }
+
   async refreshToken({ refreshToken, username }: { refreshToken: string, username: string }) {
+
+
+    if (!refreshToken || !username) {
+      throw new AuthenticationError();
+    }
+
     const params = {
       AuthFlow: AuthFlowType.REFRESH_TOKEN_AUTH,
       ClientId: configs.awsCognitoClientId,
@@ -339,6 +479,10 @@ class AuthService {
         refreshToken: result.AuthenticationResult?.RefreshToken || refreshToken, // Reuse the old refresh token if a new one isn't provided
       };
     } catch (error) {
+      if (error instanceof ApplicationError) {
+        throw error;
+      }
+
       console.error("AuthService refreshToken() method error:", error);
       throw new Error(`Error refreshing token: ${error}`);
     }

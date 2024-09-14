@@ -14,7 +14,7 @@ function setCookie(response: Response, name: string, value: string, options: Coo
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production', // Secure in production only
     sameSite: 'lax',
-    maxAge: 3600 * 5,  // 5 minutes expiration
+    maxAge: 3600 * 1000,  // 1 hour expiration
     ...options,       // Override defaults with provided options
   };
   response.cookie(name, value, defaultOptions);

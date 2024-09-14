@@ -34,6 +34,17 @@ class UserService {
     }
   }
 
+  async getUserBySub(sub: string) {
+    try {
+      const user = await UserRepository.findBySub(sub);
+
+      return user;
+    } catch (error) {
+      console.error(`UserService - getUserById() method error: `, prettyObject(error as {}))
+      throw error;
+    }
+  }
+
   async createNewUser(userInfo: UserCreationRepoParams) {
     try {
       console.log('userInfo', userInfo)
@@ -46,9 +57,9 @@ class UserService {
     }
   }
 
-  async updateUserById(userInfo: UserUpdateRepoParams) {
+  async updateUserBySub(userInfo: UserUpdateRepoParams) {
     try {
-      const updatedUser = await UserRepository.updateById(userInfo);
+      const updatedUser = await UserRepository.updateBySub(userInfo);
 
       return updatedUser;
     } catch (error) {

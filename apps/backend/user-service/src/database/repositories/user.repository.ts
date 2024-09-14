@@ -77,6 +77,29 @@ class UserRepository {
     }
   }
 
+  async findBySub(sub: string) {
+    try {
+      const result = await UserModel.findOne({
+        $or: [
+          { sub: sub },
+          { googleSub: sub },
+          { facebookSub: sub },
+        ],
+      });
+
+      console.log('result', result)
+
+      if (!result) {
+        throw new NotFoundError();
+      }
+
+      return result;
+    } catch (error) {
+      console.error(`UserRepository - findById() method error: `, prettyObject(error as {}))
+      throw error
+    }
+  }
+
   async create(newInfo: UserCreationRepoParams) {
     try {
       const result = await UserModel.create(newInfo);
@@ -109,10 +132,18 @@ class UserRepository {
     }
   }
 
-  async updateById(updateInfo: UserUpdateRepoParams) {
+  async updateBySub(updateInfo: UserUpdateRepoParams) {
     try {
       const { id, ...newUpdateInfo } = updateInfo
-      const result = await UserModel.findByIdAndUpdate(id, newUpdateInfo, { new: true });
+     
+      const result = await UserModel.findOneAndUpdate({
+        $or: [
+          { sub: id },
+          { googleSub: id },
+          { facebookSub: id },
+        ],
+      }, newUpdateInfo, { new: true });
+
 
       if (!result) {
         throw new NotFoundError();

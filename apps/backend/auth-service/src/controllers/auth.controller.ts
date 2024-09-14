@@ -4,7 +4,7 @@ import AuthService from "@/src/services/auth.service";
 import setCookie from "@/src/utils/cookie";
 import sendResponse from "@/src/utils/send-response";
 import { Response, Request as ExpressRequest } from "express";
-import { Body, Controller, Get, Post, Queries, Request, Route, SuccessResponse } from "tsoa";
+import { Body, Controller, Get, Post, Queries, Query, Request, Route, SuccessResponse } from "tsoa";
 
 @Route('v1/auth')
 export class ProductController extends Controller {
@@ -37,8 +37,9 @@ export class ProductController extends Controller {
 
       setCookie(response, 'id_token', result.idToken);
       setCookie(response, 'access_token', result.accessToken);
-      setCookie(response, 'refresh_token', result.refreshToken, { maxAge: 30 * 24 * 60 * 60 * 1000 });
-      setCookie(response, 'username', result.username!, { maxAge: 30 * 24 * 60 * 60 * 1000 });
+      setCookie(response, 'refresh_token', result.refreshToken, { maxAge: 30 * 24 * 3600 * 1000 });
+      setCookie(response, 'username', result.username!, { maxAge: 30 * 24 * 3600 * 1000 });
+      setCookie(response, 'user_id', result.userId!, { maxAge: 30 * 24 * 3600 * 1000 });
 
       return sendResponse({ message: 'Login successfully' })
     } catch (error) {
@@ -47,12 +48,11 @@ export class ProductController extends Controller {
   }
 
   @Get("/google")
-  @SuccessResponse(302, "Redirect")
-  public loginWithGoogle(@Request() request: Express.Request) {
-    const response = (request as any).res as Response;
-    const cognitoOAuthURL = AuthService.loginWithGoogle();
+  public loginWithGoogle(@Query() state: string) {
+    console.log('state: ', state);
+    const cognitoOAuthURL = AuthService.loginWithGoogle(state);
 
-    response.redirect(cognitoOAuthURL);
+    return sendResponse({ message: 'Login with Google successfully', data: cognitoOAuthURL })
   }
 
   @Get("/facebook")
@@ -70,9 +70,11 @@ export class ProductController extends Controller {
       const response = (request as any).res as Response;
       const tokens = await AuthService.getOAuthToken(query);
 
-      response.cookie('id_token', tokens.idToken);
-      response.cookie('access_token', tokens.accessToken);
-      response.cookie('refresh_token', tokens.refreshToken)
+      setCookie(response, 'id_token', tokens.idToken);
+      setCookie(response, 'access_token', tokens.accessToken);
+      setCookie(response, 'refresh_token', tokens.refreshToken, { maxAge: 30 * 24 * 3600 * 1000 });
+      setCookie(response, 'username', tokens.username!, { maxAge: 30 * 24 * 3600 * 1000 });
+      setCookie(response, 'user_id', tokens.userId!, { maxAge: 30 * 24 * 3600 * 1000 });
 
       response.redirect(configs.clientUrl)
     } catch (error) {
@@ -81,11 +83,16 @@ export class ProductController extends Controller {
   }
 
   @Post("/refresh-token")
-  public async refreshToken(@Request() request: ExpressRequest, @Body() body: { refreshToken: string, username: string }) {
+  public async refreshToken(@Request() request: ExpressRequest, @Body() body: { refreshToken?: string, username?: string }) {
     try {
       const response = (request as any).res as Response;
 
-      const result = await AuthService.refreshToken({ refreshToken: body.refreshToken, username: body.username });
+      const refreshToken = request.cookies['refresh_token'];
+      const username = request.cookies['username'];
+
+      
+
+      const result = await AuthService.refreshToken({ refreshToken: body.refreshToken || refreshToken, username: body.username || username });
 
       setCookie(response, 'id_token', result.idToken);
       setCookie(response, 'access_token', result.accessToken);

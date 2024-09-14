@@ -4,7 +4,6 @@ import express, { Response } from "express"
 import { ClientRequest, IncomingMessage } from "http"
 import { createProxyMiddleware, Options } from "http-proxy-middleware"
 import { gatewayLogger } from "@/src/server"
-import configs from "@/src/config"
 
 interface ProxyConfig {
   [context: string]: Options<IncomingMessage, Response>
@@ -34,7 +33,6 @@ const proxyConfigs: ProxyConfig = {
     pathRewrite: (path, _req) => `${ROUTE_PATHS.USER_SERVICE.path}${path}`,
     on: {
       proxyReq: (proxyReq: ClientRequest, _req: IncomingMessage, _res: Response) => {
-        proxyReq.setHeader('x-api-gateway', configs.apiGatewayHeader);
 
         // @ts-ignore
         logRequest(gatewayLogger, proxyReq, {
@@ -50,7 +48,6 @@ const proxyConfigs: ProxyConfig = {
     pathRewrite: (path, _req) => `${ROUTE_PATHS.PRODUCT_SERVICE.path}${path}`,
     on: {
       proxyReq: (proxyReq: ClientRequest, _req: IncomingMessage, _res: Response) => {
-        proxyReq.setHeader('x-api-gateway', configs.apiGatewayHeader);
 
         // @ts-ignore
         logRequest(gatewayLogger, proxyReq, {
@@ -60,8 +57,26 @@ const proxyConfigs: ProxyConfig = {
         });
       }
     }
+  },
+  [ROUTE_PATHS.NOTIFICATION_SERVICE.path]: {
+    target: ROUTE_PATHS.NOTIFICATION_SERVICE.target,
+    pathRewrite: (_path, _req) => {
+      return `${ROUTE_PATHS.NOTIFICATION_SERVICE.path}${_path}`
+    },
+    on: {
+      proxyReq: (proxyReq: ClientRequest, _req: IncomingMessage, _res: Response) => {
+        // @ts-ignore
+        logRequest(gatewayLogger, proxyReq, {
+          protocol: proxyReq.protocol,
+          host: proxyReq.getHeader('host'),
+          path: proxyReq.path
+        });
+      },
+
+    }
   }
 }
+
 
 const applyProxy = (app: express.Application) => {
   Object.keys(proxyConfigs).forEach((context: string) => {

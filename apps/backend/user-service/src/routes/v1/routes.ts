@@ -14,22 +14,38 @@ const models: TsoaRoute.Models = {
     "IUser": {
         "dataType": "refObject",
         "properties": {
-            "_id": {"dataType":"string","required":true},
-            "username": {"dataType":"string","required":true},
-            "email": {"dataType":"string","required":true},
-            "gender": {"dataType":"string","required":true},
-            "age": {"dataType":"double","required":true},
-            "createdAt": {"dataType":"datetime","required":true},
-            "updatedAt": {"dataType":"datetime","required":true},
+            "_id": {"dataType":"string"},
+            "sub": {"dataType":"string"},
+            "googleSub": {"dataType":"string"},
+            "facebookSub": {"dataType":"string"},
+            "username": {"dataType":"string"},
+            "email": {"dataType":"string"},
+            "phone_number": {"dataType":"string"},
+            "profile": {"dataType":"string"},
+            "gender": {"dataType":"string"},
+            "age": {"dataType":"double"},
+            "role": {"dataType":"string"},
+            "createdAt": {"dataType":"datetime"},
+            "updatedAt": {"dataType":"datetime"},
         },
         "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "PaginationResponse_IUser_": {
+        "dataType": "refObject",
+        "properties": {
+            "totalItems": {"dataType":"double","required":true},
+            "totalPages": {"dataType":"double","required":true},
+            "currentPage": {"dataType":"double","required":true},
+        },
+        "additionalProperties": {"dataType":"union","subSchemas":[{"dataType":"array","array":{"dataType":"refObject","ref":"IUser"}},{"dataType":"double"}]},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "UsersPaginatedResponse": {
         "dataType": "refObject",
         "properties": {
             "message": {"dataType":"string","required":true},
-            "data": {"dataType":"nestedObjectLiteral","nestedProperties":{"currentPage":{"dataType":"double","required":true},"totalPages":{"dataType":"double","required":true},"totalItems":{"dataType":"double","required":true}},"additionalProperties":{"dataType":"union","subSchemas":[{"dataType":"array","array":{"dataType":"refObject","ref":"IUser"}},{"dataType":"double"}]},"required":true},
+            "data": {"ref":"PaginationResponse_IUser_","required":true},
         },
         "additionalProperties": false,
     },
@@ -57,10 +73,14 @@ const models: TsoaRoute.Models = {
     "UserCreationRequestParams": {
         "dataType": "refObject",
         "properties": {
-            "email": {"dataType":"string","required":true},
+            "sub": {"dataType":"string"},
+            "googleSub": {"dataType":"string"},
+            "facebookSub": {"dataType":"string"},
+            "email": {"dataType":"string"},
+            "phone_number": {"dataType":"string"},
+            "profile": {"dataType":"string"},
             "username": {"dataType":"string","required":true},
-            "gender": {"dataType":"string","required":true},
-            "age": {"dataType":"double","required":true},
+            "role": {"dataType":"string"},
         },
         "additionalProperties": false,
     },
@@ -68,9 +88,14 @@ const models: TsoaRoute.Models = {
     "UserUpdateRequestParams": {
         "dataType": "refObject",
         "properties": {
+            "sub": {"dataType":"string"},
+            "googleSub": {"dataType":"string"},
+            "facebookSub": {"dataType":"string"},
             "username": {"dataType":"string"},
+            "profile": {"dataType":"string"},
             "gender": {"dataType":"string"},
             "age": {"dataType":"double"},
+            "role": {"dataType":"string"},
         },
         "additionalProperties": false,
     },
@@ -146,6 +171,36 @@ export function RegisterRoutes(app: Router) {
                 next,
                 validatedArgs,
                 successStatus: 201,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.get('/v1/users/me',
+            ...(fetchMiddlewares<RequestHandler>(UsersController)),
+            ...(fetchMiddlewares<RequestHandler>(UsersController.prototype.getMe)),
+
+            async function UsersController_getMe(request: ExRequest, response: ExResponse, next: any) {
+            const args: Record<string, TsoaRoute.ParameterSchema> = {
+                    request: {"in":"request","name":"request","required":true,"dataType":"object"},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args, request, response });
+
+                const controller = new UsersController();
+
+              await templateService.apiHandler({
+                methodName: 'getMe',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
               });
             } catch (err) {
                 return next(err);
