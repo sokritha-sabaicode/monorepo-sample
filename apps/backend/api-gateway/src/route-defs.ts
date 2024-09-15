@@ -23,6 +23,14 @@ const ROUTE_PATHS: RoutesConfig = {
     target: configs.authServiceUrl,
     nestedRoutes: [
       {
+        path: "/health",
+        methods: {
+          GET: {
+            authRequired: false,
+          }
+        },
+      },
+      {
         path: "/signup",
         methods: {
           POST: {
@@ -101,6 +109,14 @@ const ROUTE_PATHS: RoutesConfig = {
     },
     nestedRoutes: [
       {
+        path: "/health",
+        methods: {
+          GET: {
+            authRequired: false,
+          }
+        }
+      },
+      {
         path: "/me",
         methods: {
           GET: {
@@ -118,12 +134,30 @@ const ROUTE_PATHS: RoutesConfig = {
         authRequired: true,
         roles: ["admin"]
       }
-    }
+    },
+    nestedRoutes: [
+      {
+        path: "/health",
+        methods: {
+          GET: {
+            authRequired: false,
+          }
+        }
+      },
+    ]
   },
   NOTIFICATION_SERVICE: {
     path: "/v1/notifications",
     target: configs.notificationServiceUrl,
     nestedRoutes: [
+      {
+        path: "/health",
+        methods: {
+          GET: {
+            authRequired: false
+          }
+        }
+      },
       {
         path: "/subscribe",
         methods: {
