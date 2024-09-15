@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "nodemon src/server.ts",
     "build": "node build-script.js",
-    "start:local": "pm2 start ecosystem.config.local.js",
+    "start:local": "pm2 start ecosystem.local.config.js",
     "start": "pm2 start ecosystem.config.js",
     "restart": "pm2 reload ecosystem.config.js"
   },

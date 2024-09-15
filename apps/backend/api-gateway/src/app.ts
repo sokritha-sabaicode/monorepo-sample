@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { Request, Response } from 'express';
 import { globalErrorHandler } from '@/src/middlewares/global-error';
 import applyProxy from '@/src/middlewares/proxy';
 import cookieParser from 'cookie-parser';
@@ -18,6 +18,15 @@ const app = express();
 // ========================
 app.use(cors(corsOptions));
 app.use(cookieParser())
+
+// ========================
+// Gateway Health
+// ========================
+app.get('/gateway-health', (_req: Request, res: Response) => {
+  res.status(200).json({
+    message: 'OK'
+  })
+})
 
 
 // ========================
