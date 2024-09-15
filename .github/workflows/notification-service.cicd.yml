@@ -90,6 +90,17 @@ jobs:
           target: "/home/ubuntu/apps/notification-service/build"
           strip_components: 4
 
+      - name: Configure npm to use GitHub Packages
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_IP }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: 22
+          script: |
+            echo "@sokritha-sabaicode:registry=https://npm.pkg.github.com/" > /home/ubuntu/apps/notification-service/build/.npmrc
+            echo "//npm.pkg.github.com/:_authToken=${{ secrets.NPM_TOKEN }}" >> /home/ubuntu/apps/notification-service/build/.npmrc
+
       - name: Create .env File
         uses: appleboy/ssh-action@master
         with:
