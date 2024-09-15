@@ -39,6 +39,10 @@ esbuild.build({
   resolveExtensions: ['.ts', '.js'],
   define: {
     'process.env.NODE_ENV': '"production"'
+  },
+  alias: {
+    '@': path.resolve(__dirname, '.'),
+
   }
 }).then(() => {
   // (1) Solve: Copy swagger.json after successful build

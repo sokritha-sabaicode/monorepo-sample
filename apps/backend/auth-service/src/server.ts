@@ -1,5 +1,6 @@
-import app from "@/src/app"
+import app from "@/src/app";
 import configs from "@/src/config";
+
 
 async function run() {
   try {
