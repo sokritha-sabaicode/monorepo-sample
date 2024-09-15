@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "@aws-sdk/client-cloudwatch-logs": "^3.624.0",
-    "@sokritha-sabaicode/ms-libs": "0.0.4",
+    "@sokritha-sabaicode/ms-libs": "0.0.11",
     "aws-jwt-verify": "^4.0.1",
     "axios": "^1.7.2",
     "cookie-parser": "^1.4.6",
