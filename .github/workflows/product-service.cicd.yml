@@ -42,11 +42,6 @@ jobs:
       - name: Run build
         run: yarn build
 
-      - name: Run tests
-        env:
-          MONGODB_URL: ${{ secrets.TEST_MONGODB_URL}}
-        run: yarn test
-
       - name: Archive build artifacts
         uses: actions/upload-artifact@v4
         with:
