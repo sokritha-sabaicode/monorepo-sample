@@ -4,7 +4,6 @@ import { NextFunction, Request, Response } from "express";
 
 
 export function globalErrorHandler(error: unknown, _req: Request, res: Response, _next: NextFunction) {
-  console.log("error", error);
   console.log("error instanceof ApplicationError", error instanceof ApplicationError);
   // Handle Error
   if (error instanceof ApplicationError) {
