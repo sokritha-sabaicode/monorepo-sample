@@ -4,5 +4,4 @@
   ],
   "ext": "ts",
   "exec": "nodemon --legacy-watch --exec ts-node src/server.ts"
-
 }
