@@ -15,7 +15,6 @@ type Config = {
   awsCloudwatchLogsGroupName: string;
   awsCognitoUserPoolId: string;
   awsCognitoClientId: string;
-  apiGatewayHeader: string;
   notificationServiceUrl: string;
 };
 
@@ -40,7 +39,6 @@ function loadConfig(): Config {
     AWS_CLOUDWATCH_LOGS_GROUP_NAME: Joi.string().required(),
     AWS_COGNITO_USER_POOL_ID: Joi.string().required(),
     AWS_COGNITO_CLIENT_ID: Joi.string().required(),
-    API_GATEWAY_HEADER: Joi.string().required(),
     NOTIFICATION_SERVICE_URL: Joi.string().required()
   }).unknown().required();
 
@@ -63,7 +61,6 @@ function loadConfig(): Config {
     awsCloudwatchLogsGroupName: envVars.AWS_CLOUDWATCH_LOGS_GROUP_NAME,
     awsCognitoUserPoolId: envVars.AWS_COGNITO_USER_POOL_ID,
     awsCognitoClientId: envVars.AWS_COGNITO_CLIENT_ID,
-    apiGatewayHeader: envVars.API_GATEWAY_HEADER,
     notificationServiceUrl: envVars.NOTIFICATION_SERVICE_URL
   };
 }
