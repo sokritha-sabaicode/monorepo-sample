@@ -123,7 +123,7 @@ jobs:
             yarn install --production
 
             # Check if the PM2 process is running
-            if pm2 show auth > /dev/null; then
+            if pm2 show user-service > /dev/null; then
               echo "Application is running. Restarting..."
               yarn restart
             else
