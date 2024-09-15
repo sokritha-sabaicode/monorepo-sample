@@ -98,8 +98,8 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 22
           script: |
-            echo "@sokritha-sabaicode:registry=https://npm.pkg.github.com/" > /home/ubuntu/apps/api-gateway/build
-            echo "//npm.pkg.github.com/:_authToken=${{ secrets.NPM_TOKEN }}" >> /home/ubuntu/apps/api-gateway/build
+            echo "@sokritha-sabaicode:registry=https://npm.pkg.github.com/" > /home/ubuntu/apps/api-gateway/build/.npmrc
+            echo "//npm.pkg.github.com/:_authToken=${{ secrets.NPM_TOKEN }}" >> /home/ubuntu/apps/api-gateway/build/.npmrc
 
       - name: Create .env File
         uses: appleboy/ssh-action@master
