@@ -8,7 +8,7 @@ export const gatewayLogger = createLogger({ service: 'api-gateway', level: 'info
 async function run() {
   try {
     app.listen(configs.port, () => {
-      console.log(`User Service running on Port:`, configs.port)
+      console.log(`Gateway Service running on Port:`, configs.port)
     })
   } catch (error) {
     console.error("Failed to start the application:", error);
