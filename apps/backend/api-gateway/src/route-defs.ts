@@ -93,10 +93,10 @@ const ROUTE_PATHS: RoutesConfig = {
     target: configs.userServiceUrl,
     methods: {
       GET: {
-        authRequired: true, roles: ["user"]
+        authRequired: true, roles: ["user", "admin"]
       },
       POST: {
-        authRequired: true, roles: ["user"]
+        authRequired: true, roles: ["user", "admin"]
       }
     },
     nestedRoutes: [
@@ -104,7 +104,7 @@ const ROUTE_PATHS: RoutesConfig = {
         path: "/me",
         methods: {
           GET: {
-            authRequired: true, roles: ["user"]
+            authRequired: true, roles: ["user", "admin"]
           }
         }
       }
