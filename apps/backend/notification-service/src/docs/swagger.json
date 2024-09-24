@@ -49,8 +49,7 @@
 					}
 				},
 				"required": [
-					"message",
-					"data"
+					"message"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -186,6 +185,33 @@
 						}
 					}
 				}
+			}
+		},
+		"/v1/notifications/health": {
+			"get": {
+				"operationId": "GetHealth",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										}
+									},
+									"required": [
+										"message"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": []
 			}
 		}
 	},
