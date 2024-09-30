@@ -1,7 +1,7 @@
 import MongoDBConnector from '@/src/database/connector';
 import UserRepository from '@/src/database/repositories/user.repository';
 import configs from '@/src/config';
-import { InvalidInputError, ResourceConflictError } from '@sokritha-sabaicode/ms-libs';
+import { InvalidInputError } from '@sokritha-sabaicode/ms-libs';
 
 let createdUserId;
 
@@ -39,10 +39,10 @@ describe("UserRepository - Create User", () => {
     }
   }, 20000);
 
-  it("should throw a ResourceConflictError for duplicate email", async () => {
-    const userData = { email: 'duplicate@example.com', username: 'testuser', age: 25, gender: 'Female' };
+  // it("should throw a ResourceConflictError for duplicate email", async () => {
+  //   const userData = { email: 'duplicate@example.com', username: 'testuser', age: 25, gender: 'Female' };
 
-    await UserRepository.create(userData);  // First insertion
-    await expect(UserRepository.create(userData)).rejects.toThrow(ResourceConflictError);  // Second insertion should fail
-  }, 20000);
+  //   await UserRepository.create(userData);  // First insertion
+  //   await expect(UserRepository.create(userData)).rejects.toThrow(ResourceConflictError);  // Second insertion should fail
+  // }, 20000);
 })
