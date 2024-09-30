@@ -33,7 +33,7 @@ RegisterRoutes(app)
 // ========================
 // API Documentations
 // ========================
-app.use("/user-api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // ========================
 // ERROR Handler
