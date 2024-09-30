@@ -47,8 +47,8 @@ export class UsersController extends Controller {
       // Create New User
       const response = await UserService.createNewUser(requestBody);
 
-      // Schedule Notification Job 2 Minutes Later
-      await agenda.schedule('in 2 minutes', SCHEDULE_JOBS.NOTIFICATION_NEW_REGISTRATION, { userId: response._id })
+      // Schedule Notification Job 1 Minute Later
+      await agenda.schedule('in 1 minutes', SCHEDULE_JOBS.NOTIFICATION_NEW_REGISTRATION, { userId: response._id })
 
       this.setStatus(201); // set return status 201
       return sendResponse<IUser>({ message: 'success', data: response })

@@ -83,8 +83,7 @@ class UserRepository {
         $or: [
           { sub: sub },
           { googleSub: sub },
-          { facebookSub: sub },
-          { _id: sub}
+          { facebookSub: sub }
         ],
       });
 

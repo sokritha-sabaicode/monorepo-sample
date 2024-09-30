@@ -6,5 +6,5 @@ export const SCHEDULE_JOBS = {
 }
 
 export const registerJobs = (agenda: Agenda) => {
-  agenda.define("notify-new-registration", sendNewRegistrationNotification)
+  agenda.define(SCHEDULE_JOBS.NOTIFICATION_NEW_REGISTRATION, sendNewRegistrationNotification)
 }

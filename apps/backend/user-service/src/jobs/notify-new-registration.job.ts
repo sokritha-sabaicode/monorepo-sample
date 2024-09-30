@@ -3,6 +3,7 @@ import { Job } from "agenda";
 import axios from "axios";
 
 export const sendNewRegistrationNotification = async (job: Job) => {
+  console.log('JOBs: ', job)
   const { userId } = job.attrs.data;
 
   try {
@@ -12,9 +13,7 @@ export const sendNewRegistrationNotification = async (job: Job) => {
     }, {
       headers: {
         'Content-Type': 'application/json',
-        'set-cookie': [
-          `user_id=${userId}`,
-        ]
+        'Cookie': `user_id=${userId}`
       }
     });
     console.log(`Notification send for user: ${userId}`)

@@ -10,9 +10,9 @@
     "packages/*"
   ],
   "scripts": {
-    "start": "concurrently \"yarn workspace ms-ui-components watch\" \"yarn workspace frontend-client dev\" \"yarn workspace frontend-dashboard dev\" \"yarn workspace user-service dev\"  \"yarn workspace product-service dev\"  \"yarn workspace auth-service dev\"",
-    "start:client": "concurrently \"yarn workspace ms-ui-components watch\" \"yarn workspace frontend-client dev\"",
-    "start:dashboard": "concurrently \"yarn workspace ms-ui-components watch\" \"yarn workspace frontend-dashboard dev\"",
+    "start": "concurrently \"yarn workspace ms-ui-components watch\" \"yarn workspace camformant-client dev\" \"yarn workspace frontend-dashboard dev\" \"yarn workspace user-service dev\"  \"yarn workspace product-service dev\"  \"yarn workspace auth-service dev\"",
+    "start:camformant-client": "yarn workspace camformant-client dev",
+    "start:dashboard": "concurrently \"yarn workspace ms-ui-components watch\" \"yarn workspace camformant-dashboard dev\"",
     "start:user-service": "yarn workspace user-service dev",
     "start:product-service": "yarn workspace product-service dev",
     "start:auth-service": "yarn workspace auth-service dev",
