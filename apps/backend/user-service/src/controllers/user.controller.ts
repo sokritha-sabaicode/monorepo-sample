@@ -19,6 +19,8 @@ import userJoiSchema from '@/src/schemas/user.schema';
 import { UsersPaginatedResponse, prettyObject, UserCreationRequestParams, UserProfileResponse, UserUpdateRequestParams, IUser } from "@sokritha-sabaicode/ms-libs";
 import { UserGetAllControllerParams } from "@/src/controllers/types/user-controller.type";
 import { Request as ExpressRequest } from 'express';
+import agenda from "@/src/utils/agenda";
+import { SCHEDULE_JOBS } from "@/src/jobs";
 
 
 @Route("v1/users")
@@ -42,7 +44,11 @@ export class UsersController extends Controller {
     @Body() requestBody: UserCreationRequestParams
   ): Promise<UserProfileResponse> {
     try {
+      // Create New User
       const response = await UserService.createNewUser(requestBody);
+
+      // Schedule Notification Job 1 Minute Later
+      await agenda.schedule('in 1 minutes', SCHEDULE_JOBS.NOTIFICATION_NEW_REGISTRATION, { userId: response._id })
 
       this.setStatus(201); // set return status 201
       return sendResponse<IUser>({ message: 'success', data: response })

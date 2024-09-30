@@ -32,6 +32,7 @@ const config: Config.InitialOptions = {
   moduleNameMapper: {
     '@/(.*)': ['<rootDir>/$1'],
   },
+  setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
 };
 
 export default config;

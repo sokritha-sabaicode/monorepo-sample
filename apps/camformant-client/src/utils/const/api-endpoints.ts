@@ -1,0 +1,20 @@
+export const API_ENDPOINTS = {
+  // AUTH SERVICE
+  SIGN_UP: `${process.env.NEXT_PUBLIC_AUTH_SERVICE_URL}/signup`,
+  VERIFY: `${process.env.NEXT_PUBLIC_AUTH_SERVICE_URL}/verify`,
+  SIGN_IN: `${process.env.NEXT_PUBLIC_AUTH_SERVICE_URL}/login`,
+  SIGN_OUT: `${process.env.NEXT_PUBLIC_AUTH_SERVICE_URL}/signout`,
+  REFRESH: `${process.env.NEXT_PUBLIC_AUTH_SERVICE_URL}/refresh-token`,
+  PROFILE: `${process.env.NEXT_PUBLIC_AUTH_SERVICE_URL}/me`,
+  SIGN_IN_WITH_GOOGLE: `${process.env.NEXT_PUBLIC_AUTH_SERVICE_URL}/google`,
+  // USER SERVICE
+  USER_PROFILE: `${process.env.NEXT_PUBLIC_USER_SERVICE_URL}/me`,
+  USER_PROFILE_UPDATE: `${process.env.NEXT_PUBLIC_USER_SERVICE_URL}/photo`,
+  // PUSH NOTIFICATION SERVICE
+  SUBSCRIBE: `${process.env.NEXT_PUBLIC_PUSH_NOTIFICATION_SERVICE_URL}/subscribe`,
+}
+
+export const API_ENDPOINTS_SERVER = {
+  // USER SERVICE
+  USER_PROFILE: `/${process.env.NEXT_PUBLIC_USER_SERVICE_URL}/me`,
+}

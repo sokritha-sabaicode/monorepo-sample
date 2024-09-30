@@ -1,0 +1,65 @@
+{
+  "data": [
+    {
+      "id": 1,
+      "title": "Insurance Advisor",
+      "image":"./images/logo.png",
+      "description": "Job insurance in Phnom Penh",
+      "jobActive": "5 jobOpening",
+      "salary": "300$-500$",
+      "date": ""
+    },
+    {
+      "id": 2,
+      "title": "Insurance Advisor",
+      "description": "Job insurance in Phnom Penh",
+      "jobActive": "5 jobOpening",
+      "salary": "300$-500$",
+      "date": ""
+    },
+    {
+      "id": 3,
+      "title": "Insurance Advisor",
+      "description": "Job insurance in Phnom Penh",
+      "jobActive": "5 jobOpening",
+      "salary": "300$-500$",
+      "date": ""
+    },
+    {
+      "id": 4,
+      "title": "Insurance Advisor",
+      "description": "Job insurance in Phnom Penh",
+      "jobActive": "5 jobOpening",
+      "salary": "300$-500$",
+      "date": ""
+    },
+    {
+      "id": 5,
+      "title": "Insurance Advisor",
+      "description": "Job insurance in Phnom Penh",
+      "jobActive": "5 jobOpening",
+      "salary": "300$-500$",
+      "date": ""
+    }
+  ],
+
+  "categories": [
+    { "text": "Remote" },
+    { "text": "Full-time" },
+    { "text": "Part-time" },
+    { "text": "Communication" },
+    { "text": "Language" }
+  ],
+
+  "categoryPosition": [
+    { "text": "All Position" },
+    { "text": "Backend Developer" },
+    { "text": "Frontend Developer" },
+    { "text": "UX/UI Designer" },
+    { "text": "DevOps Engineer" },
+    { "text": "QA Engineer" },
+    { "text": "Marketing Specialist" },
+    { "text": "Data Scientist" }
+  ]
+
+}

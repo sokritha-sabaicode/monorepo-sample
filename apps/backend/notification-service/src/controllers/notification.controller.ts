@@ -23,7 +23,7 @@ interface PushSubscriptionParams {
 
 interface SubscriptionNotificationResponse {
   message: string;
-  data: INotification;
+  data?: INotification;
 }
 
 
@@ -33,7 +33,6 @@ export class NotificationsController extends Controller {
   @Post('/subscribe')
   public async subscribe(@Request() request: ExpressRequest, @Body() body: PushSubscriptionParams): Promise<SubscriptionNotificationResponse> {
     try {
-      console.log('body', body)
       const userId = request.cookies['user_id']
 
       const newSubscription = await NotificationService.subscribe({ userId, ...body });
@@ -56,6 +55,7 @@ export class NotificationsController extends Controller {
     try {
       const userId = request.cookies['user_id']
 
+      console.log('Push Notification is trigger', userId)
       await NotificationService.sendNotification(userId, body);
     } catch (error) {
       throw error;
