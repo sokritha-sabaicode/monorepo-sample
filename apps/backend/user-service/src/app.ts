@@ -1,3 +1,4 @@
+// MUST ADD THIS SENTRY ABOVE ALL OTHER MODULES
 import '@/src/utils/sentry'
 
 import express from 'express';
