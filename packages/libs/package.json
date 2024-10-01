@@ -1,5 +1,5 @@
 {
-  "name": "@sokritha-sabaicode/ms-libss",
+  "name": "@sokritha-sabaicode/ms-libs",
   "version": "0.0.12",
   "main": "./src/index.js",
   "types": "./src/index.d.ts",
