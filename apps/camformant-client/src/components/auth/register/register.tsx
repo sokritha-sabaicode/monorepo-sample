@@ -9,14 +9,7 @@ import { useNotification } from "@/hooks/user-notification";
 import { isAPIErrorResponse } from "@/utils/types/common";
 import { ContactSocialMedia } from "@/components/auth/contact-social-media/contact-social-media";
 import { FormFieldRegister } from "@/components/auth/form/form-field-register";
-import { UserSchema } from "@/schema/register";
-
-type RegisterProps = {
-  sur_name: string;
-  last_name: string;
-  contact: string;   // Single field for email or phone number
-  password: string;
-};
+import { RegisterProps, UserSchema } from "@/schema/register";
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -32,11 +25,7 @@ export const Register: React.FC = () => {
     resolver: zodResolver(UserSchema), // Apply the zodResolver
   });
 
-  console.log('errors', errors);
-
-
   const onSubmit = async (data: RegisterProps) => {
-    console.log('data', data)
     let contactMethod = "";
     if (emailRegex.test(data.contact)) {
       contactMethod = "email"
@@ -45,7 +34,6 @@ export const Register: React.FC = () => {
     }
 
     try {
-      console.log('data', data)
       await signup({ ...data, [contactMethod]: data.contact })
     } catch (error) {
       if (isAPIErrorResponse(error)) {

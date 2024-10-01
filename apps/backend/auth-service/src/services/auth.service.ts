@@ -26,9 +26,10 @@ class AuthService {
   async signup(body: SignupRequest): Promise<string> {
     const existingUser = await this.getUserByEmail((body.email || body.phone_number) as string);
     if (existingUser) {
-      throw new ResourceConflictError(`This email is already registered with Google. Please use Google login to access your account.`);
+      throw new ResourceConflictError(`An account with this email already exists.`);
     }
 
+    // FORMAT: REQUEST BODY TO {NAME, PHONE_NUMBER || EMAIL, PASSWORD, ROLE}
     const inputBody = {
       name: `${body.sur_name} ${body.last_name}`,
       ...Object.keys(body).filter(key => key !== 'sur_name' && key !== 'last_name').reduce<Record<string, any>>((obj, key) => {
