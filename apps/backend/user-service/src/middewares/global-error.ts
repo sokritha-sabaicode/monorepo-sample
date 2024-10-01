@@ -1,7 +1,11 @@
 import { APP_ERROR_MESSAGE, ApplicationError, HTTP_STATUS_CODE, prettyObject } from "@sokritha-sabaicode/ms-libs";
 import { NextFunction, Request, Response } from "express";
+import * as Sentry from '@sentry/node';
 
 export function globalErrorHandler(error: unknown, _req: Request, res: Response, _next: NextFunction) {
+  // Log the error with Sentry
+  Sentry.captureException(error);
+
   // Handle Error
   if (error instanceof ApplicationError) {
     const status = error.status;

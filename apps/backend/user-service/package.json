@@ -17,6 +17,8 @@
     "db:dump": "ts-node src/database/scripts/dump-data"
   },
   "dependencies": {
+    "@sentry/node": "^8.32.0",
+    "@sentry/profiling-node": "^8.32.0",
     "@sokritha-sabaicode/ms-libs": "0.0.11",
     "agenda": "^5.0.0",
     "axios": "^1.7.7",

@@ -9,7 +9,7 @@ esbuild.build({
   platform: 'node',
   target: 'node20',  // Target depends on your environment
   outdir: 'build',
-  external: ['express'],  // Specify Node.js packages here
+  external: ['express', '@sentry/*',],  // Specify Node.js packages here
   loader: {
     '.ts': 'ts',
   },
