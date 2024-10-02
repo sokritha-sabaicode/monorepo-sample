@@ -5,7 +5,13 @@ export interface APIResponse<T = undefined> {
 
 export interface APIErrorResponse<T = undefined> {
   message: string;
-  error?: T
+  status: number;
+  response: {
+    data: {
+      message: string;
+      error?: T
+    }
+  }
 }
 
 export function isAPIErrorResponse<T>(error: any): error is APIErrorResponse<T> {

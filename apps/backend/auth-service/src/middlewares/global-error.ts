@@ -1,6 +1,5 @@
-import { APP_ERROR_MESSAGE, ApplicationError, HTTP_STATUS_CODE, prettyObject } from "@sokritha-sabaicode/ms-libs";
+import { ApplicationError, HTTP_STATUS_CODE, prettyObject } from "@sokritha-sabaicode/ms-libs";
 import { NextFunction, Request, Response } from "express";
-
 
 
 export function globalErrorHandler(error: unknown, _req: Request, res: Response, _next: NextFunction) {
@@ -17,5 +16,5 @@ export function globalErrorHandler(error: unknown, _req: Request, res: Response,
 
   // Unhandle Error
   console.error(`$AuthService - globalErrorHandler() method unexpected error: `, prettyObject(error as {}))
-  res.status(HTTP_STATUS_CODE.SERVER_ERROR).json({ message: APP_ERROR_MESSAGE.serverError })
+  res.status(HTTP_STATUS_CODE.SERVER_ERROR).json({ message: 'Something went wrong!' })
 }

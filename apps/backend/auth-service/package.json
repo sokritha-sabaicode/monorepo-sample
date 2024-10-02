@@ -17,7 +17,7 @@
   },
   "dependencies": {
     "@aws-sdk/client-cognito-identity-provider": "^3.620.0",
-    "@sokritha-sabaicode/ms-libs": "0.0.4",
+    "@sokritha-sabaicode/ms-libs": "0.0.12",
     "axios": "^1.7.2",
     "cookie-parser": "^1.4.6",
     "dotenv": "^16.4.5",

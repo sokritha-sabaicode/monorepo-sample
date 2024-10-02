@@ -40,6 +40,11 @@ const nextConfig = {
         hostname: 'cam-formant.s3.amazonaws.com',
         pathname: '/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'postimg.cc',
+        pathname: '/**',
+      },
     ],
   },
 };

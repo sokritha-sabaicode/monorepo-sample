@@ -5,7 +5,6 @@ export const API_ENDPOINTS = {
   SIGN_IN: `${process.env.NEXT_PUBLIC_AUTH_SERVICE_URL}/login`,
   SIGN_OUT: `${process.env.NEXT_PUBLIC_AUTH_SERVICE_URL}/signout`,
   REFRESH: `${process.env.NEXT_PUBLIC_AUTH_SERVICE_URL}/refresh-token`,
-  PROFILE: `${process.env.NEXT_PUBLIC_AUTH_SERVICE_URL}/me`,
   SIGN_IN_WITH_GOOGLE: `${process.env.NEXT_PUBLIC_AUTH_SERVICE_URL}/google`,
   // USER SERVICE
   USER_PROFILE: `${process.env.NEXT_PUBLIC_USER_SERVICE_URL}/me`,

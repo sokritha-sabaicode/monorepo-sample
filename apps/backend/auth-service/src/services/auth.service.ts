@@ -3,7 +3,7 @@ import { AdminAddUserToGroupCommand, AdminGetUserCommand, AdminLinkProviderForUs
 import { GoogleCallbackRequest, LoginRequest, SignupRequest, VerifyUserRequest } from "@/src/controllers/types/auth-request.type";
 import crypto from 'crypto';
 import axios from "axios";
-import { APP_ERROR_MESSAGE, ApplicationError, AuthenticationError, InternalServerError, InvalidInputError, ResourceConflictError } from "@sokritha-sabaicode/ms-libs";
+import { AUTH_MESSAGES, ApplicationError, AuthenticationError, InternalServerError, InvalidInputError, ResourceConflictError } from "@sokritha-sabaicode/ms-libs";
 import { jwtDecode } from "jwt-decode";
 import { CognitoToken } from "@/src/services/types/auth-service.type";
 
@@ -26,10 +26,9 @@ class AuthService {
   async signup(body: SignupRequest): Promise<string> {
     const existingUser = await this.getUserByEmail((body.email || body.phone_number) as string);
     if (existingUser) {
-      throw new ResourceConflictError(`An account with this email already exists.`);
+      throw new ResourceConflictError(AUTH_MESSAGES.AUTHENTICATION.ACCOUNT_ALREADY_EXISTS);
     }
 
-    // FORMAT: REQUEST BODY TO {NAME, PHONE_NUMBER || EMAIL, PASSWORD, ROLE}
     const inputBody = {
       name: `${body.sur_name} ${body.last_name}`,
       ...Object.keys(body).filter(key => key !== 'sur_name' && key !== 'last_name').reduce<Record<string, any>>((obj, key) => {
@@ -72,18 +71,16 @@ class AuthService {
       // Duplicate Account
       if (typeof error === 'object' && error !== null && 'name' in error) {
         if ((error as { name: string }).name === 'UsernameExistsException') {
-          throw new ResourceConflictError(APP_ERROR_MESSAGE.existedAccount);
+          throw new ResourceConflictError(AUTH_MESSAGES.AUTHENTICATION.ACCOUNT_ALREADY_EXISTS);
         }
       }
-
-
 
       throw new Error(`Error signing up user: ${error}`)
     }
   }
 
   async verifyUser(body: VerifyUserRequest): Promise<void> {
-    const username = (body.email || body.phone_number) as string;
+    const username = (body.email || body.phone_number?.replace(/^\+/, '')) as string;
 
     const params = {
       ClientId: configs.awsCognitoClientId,
@@ -99,7 +96,6 @@ class AuthService {
 
       // Retrieve the user to get the `role` attribute
       const userInfo = await this.getUserByUsername(username);
-      console.log('UserInfo: ', userInfo);
       const role = userInfo.UserAttributes?.find(attr => attr.Name === 'custom:role')?.Value || 'user';
 
       // Add the user to the group based on the `role` attribute
@@ -121,7 +117,7 @@ class AuthService {
       // Mismatch Code
       if (typeof error === 'object' && error !== null && 'name' in error) {
         if ((error as { name: string }).name === 'CodeMismatchException') {
-          throw new InvalidInputError({ message: APP_ERROR_MESSAGE.verifyFail });
+          throw new InvalidInputError({ message: AUTH_MESSAGES.MFA.VERIFICATION_FAILED });
         }
       }
 
@@ -164,14 +160,14 @@ class AuthService {
       // Mismatch Password | Email or Phone Number
       if (typeof error === 'object' && error !== null && 'name' in error) {
         if ((error as { name: string }).name === 'NotAuthorizedException') {
-          throw new InvalidInputError({ message: APP_ERROR_MESSAGE.invalidCredentials });
+          throw new InvalidInputError({ message: AUTH_MESSAGES.AUTHENTICATION.ACCOUNT_NOT_FOUND });
         }
       }
 
       // Cognito Service Error
       if (typeof error === 'object' && error !== null && 'name' in error) {
         if ((error as { name: string }).name === 'InternalErrorException') {
-          throw new InternalServerError({ message: APP_ERROR_MESSAGE.serverError });
+          throw new InternalServerError({ message: AUTH_MESSAGES.ERRORS.TECHNICAL_ISSUE });
         }
       }
 
