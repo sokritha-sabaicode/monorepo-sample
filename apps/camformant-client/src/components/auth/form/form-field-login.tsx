@@ -1,4 +1,4 @@
-import { FieldLoginProps } from "@/app/api/login";
+import { FieldLoginProps } from "@/schema/login";
 
 export const FormFieldLogin: React.FC<FieldLoginProps> = ({
   type,

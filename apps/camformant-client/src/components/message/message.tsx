@@ -5,9 +5,9 @@ import { useParams } from "next/navigation";
 import axios from "axios";
 import { IoMdSend } from "react-icons/io";
 import Background from "../background/background";
-import Back1 from "../back1/back1";
 import { formatDistanceToNow } from "date-fns";
 import socket from "@/utils/socketClient"; // Import the socket instance
+import BackButton from "@/components/back/BackButton";
 
 interface Company {
   name: string;
@@ -140,9 +140,9 @@ const Message = () => {
             <div key={job._id} className=" absolute mt-[-220px] ml-36 gap-8 flex items-center justify-center">
               {/* Back1 displayed in front */}
               <div className=" -ml-32 z-10">
-                <Back1 />
+                <BackButton />
               </div>
-              
+
               {/* Company profile image */}
               {job.companyId.profile && (
                 <div className="relative w-20 h-20 overflow-hidden rounded-full -ml-5">
@@ -153,8 +153,8 @@ const Message = () => {
                   />
                 </div>
               )}
-             
-              
+
+
               {/* Company name and online status */}
               <div className="-ml-5 text-center flex flex-col">
                 <p className="font-mono font-bold text-xl xl:text-3xl text-white">
@@ -167,7 +167,7 @@ const Message = () => {
             </div>
           ))}
         </div>
-         {/*body section: render message*/}
+        {/*body section: render message*/}
         <div className="-mt-28" >
           <div
             className="overflow-auto w-screen h-[70vh] p-4 rounded-md xl:h-[60vh]"
@@ -211,7 +211,7 @@ const Message = () => {
         </div>
       </Background>
     </div>
-    
+
   );
 };
 
