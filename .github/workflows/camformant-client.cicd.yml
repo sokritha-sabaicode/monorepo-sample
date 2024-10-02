@@ -26,7 +26,7 @@ jobs:
           node-version: "20"
 
       - name: Install dependencies for camformant-client
-        run: yarn workspace camformant-client install --focus
+        run: yarn workspace camformant-client install --production --frozen-lockfile
         working-directory: "./"
 
       - name: Build the Next.js project
@@ -48,7 +48,7 @@ jobs:
           node-version: "20"
 
       - name: Install dependencies for camformant-client
-        run: yarn workspace camformant-client install --focus
+        run: yarn workspace camformant-client install --production --frozen-lockfile
         working-directory: "./"
 
       - name: Set Environment Variables
