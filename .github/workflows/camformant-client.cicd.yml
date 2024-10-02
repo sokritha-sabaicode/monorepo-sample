@@ -1,4 +1,4 @@
-name: CI/CD Pipeline for Cam-formant Client
+name: CI/CD Pipeline for Camformant Client
 
 on:
   push:
@@ -25,14 +25,13 @@ jobs:
         with:
           node-version: "20"
 
-      - name: Install dependencies
-        run: yarn install
-        working-directory: "apps/camformant-client"
+      - name: Install dependencies for camformant-client
+        run: yarn workspace camformant-client install --focus
+        working-directory: "./"
 
       - name: Build the Next.js project
         run: yarn build
         working-directory: "apps/camformant-client"
-        
 
   deploy:
     runs-on: ubuntu-latest
@@ -48,10 +47,9 @@ jobs:
         with:
           node-version: "20"
 
-      - name: Install dependencies
-        run: yarn install
-        working-directory: "apps/camformant-client"
-
+      - name: Install dependencies for camformant-client
+        run: yarn workspace camformant-client install --focus
+        working-directory: "./"
 
       - name: Set Environment Variables
         run: |
