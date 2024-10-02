@@ -12,10 +12,6 @@ on:
     paths:
       - "apps/camformant-client/**"
 
-defaults:
-  run:
-    working-directory: "apps/camformant-client"
-
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -31,9 +27,12 @@ jobs:
 
       - name: Install dependencies
         run: yarn install
+        working-directory: "apps/camformant-client"
 
       - name: Build the Next.js project
         run: yarn build
+        working-directory: "apps/camformant-client"
+        
 
   deploy:
     runs-on: ubuntu-latest
@@ -51,6 +50,8 @@ jobs:
 
       - name: Install dependencies
         run: yarn install
+        working-directory: "apps/camformant-client"
+
 
       - name: Set Environment Variables
         run: |
@@ -69,3 +70,4 @@ jobs:
 
       - name: Deploy to AWS with SST
         run: npx sst deploy --stage prod
+        working-directory: "apps/camformant-client"
