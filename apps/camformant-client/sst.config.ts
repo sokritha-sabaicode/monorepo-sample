@@ -10,7 +10,15 @@ export default {
   },
   stacks(app) {
     app.stack(function Site({ stack }) {
-      const site = new NextjsSite(stack, "site");
+      const site = new NextjsSite(stack, "site", {
+        environment: {
+          NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || '',
+          NEXT_PUBLIC_AUTH_SERVICE_URL: process.env.NEXT_PUBLIC_AUTH_SERVICE_URL || '',
+          NEXT_PUBLIC_USER_SERVICE_URL: process.env.NEXT_PUBLIC_USER_SERVICE_URL || '',
+          NEXT_PUBLIC_PUSH_NOTIFICATION_SERVICE_URL: process.env.NEXT_PUBLIC_PUSH_NOTIFICATION_SERVICE_URL || '',
+          NEXT_PUBLIC_VAPID_PUBLIC_KEY: process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY || '',
+        }
+      });
 
       stack.addOutputs({
         SiteUrl: site.url,

@@ -12,6 +12,10 @@ on:
     paths:
       - "apps/camformant-client/**"
 
+defaults:
+  run:
+    working-directory: "apps/camformant-client"
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -25,13 +29,16 @@ jobs:
         with:
           node-version: "20"
 
+      - name: Configure npm to use GitHub Packages
+        run: |
+          echo "@sokritha-sabaicode:registry=https://npm.pkg.github.com/" > ~/.npmrc
+          echo "//npm.pkg.github.com/:_authToken=${{ secrets.NPM_TOKEN }}" >> ~/.npmrc
+
       - name: Install dependencies for camformant-client
-        run: yarn workspace camformant-client install --production --frozen-lockfile
-        working-directory: "./"
+        run: yarn install --production
 
       - name: Build the Next.js project
         run: yarn build
-        working-directory: "apps/camformant-client"
 
   deploy:
     runs-on: ubuntu-latest
@@ -47,9 +54,13 @@ jobs:
         with:
           node-version: "20"
 
+      - name: Configure npm to use GitHub Packages
+        run: |
+          echo "@sokritha-sabaicode:registry=https://npm.pkg.github.com/" > ~/.npmrc
+          echo "//npm.pkg.github.com/:_authToken=${{ secrets.NPM_TOKEN }}" >> ~/.npmrc
+
       - name: Install dependencies for camformant-client
-        run: yarn workspace camformant-client install --production --frozen-lockfile
-        working-directory: "./"
+        run: yarn install --production
 
       - name: Set Environment Variables
         run: |
