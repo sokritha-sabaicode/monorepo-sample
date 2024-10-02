@@ -4,8 +4,8 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import io from "socket.io-client";
 import Background from "@/components/background/background";
-import Back1 from "@/components/back1/back1";
 import SkeletonCard from "@/components/message/SkeletonCard"; // Import SkeletonCard
+import BackButton from "@/components/back/BackButton";
 
 interface Company {
   _id: string;
@@ -85,7 +85,7 @@ const Chat = () => {
         <div className="absolute inset-0 flex flex-col mt-28 bg-white rounded-3xl xl:mt-32">
           <div className="flex-1 overflow-auto p-4">
             <p className="absolute mt-[-80px] text-white font-mono text-3xl font-bold">
-              <Back1 /> Contact
+              <BackButton /> Contact
             </p>
             {isLoading ? (
               // Render 5 skeleton cards while loading

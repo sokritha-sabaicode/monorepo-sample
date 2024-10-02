@@ -1,4 +1,4 @@
-import { FieldRegisterProps } from "@/app/api/register";
+import { FieldRegisterProps } from "@/schema/register";
 
 export const FormFieldRegister: React.FC<FieldRegisterProps> = ({
   type,

@@ -32,7 +32,7 @@ const Page: React.FC = () => {
 
     } catch (error) {
       if (isAPIErrorResponse(error)) {
-        addNotification(error.message, 'error');
+        addNotification(error.response.data.message, 'error');
       } else {
         addNotification(error as string, 'error');
       }

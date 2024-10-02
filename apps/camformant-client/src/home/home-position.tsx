@@ -3,7 +3,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { Card } from "../components/card/card";
-import { categoryPosition } from "@/data/data.json";
+import categoryPosition from "@/data/data.json";
 import { Heading } from "@/components/heading/heading";
 import { CategoryPosition } from "@/components/category-position/category-position";
 
@@ -89,7 +89,7 @@ export const HomePosition: React.FC = () => {
       <Heading title="Positions" subTitle="You can find more positions here" />
 
       <div className="mb-8 mt-4 flex justify-start items-center gap-5 overflow-x-auto p-1">
-        {categoryPosition.map((x) => (
+        {categoryPosition.categoryPosition.map((x) => (
           <div key={x.text}>
             <CategoryPosition
               text={x.text}

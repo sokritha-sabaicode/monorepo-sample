@@ -8,8 +8,8 @@ const meta: Meta<typeof ButtonSigOut> = {
   component: ButtonSigOut,
   tags: ["autodocs"],
   argTypes: {
-    logout: { control: "text" },
-    Logout: { action: "Logout" },
+    isLogout: { control: "text" },
+    onHandleLogout: { action: "Logout" },
   },
 };
 
@@ -19,14 +19,14 @@ type Story = StoryObj<typeof ButtonSigOut>;
 
 export const Default: Story = {
   args: {
-    logout: "Sign Out",
-    Logout: action("Logout clicked"),
+    isLogout: "Sign Out",
+    onHandleLogout: action("Logout clicked"),
   },
 };
 
 export const RegisterAccount: Story = {
   args: {
-    logout: null,
-    Logout: action("Logout clicked"),
+    isLogout: null,
+    onHandleLogout: action("Logout clicked"),
   },
 };
