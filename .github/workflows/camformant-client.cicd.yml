@@ -35,7 +35,7 @@ jobs:
           echo "//npm.pkg.github.com/:_authToken=${{ secrets.NPM_TOKEN }}" >> ~/.npmrc
 
       - name: Install dependencies for camformant-client
-        run: yarn install --production
+        run: yarn install
 
       - name: Build the Next.js project
         run: yarn build
