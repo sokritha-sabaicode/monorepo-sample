@@ -1,5 +1,5 @@
 {
-  "name": "product-service",
+  "name": "job-service",
   "version": "1.0.0",
   "main": "src/server.ts",
   "license": "MIT",
@@ -16,7 +16,7 @@
     "db:dump": "ts-node src/database/scripts/dump-data"
   },
   "dependencies": {
-    "@sokritha-sabaicode/ms-libs": "0.0.11",
+    "@sokritha-sabaicode/ms-libs": "0.0.12",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "fs-extra": "^11.2.0",
