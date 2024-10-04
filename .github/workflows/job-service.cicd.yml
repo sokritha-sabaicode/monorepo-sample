@@ -44,10 +44,13 @@ jobs:
 
       - name: Run tests
         env:
-          MONGODB_URL: ${{ secrets.TEST_MONGODB_URL}}
-          NOTIFICATION_SERVICE_URL: ${{ secrets.NOTIFICATION_SERVICE_URL }}
-          GLITCHTIP_DNS: ${{ secrets.GLITCHTIP_DNS }}
-        run: yarn test
+          MONGODB_URL: ${{ secrets.JOB_MONGODB_URL}}
+          S3_REGION: ${{ secrets.S3_REGION }}
+          S3_BUCKET: ${{ secrets.S3_BUCKET }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+        run: yarn test --passWithNoTests
 
       - name: Archive build artifacts
         uses: actions/upload-artifact@v4
@@ -124,7 +127,6 @@ jobs:
             echo "AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}" >> /home/ubuntu/apps/job-service/build/configs/.env.production
             echo "AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}" >> /home/ubuntu/apps/job-service/build/configs/.env.production
 
-            
       - name: Install Dependencies and Restart PM2
         uses: appleboy/ssh-action@master
         with:

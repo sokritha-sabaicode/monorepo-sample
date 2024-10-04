@@ -6,7 +6,7 @@ async function run() {
   try {
     await connectToMongoDB()
     app.listen(configs.port, () => {
-      console.log(`Job Server is running port ${configs.port}`);
+      console.log(`Job Service is running on port ${configs.port}`);
     })
   } catch (error) {
     console.error(error);
