@@ -20,9 +20,13 @@ export const uploadFile = async (
     ContentType: file.mimetype,
   };
 
-  const command = new PutObjectCommand(params);
-  await s3.send(command);
-  return `https://${configs.s3Bucket}.s3.amazonaws.com/${params.Key}`;
+  try {
+    const command = new PutObjectCommand(params);
+    await s3.send(command);
+    return `https://${configs.s3Bucket}.s3.amazonaws.com/${params.Key}`;
+  } catch (error) {
+    throw error;
+  }
 };
 
 export const deleteFile = async (fileUrl: string): Promise<void> => {
@@ -33,6 +37,11 @@ export const deleteFile = async (fileUrl: string): Promise<void> => {
     Key: key,
   };
 
-  const command = new DeleteObjectCommand(params);
-  await s3.send(command);
+  try {
+    const command = new DeleteObjectCommand(params);
+    await s3.send(command);
+  } catch (error) {
+    throw error
+  }
+
 };
