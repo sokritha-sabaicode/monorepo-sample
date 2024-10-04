@@ -43,9 +43,9 @@ const proxyConfigs: ProxyConfig = {
       }
     }
   },
-  [ROUTE_PATHS.PRODUCT_SERVICE.path]: {
-    target: ROUTE_PATHS.PRODUCT_SERVICE.target,
-    pathRewrite: (path, _req) => `${ROUTE_PATHS.PRODUCT_SERVICE.path}${path}`,
+  [ROUTE_PATHS.JOB_SERVICE.path]: {
+    target: ROUTE_PATHS.JOB_SERVICE.target,
+    pathRewrite: (path, _req) => `${ROUTE_PATHS.JOB_SERVICE.path}${path}`,
     on: {
       proxyReq: (proxyReq: ClientRequest, _req: IncomingMessage, _res: Response) => {
 

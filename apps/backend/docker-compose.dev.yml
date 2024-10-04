@@ -13,7 +13,7 @@ services:
       - DOCKER_ENV=true
       - AUTH_SERVICE_URL=http://auth:4001
       - USER_SERVICE_URL=http://user:4002
-      - PRODUCT_SERVICE_URL=http://product:4003
+      - JOB_SERVICE_URL=http://job:4003
       - NOTIFICATION_SERVICE_URL=http://notification:4009
     volumes:
       - ./api-gateway/src:/app/src # HOT RELOADING
@@ -45,19 +45,19 @@ services:
       - NOTIFICATION_SERVICE_URL=http://notification:4009
     volumes:
       - ./user-service/src:/app/src # HOT RELOADING
-  product:
-    container_name: product_service_container
+  job:
+    container_name: job_service_container
     build:
-      context: ./product-service
+      context: ./job-service
       dockerfile: Dockerfile.dev
     restart: always
     ports:
       - 4003:4003
-    env_file: ./product-service/src/configs/.env.development
+    env_file: ./job-service/src/configs/.env.development
     environment:
       - DOCKER_ENV=true
     volumes:
-      - ./product-service/src:/app/src # HOT RELOADING
+      - ./job-service/src:/app/src # HOT RELOADING
   notification:
     container_name: notification_service_container
     build:

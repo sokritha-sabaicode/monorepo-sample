@@ -1,13 +1,13 @@
 import { Header } from "@/components/header/header";
-import { HomeNewReleases } from "@/home/home-new-release";
-import { HomePosition } from "@/home/home-position";
+import { PositionPost } from "@/components/posts/position-post";
+import { RecommendationPost } from "@/components/posts/recommendation-post";
 
 export default function Home() {
   return (
     <>
       <Header />
-      <HomeNewReleases />
-      <HomePosition />
+      <RecommendationPost/>
+      <PositionPost/>
     </>
   );
 }

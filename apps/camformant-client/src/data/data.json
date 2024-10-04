@@ -3,7 +3,7 @@
     {
       "id": 1,
       "title": "Insurance Advisor",
-      "image":"./images/logo.png",
+      "image": "./images/logo.png",
       "description": "Job insurance in Phnom Penh",
       "jobActive": "5 jobOpening",
       "salary": "300$-500$",
@@ -42,24 +42,50 @@
       "date": ""
     }
   ],
-
   "categories": [
-    { "text": "Remote" },
-    { "text": "Full-time" },
-    { "text": "Part-time" },
-    { "text": "Communication" },
-    { "text": "Language" }
+    {
+      "text": "Remote"
+    },
+    {
+      "text": "Full-time"
+    },
+    {
+      "text": "Part-time"
+    },
+    {
+      "text": "Communication"
+    },
+    {
+      "text": "Language"
+    }
   ],
-
   "categoryPosition": [
-    { "text": "All Position" },
-    { "text": "Backend Developer" },
-    { "text": "Frontend Developer" },
-    { "text": "UX/UI Designer" },
-    { "text": "DevOps Engineer" },
-    { "text": "QA Engineer" },
-    { "text": "Marketing Specialist" },
-    { "text": "Data Scientist" }
+    {
+      "text": "All"
+    },
+    {
+      "text": "Development"
+    },
+    {
+      "text": "Backend Developer"
+    },
+    {
+      "text": "Frontend Developer"
+    },
+    {
+      "text": "UX/UI Designer"
+    },
+    {
+      "text": "DevOps Engineer"
+    },
+    {
+      "text": "QA Engineer"
+    },
+    {
+      "text": "Marketing Specialist"
+    },
+    {
+      "text": "Data Scientist"
+    }
   ]
-
 }

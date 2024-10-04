@@ -114,42 +114,55 @@ const authorizeRole = (req: Request, _res: Response, next: NextFunction) => {
 };
 
 
-// TODO: implement the findRouteConfig function
-// STEP 1: Check if the requested path starts with the current route's path
-// Step 2: If there are no nested routes, return the current routeConfig
-// Step 3: Calculate the remaining path after the base path
-// Step 4: Check if any nested routes match the remaining path
-// Step 5: If a nested route matches, recursively call findRouteConfig on the nested route
-// Step 6: If no nested route matches, return null
-const findRouteConfig = (path: string, routeConfigs: RouteConfig): RouteConfig | null => {
-  // STEP 1
-  if (!path.startsWith(routeConfigs.path)) {
-    return null; // If the path does not start with routeConfig.path, return null (no match)
+const findRouteConfig = (
+  path: string,
+  routeConfigs: RouteConfig
+): RouteConfig | null => {
+  // Normalize path and ensure there's a leading slash
+  const trimmedPath = path.replace(/\/+$/, ""); // Remove trailing slash, if any
+
+  // STEP 1: Split both the path and routeConfig path into segments
+  const requestSegments = trimmedPath.split("/").filter(Boolean); // Split and remove empty segments
+  const routeSegments = routeConfigs.path.split("/").filter(Boolean);
+
+  // STEP 2: Check if the number of segments match
+  if (routeSegments.length > requestSegments.length) {
+    return null; // Path is too short to match this route
   }
 
-  // STEP 2
+  // STEP 3: Match route segments (considering dynamic segments like :productId)
+  for (let i = 0; i < routeSegments.length; i++) {
+    const routeSegment = routeSegments[i];
+    const requestSegment = requestSegments[i];
+
+    if (routeSegment.startsWith(":")) {
+      // Dynamic segment, can be anything, so it matches
+      continue;
+    }
+
+    if (routeSegment !== requestSegment) {
+      return null; // Static segment mismatch
+    }
+  }
+
+  // STEP 4: If no nested routes, return the current routeConfig
   if (!routeConfigs.nestedRoutes) {
     return routeConfigs;
   }
 
-  // STEP 3
-  const remainingPath = path.slice(routeConfigs.path.length);
+  // STEP 5: Find the remaining path after matching the base path
+  const remainingPath = `/${requestSegments.slice(routeSegments.length).join("/")}`;
 
-  // STEP 4
-  for (const nestedRouteKey in routeConfigs.nestedRoutes) {
-    const nestedRouteConfig = routeConfigs.nestedRoutes[nestedRouteKey];
-
-    // STEP 5
-    if (remainingPath.startsWith(nestedRouteConfig.path)) {
-      const nestedResult = findRouteConfig(remainingPath, nestedRouteConfig);
-      if (nestedResult) {
-        return nestedResult;
-      }
+  // STEP 6: Check if any nested routes match the remaining path
+  for (const nestedRouteConfig of routeConfigs.nestedRoutes) {
+    const nestedResult = findRouteConfig(remainingPath, nestedRouteConfig);
+    if (nestedResult) {
+      return nestedResult;
     }
   }
 
-  // STEP 6
-  return null;
+  // If no nested route matches, return the current routeConfig
+  return routeConfigs;
 };
 
 // TODO: implement the routeConfigMiddleware function

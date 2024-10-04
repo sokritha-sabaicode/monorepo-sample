@@ -1,6 +1,5 @@
 import configs from "@/src/config"
 
-
 export interface RouteConfig {
   path: string;
   target?: string;
@@ -126,18 +125,25 @@ const ROUTE_PATHS: RoutesConfig = {
       }
     ]
   },
-  PRODUCT_SERVICE: {
-    path: "/v1/products",
-    target: configs.productServiceUrl,
+  JOB_SERVICE: {
+    path: "/v1/jobs",
+    target: configs.jobServiceUrl,
     methods: {
       GET: {
-        authRequired: true,
-        roles: ["admin"]
+        authRequired: false,
       }
     },
     nestedRoutes: [
       {
         path: "/health",
+        methods: {
+          GET: {
+            authRequired: false,
+          }
+        }
+      },
+      {
+        path: "/:id",
         methods: {
           GET: {
             authRequired: false,

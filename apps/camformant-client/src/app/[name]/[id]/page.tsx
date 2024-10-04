@@ -15,6 +15,8 @@ import ButtonApply from "@/components/card-detail/button-apply";
 import axios from "axios";
 import ErrorAlert from "@/components/alert/alert-error";
 import { BsPersonVcard } from "react-icons/bs";
+import { API_ENDPOINTS } from "@/utils/const/api-endpoints";
+import axiosInstance from "@/utils/axios";
 
 const Page: React.FC = () => {
   const params = useParams();
@@ -35,8 +37,8 @@ const Page: React.FC = () => {
   useEffect(() => {
     const fetchJob = async () => {
       try {
-        const response = await axios.get(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/v1/jobs/${id}`
+        const response = await axiosInstance.get(
+          `${API_ENDPOINTS.JOBS}/${id}`
         );
         if (response.status === 200 && response.data.data) {
           const job = response.data.data;

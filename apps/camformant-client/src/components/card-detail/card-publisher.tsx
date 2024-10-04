@@ -38,7 +38,7 @@ export const JobPublisher: React.FC<CardCompanyProps> = ({
               <p className="text-gray-400 pt-1">{bio}</p>
             </div>
             <div className="text-xs pb-3">
-              <h1>+855 {phone_number} </h1>
+              <h1>{phone_number} </h1>
               <p className="pt-1">{email}</p>
             </div>
           </div>

@@ -22,15 +22,15 @@ services:
     env_file: ./user-service/src/configs/.env.development
     environment:
       - DOCKER_ENV=true
-  product_app:
-    container_name: product_service_app
+  job_app:
+    container_name: job_service_app
     build:
-      context: ./product-service
+      context: ./job-service
       dockerfile: Dockerfile.local
     restart: always
     ports:
       - 4003:4003
-    env_file: ./product-service/src/configs/.env.development
+    env_file: ./job-service/src/configs/.env.development
     environment:
       - DOCKER_ENV=true
   
