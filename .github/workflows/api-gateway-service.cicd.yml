@@ -116,7 +116,7 @@ jobs:
             echo "CLIENT_URL=${{ secrets.CLIENT_URL }}" >> /home/ubuntu/apps/api-gateway/build/configs/.env.production
             echo "USER_SERVICE_URL=${{ secrets.USER_SERVICE_URL }}" >> /home/ubuntu/apps/api-gateway/build/configs/.env.production
             echo "AUTH_SERVICE_URL=${{ secrets.AUTH_SERVICE_URL }}" >> /home/ubuntu/apps/api-gateway/build/configs/.env.production
-            echo "PRODUCT_SERVICE_URL=${{ secrets.PRODUCT_SERVICE_URL }}" >> /home/ubuntu/apps/api-gateway/build/configs/.env.production
+            echo "JOB_SERVICE_URL=${{ secrets.JOB_SERVICE_URL }}" >> /home/ubuntu/apps/api-gateway/build/configs/.env.production
             echo "NOTIFICATION_SERVICE_URL=${{ secrets.NOTIFICATION_SERVICE_URL }}" >> /home/ubuntu/apps/api-gateway/build/configs/.env.production
             echo "AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}" >> /home/ubuntu/apps/api-gateway/build/configs/.env.production
             echo "AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}" >> /home/ubuntu/apps/api-gateway/build/configs/.env.production
