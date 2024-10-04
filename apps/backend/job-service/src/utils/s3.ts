@@ -10,11 +10,12 @@ export const s3 = new S3Client({
 });
 
 export const uploadFile = async (
-  file: Express.Multer.File
+  file: Express.Multer.File,
+  location?: string
 ): Promise<string> => {
   const params = {
     Bucket: configs.s3Bucket,
-    Key: `${Date.now()}-${file.originalname}`,
+    Key: location ? `${location}/${Date.now()}-${file.originalname}` : `${Date.now()}-${file.originalname}`,
     Body: file.buffer,
     ContentType: file.mimetype,
   };

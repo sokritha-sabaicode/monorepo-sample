@@ -1,4 +1,4 @@
-import {  JobGetAllRepoParams, JobParams, JobSortParams } from "@/src/controllers/types/job-controller.type";
+import { JobGetAllRepoParams, JobParams, JobSortParams } from "@/src/controllers/types/job-controller.type";
 import { CompanyModel } from "@/src/database/models/company.model";
 import { IJob, JobModel } from "@/src/database/models/job.model";
 import { NotFoundError, prettyObject } from "@sokritha-sabaicode/ms-libs";
@@ -8,13 +8,9 @@ import { SortOrder } from "mongoose";
 class JobRepository {
   public async createNewJob(newInfo: JobParams): Promise<IJob> {
     try {
-      const nweJob = await JobModel.create(newInfo);
+      const newJob = await JobModel.create(newInfo);
 
-      if (!nweJob) {
-        throw new NotFoundError();
-      }
-
-      return nweJob;
+      return newJob;
     } catch (error) {
       console.error(
         `JobRepository createNewJob() method error: `,
@@ -28,11 +24,10 @@ class JobRepository {
   public async getAllJobs(queries: JobGetAllRepoParams) {
     const {
       page = 1,
-      limit = 10,
-      filter = {},
-      sort = { createdAt: "desc", title: "desc" },
+      limit = 5,
+      filter = { position: "ALL" },
+      sort = { createdAt: "desc" },
       search = "",
-      category = "",
     } = queries;
 
     // Define a list of properties that should always be treated as arrays
@@ -41,6 +36,7 @@ class JobRepository {
       "schedule",
       "required_experience",
       "location",
+      "position"
     ];
 
     // Convert sort from {'field': 'desc'} to {'field': -1}
@@ -56,6 +52,7 @@ class JobRepository {
       },
       {} as Record<keyof JobSortParams, SortOrder>
     );
+
 
     // Build MongoDB filter object
     const buildFilter = (filter: Record<string, any>) => {
@@ -89,34 +86,43 @@ class JobRepository {
             mongoFilter[key] = filter[key];
           }
         } else if (arrayProperties.includes(key)) {
-          const trimmedArray = Array.isArray(filter[key])
-            ? filter[key].map((val: string) => val.trim())
-            : [filter[key].trim()];
-          mongoFilter[key] = { $in: trimmedArray };
-          // mongoFilter[key] = { $regex: `.*${filter[key]}.*`, $options: "i" };
+          if (key === "position") {
+            const positionValue = filter[key];
+            if (
+              typeof positionValue === "string" &&
+              positionValue.toUpperCase() !== "ALL"
+            ) {
+              // Use case-insensitive regex for partial matching
+              const regex = new RegExp(positionValue.trim(), "i");
+              mongoFilter[key] = { $regex: regex };
+            }
+            // If "ALL" is present, do not add to filter
+          } else {
+            // Handle other array properties normally
+            const trimmedArray = Array.isArray(filter[key])
+              ? filter[key].map((val: string) => val.trim())
+              : [filter[key].trim()];
+            mongoFilter[key] = { $in: trimmedArray };
+          }
         } else {
+          console.log('hello')
           mongoFilter[key] = filter[key];
         }
-      }
-
-      // Handle category filter using $in
-      if (category) {
-        const categoriesArray = category.split(",").map((cat) => cat.trim());
-        mongoFilter.category = { $in: categoriesArray };
       }
 
       return mongoFilter;
     };
 
+    console.log('buildFilter', buildFilter(filter))
     // Adding search functionality
     const searchFilter = search
       ? {
-          $or: [
-            { title: { $regex: search, $options: "i" } },
-            { position: { $regex: search, $options: "i" } },
-            { "companyId.name": { $regex: search, $options: "i" } },
-          ],
-        }
+        $or: [
+          { title: { $regex: search, $options: "i" } },
+          { position: { $regex: search, $options: "i" } },
+          { "companyId.name": { $regex: search, $options: "i" } },
+        ],
+      }
       : {};
 
     try {

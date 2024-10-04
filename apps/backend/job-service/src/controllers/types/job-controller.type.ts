@@ -1,11 +1,14 @@
 // ========================
 // Job Interface
+
+import { EmploymentSchedule, EmploymentType, WorkMode } from "@/src/database/models/job.model";
+
 // ========================
 export interface JobParams {
   companyId?: string;
   title?: string;
-  position?: string;
-  category?: string;
+  position?: string[];
+  workMode?: WorkMode[];
   location?: string;
   requirement?: string;
   description?: string;
@@ -13,8 +16,8 @@ export interface JobParams {
   min_salary?: number;
   max_salary?: number;
   job_opening?: number;
-  type?: string[];
-  schedule?: string[];
+  type?: EmploymentType[];
+  schedule?: EmploymentSchedule[];
   required_experience?: string[];
   benefit?: string[];
   deadline?: Date;
@@ -40,7 +43,6 @@ export interface JobGetAllControllerParams {
   filter?: string;
   sort?: string;
   search?: string;
-  category?: string;  // Add category field
 }
 
 export interface JobGetAllRepoParams {
@@ -49,5 +51,4 @@ export interface JobGetAllRepoParams {
   filter?: JobsFilterParams;
   sort?: JobSortParams;
   search?: string;
-  category?: string; 
 }

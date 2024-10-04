@@ -17,7 +17,7 @@ import {
   SuccessResponse,
 } from "tsoa";
 
-@Route("/api/v1/jobs")
+@Route("/v1/jobs")
 @Tags("Job")
 export class JobController extends Controller {
   @SuccessResponse("201", "Created")
@@ -37,7 +37,7 @@ export class JobController extends Controller {
   @Get("")
   public async getAllJobs(
     @Queries() queries: JobGetAllControllerParams
-  ): Promise<PaginationResponse<IJob>> {
+  ): Promise<APIResponse<PaginationResponse<IJob>>> {
     try {
       const response = await jobService.getAllJobs(queries);
 

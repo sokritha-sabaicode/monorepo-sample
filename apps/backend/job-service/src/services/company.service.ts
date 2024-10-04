@@ -1,6 +1,6 @@
 import { CompanyParams } from "@/src/controllers/types/company-controller.type";
 import { ICompany } from "@/src/database/models/company.model";
-import companyRepository from "@/src/database/repositiries/company.repository";
+import companyRepository from "@/src/database/repositories/company.repository";
 import { deleteFile, uploadFile } from "@/src/utils/s3";
 import { NotFoundError } from "@sokritha-sabaicode/ms-libs";
 
@@ -10,7 +10,7 @@ class CompanyService {
     profile: Express.Multer.File
   ): Promise<ICompany> {
     try {
-      const imageUrl = await uploadFile(profile);
+      const imageUrl = await uploadFile(profile, 'company-profile');
       const newCompany = await companyRepository.createCompany({
         ...data,
         profile: imageUrl,

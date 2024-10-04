@@ -32,12 +32,7 @@ const nextConfig = {
       },
       {
         protocol: 'https',
-        hostname: 'camfor.s3.amazonaws.com',
-        pathname: '/**',
-      },
-      {
-        protocol: 'https',
-        hostname: 'cam-formant.s3.amazonaws.com',
+        hostname: 'camformant-jobs.s3.amazonaws.com',
         pathname: '/**',
       },
       {

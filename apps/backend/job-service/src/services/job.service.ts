@@ -1,6 +1,6 @@
 import { JobGetAllControllerParams, JobParams } from "@/src/controllers/types/job-controller.type";
 import { IJob } from "@/src/database/models/job.model";
-import jobRepository from "@/src/database/repositiries/job.repository";
+import jobRepository from "@/src/database/repositories/job.repository";
 import { prettyObject } from "@sokritha-sabaicode/ms-libs";
 
 
@@ -20,15 +20,14 @@ class JobService {
 
   public async getAllJobs(queries: JobGetAllControllerParams) {
     try {
-      const { page, limit, filter, sort, search, category } = queries;
+      const { page, limit, filter, sort, search } = queries;
 
       const newQueries = {
         page,
         limit,
         filter: filter && JSON.parse(filter),
         sort: sort && JSON.parse(sort),
-        search,
-        category
+        search
       };
       const result = await jobRepository.getAllJobs(newQueries);
 

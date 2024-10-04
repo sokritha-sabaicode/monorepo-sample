@@ -4,15 +4,17 @@ import React, { useEffect, useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/pagination";
-import { Card } from "../components/card/card";
 import { Pagination } from "swiper/modules";
 import { Heading } from "@/components/heading/heading";
 import { Button } from "@/components/button/button";
 import { AiOutlineArrowRight } from "react-icons/ai";
 import axios from "axios";
 import Image from "next/image";
+import axiosInstance from "@/utils/axios";
+import { API_ENDPOINTS } from "@/utils/const/api-endpoints";
+import { Card } from "@/components/card/card";
 
-export const HomeNewReleases: React.FC = () => {
+export const RecommendationPost: React.FC = () => {
   const [jobData, setJobData] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -29,16 +31,8 @@ export const HomeNewReleases: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-       // Fetch job and favorite data when the component mounts or when `love` state changes
-        const config = {
-          headers: {
-            "Content-Type": "application/json",
-          },
-          withCredentials: true, // Make sure cookies are handled properly
-        };
-        
-        const jobResponse = await axios.get(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/v1/jobs`,
+        const jobResponse = await axiosInstance.get(
+          `${API_ENDPOINTS.JOBS}`,
           {
             params: {
               limit: 5,
@@ -46,19 +40,18 @@ export const HomeNewReleases: React.FC = () => {
             },
           }
         );
-
         const jobs = jobResponse.data.data.jobs;
         let favorites = [];
 
+        // TODO
+        // BUGS: FAVORITE FEATURE
         try {
           const favoritesResponse = await axios.get(
-            `${process.env.NEXT_PUBLIC_API_URL}/v1/user/favorites/`,
-            config
+            `${process.env.NEXT_PUBLIC_API_URL}/v1/user/favorites/`
           );
           favorites = favoritesResponse.data;
         } catch (favError) {
           console.error("Failed to fetch favorites data:", favError);
-          // Proceed without favorites
         }
 
         const updatedJobs = jobs.map((job: any) => {
