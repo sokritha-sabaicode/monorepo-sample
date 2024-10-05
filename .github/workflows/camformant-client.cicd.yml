@@ -64,12 +64,12 @@ jobs:
 
       - name: Set Environment Variables
         run: |
-          echo "NEXT_PUBLIC_API_URL=${{ secrets.NEXT_PUBLIC_API_URL }}" >> $GITHUB_ENV
-          echo "NEXT_PUBLIC_AUTH_ENDPOINT=${{ secrets.NEXT_PUBLIC_AUTH_ENDPOINT }}" >> $GITHUB_ENV
-          echo "NEXT_PUBLIC_USER_ENDPOINT=${{ secrets.NEXT_PUBLIC_USER_ENDPOINT }}" >> $GITHUB_ENV
-          echo "NEXT_PUBLIC_JOB_ENDPOINT=${{ secrets.NEXT_PUBLIC_JOB_ENDPOINT }}" >> $GITHUB_ENV
-          echo "NEXT_PUBLIC_PUSH_NOTIFICATION_ENDPOINT=${{ secrets.NEXT_PUBLIC_PUSH_NOTIFICATION_ENDPOINT }}" >> $GITHUB_ENV
-          echo "NEXT_PUBLIC_VAPID_PUBLIC_KEY=${{ secrets.NEXT_PUBLIC_VAPID_PUBLIC_KEY }}" >> $GITHUB_ENV
+          echo "NEXT_PUBLIC_API_URL=${{ secrets.NEXT_PUBLIC_API_URL }}" > $GITHUB_ENV
+          echo "NEXT_PUBLIC_AUTH_ENDPOINT=${{ secrets.NEXT_PUBLIC_AUTH_ENDPOINT }}" > $GITHUB_ENV
+          echo "NEXT_PUBLIC_USER_ENDPOINT=${{ secrets.NEXT_PUBLIC_USER_ENDPOINT }}" > $GITHUB_ENV
+          echo "NEXT_PUBLIC_JOB_ENDPOINT=${{ secrets.NEXT_PUBLIC_JOB_ENDPOINT }}" > $GITHUB_ENV
+          echo "NEXT_PUBLIC_PUSH_NOTIFICATION_ENDPOINT=${{ secrets.NEXT_PUBLIC_PUSH_NOTIFICATION_ENDPOINT }}" > $GITHUB_ENV
+          echo "NEXT_PUBLIC_VAPID_PUBLIC_KEY=${{ secrets.NEXT_PUBLIC_VAPID_PUBLIC_KEY }}" > $GITHUB_ENV
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4

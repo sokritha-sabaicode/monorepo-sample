@@ -109,19 +109,19 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 22
           script: |
-            echo "NODE_ENV=${{ secrets.NODE_ENV }}" >> /home/ubuntu/apps/auth-service/build/configs/.env.production
-            echo "PORT=${{ secrets.AUTH_PORT }}" >> /home/ubuntu/apps/auth-service/build/configs/.env.production
-            echo "AWS_COGNITO_REGION=${{ secrets.AWS_COGNITO_REGION }}" >> /home/ubuntu/apps/auth-service/build/configs/.env.production
-            echo "AWS_COGNITO_USER_POOL_ID=${{ secrets.AWS_COGNITO_USER_POOL_ID }}" >> /home/ubuntu/apps/auth-service/build/configs/.env.production
-            echo "AWS_COGNITO_CLIENT_ID=${{ secrets.AWS_COGNITO_CLIENT_ID }}" >> /home/ubuntu/apps/auth-service/build/configs/.env.production
-            echo "AWS_COGNITO_CLIENT_SECRET=${{ secrets.AWS_COGNITO_CLIENT_SECRET }}" >> /home/ubuntu/apps/auth-service/build/configs/.env.production
-            echo "AWS_COGNITO_IDENTITY_POOL_ID=${{ secrets.AWS_COGNITO_IDENTITY_POOL_ID }}" >> /home/ubuntu/apps/auth-service/build/configs/.env.production
-            echo "AWS_COGNITO_DOMAIN=${{ secrets.AWS_COGNITO_DOMAIN }}" >> /home/ubuntu/apps/auth-service/build/configs/.env.production
-            echo "AWS_REDIRECT_URI=${{ secrets.AWS_REDIRECT_URI }}" >> /home/ubuntu/apps/auth-service/build/configs/.env.production
-            echo "CLIENT_URL=${{ secrets.CLIENT_URL }}" >> /home/ubuntu/apps/auth-service/build/configs/.env.production
-            echo "USER_SERVICE_URL=${{ secrets.USER_SERVICE_URL }}" >> /home/ubuntu/apps/auth-service/build/configs/.env.production
-            echo "AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}" >> /home/ubuntu/apps/auth-service/build/configs/.env.production
-            echo "AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}" >> /home/ubuntu/apps/auth-service/build/configs/.env.production
+            echo "NODE_ENV=${{ secrets.NODE_ENV }}" > /home/ubuntu/apps/auth-service/build/configs/.env.production
+            echo "PORT=${{ secrets.AUTH_PORT }}" > /home/ubuntu/apps/auth-service/build/configs/.env.production
+            echo "AWS_COGNITO_REGION=${{ secrets.AWS_COGNITO_REGION }}" > /home/ubuntu/apps/auth-service/build/configs/.env.production
+            echo "AWS_COGNITO_USER_POOL_ID=${{ secrets.AWS_COGNITO_USER_POOL_ID }}" > /home/ubuntu/apps/auth-service/build/configs/.env.production
+            echo "AWS_COGNITO_CLIENT_ID=${{ secrets.AWS_COGNITO_CLIENT_ID }}" > /home/ubuntu/apps/auth-service/build/configs/.env.production
+            echo "AWS_COGNITO_CLIENT_SECRET=${{ secrets.AWS_COGNITO_CLIENT_SECRET }}" > /home/ubuntu/apps/auth-service/build/configs/.env.production
+            echo "AWS_COGNITO_IDENTITY_POOL_ID=${{ secrets.AWS_COGNITO_IDENTITY_POOL_ID }}" > /home/ubuntu/apps/auth-service/build/configs/.env.production
+            echo "AWS_COGNITO_DOMAIN=${{ secrets.AWS_COGNITO_DOMAIN }}" > /home/ubuntu/apps/auth-service/build/configs/.env.production
+            echo "AWS_REDIRECT_URI=${{ secrets.AWS_REDIRECT_URI }}" > /home/ubuntu/apps/auth-service/build/configs/.env.production
+            echo "CLIENT_URL=${{ secrets.CLIENT_URL }}" > /home/ubuntu/apps/auth-service/build/configs/.env.production
+            echo "USER_SERVICE_URL=${{ secrets.USER_SERVICE_URL }}" > /home/ubuntu/apps/auth-service/build/configs/.env.production
+            echo "AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}" > /home/ubuntu/apps/auth-service/build/configs/.env.production
+            echo "AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}" > /home/ubuntu/apps/auth-service/build/configs/.env.production
 
       - name: Install Dependencies and Restart PM2
         uses: appleboy/ssh-action@master
