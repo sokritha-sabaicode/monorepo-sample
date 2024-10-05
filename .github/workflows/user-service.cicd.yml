@@ -116,11 +116,11 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 22
           script: |
-            echo "NODE_ENV=${{ secrets.NODE_ENV }}" >> /home/ubuntu/apps/user-service/build/configs/.env.production
-            echo "PORT=${{ secrets.USER_PORT }}" >> /home/ubuntu/apps/user-service/build/configs/.env.production
-            echo "MONGODB_URL=${{ secrets.USER_MONGODB_URL }}" >> /home/ubuntu/apps/user-service/build/configs/.env.production
-            echo "GLITCHTIP_DNS=${{ secrets.GLITCHTIP_DNS }}" >> /home/ubuntu/apps/user-service/build/configs/.env.production
-            
+            echo "NODE_ENV=${{ secrets.NODE_ENV }}" > /home/ubuntu/apps/user-service/build/configs/.env.production
+            echo "PORT=${{ secrets.USER_PORT }}" > /home/ubuntu/apps/user-service/build/configs/.env.production
+            echo "MONGODB_URL=${{ secrets.USER_MONGODB_URL }}" > /home/ubuntu/apps/user-service/build/configs/.env.production
+            echo "GLITCHTIP_DNS=${{ secrets.GLITCHTIP_DNS }}" > /home/ubuntu/apps/user-service/build/configs/.env.production
+
       - name: Install Dependencies and Restart PM2
         uses: appleboy/ssh-action@master
         with:
