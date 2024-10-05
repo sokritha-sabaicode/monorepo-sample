@@ -16,6 +16,7 @@ const app = express();
 // ========================
 // Security Middleware
 // ========================
+console.log('corsOptions:::', corsOptions)
 app.use(cors(corsOptions));
 app.use(cookieParser())
 
