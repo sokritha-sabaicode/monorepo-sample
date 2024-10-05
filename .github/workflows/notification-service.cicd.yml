@@ -110,10 +110,10 @@ jobs:
           port: 22
           script: |
             echo "NODE_ENV=${{ secrets.NODE_ENV }}" > /home/ubuntu/apps/notification-service/build/configs/.env.production
-            echo "PORT=${{ secrets.NOTIFICATION_PORT }}" > /home/ubuntu/apps/notification-service/build/configs/.env.production
-            echo "MONGODB_URL=${{ secrets.NOTIFICATION_MONGODB_URL }}" > /home/ubuntu/apps/notification-service/build/configs/.env.production
-            echo "VAPID_PUBLIC_KEY=${{ secrets.VAPID_PUBLIC_KEY }}" > /home/ubuntu/apps/notification-service/build/configs/.env.production
-            echo "VAPID_PRIVATE_KEY=${{ secrets.VAPID_PRIVATE_KEY }}" > /home/ubuntu/apps/notification-service/build/configs/.env.production
+            echo "PORT=${{ secrets.NOTIFICATION_PORT }}" >> /home/ubuntu/apps/notification-service/build/configs/.env.production
+            echo "MONGODB_URL=${{ secrets.NOTIFICATION_MONGODB_URL }}" >> /home/ubuntu/apps/notification-service/build/configs/.env.production
+            echo "VAPID_PUBLIC_KEY=${{ secrets.VAPID_PUBLIC_KEY }}" >> /home/ubuntu/apps/notification-service/build/configs/.env.production
+            echo "VAPID_PRIVATE_KEY=${{ secrets.VAPID_PRIVATE_KEY }}" >> /home/ubuntu/apps/notification-service/build/configs/.env.production
 
       - name: Install Dependencies and Restart PM2
         uses: appleboy/ssh-action@master
