@@ -14,7 +14,6 @@ const proxyConfigs: ProxyConfig = {
   [ROUTE_PATHS.AUTH_SERVICE.path]: {
     target: ROUTE_PATHS.AUTH_SERVICE.target,
     pathRewrite: (path, _req) => {
-      console.log('path', path)
       return `${ROUTE_PATHS.AUTH_SERVICE.path}${path}`
     },
     on: {
