@@ -17,6 +17,7 @@ import { API_ENDPOINTS } from "@/utils/const/api-endpoints";
 import axiosInstance from "@/utils/axios";
 import ButtonSignOut from "@/components/login-logout/sign-out";
 import { useNotification } from "@/hooks/user-notification";
+import { isAPIErrorResponse } from "@/utils/types/common";
 
 const SkeletonLoader = ({
   width = "w-32",
@@ -77,7 +78,11 @@ const Page: React.FC = () => {
         setUser(res.data.data);
         setPic(res.data.data.profile);
       } catch (error) {
-        addNotification("Cannot load your data at the moment, please reload the page", 'error')
+        if (isAPIErrorResponse(error)) {
+          addNotification(error.response.data.message, 'error');
+        } else {
+          addNotification("Cannot load your data at the moment, please reload the page", 'error')
+        }
       } finally {
         setLoading(false);
       }
