@@ -41,30 +41,8 @@ export const RecommendationPost: React.FC = () => {
           }
         );
         const jobs = jobResponse.data.data.jobs;
-        let favorites = [];
 
-        // TODO
-        // BUGS: FAVORITE FEATURE
-        try {
-          const favoritesResponse = await axios.get(
-            `${process.env.NEXT_PUBLIC_API_URL}/v1/user/favorites/`
-          );
-          favorites = favoritesResponse.data;
-        } catch (favError) {
-          console.error("Failed to fetch favorites data:", favError);
-        }
-
-        const updatedJobs = jobs.map((job: any) => {
-          const favoriteJob = favorites.find(
-            (fav: any) => fav.jobId === job._id
-          );
-          return {
-            ...job,
-            favorite: favoriteJob ? favoriteJob.favorite : false,
-          };
-        });
-
-        setJobData(updatedJobs);
+        setJobData(jobs);
         setLoading(false);
       } catch (jobError) {
         setError("Failed to fetch job data");
@@ -73,7 +51,7 @@ export const RecommendationPost: React.FC = () => {
     };
 
     fetchData();
-  }, [love]); // Re-fetch data when `love` state changes
+  }, []);
 
   if (error) {
     return (

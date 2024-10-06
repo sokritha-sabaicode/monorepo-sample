@@ -13,8 +13,9 @@ function setCookie(response: Response, name: string, value: string, options: Coo
   const defaultOptions: CookieOptions = {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production', // Secure in production only
-    sameSite: 'lax',
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
     maxAge: 3600 * 1000,  // 1 hour expiration
+    domain: process.env.NODE_ENV === 'production' ? 'd3e1i3k8im34yu.cloudfront.net' : undefined,
     ...options,       // Override defaults with provided options
   };
   response.cookie(name, value, defaultOptions);
