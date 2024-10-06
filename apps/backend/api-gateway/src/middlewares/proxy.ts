@@ -28,7 +28,6 @@ const proxyConfigs: ProxyConfig = {
         });
       },
       proxyRes: (proxyRes, _req, _res) => {
-        // Modify the response headers
         proxyRes.headers['Access-Control-Allow-Origin'] = corsOptions.origin;
         proxyRes.headers['Access-Control-Allow-Credentials'] = 'true';
         proxyRes.headers['Access-Control-Allow-Methods'] = corsOptions.methods.join(', ');
@@ -50,7 +49,6 @@ const proxyConfigs: ProxyConfig = {
         });
       },
       proxyRes: (proxyRes, _req, _res) => {
-        // Modify the response headers
         proxyRes.headers['Access-Control-Allow-Origin'] = corsOptions.origin;
         proxyRes.headers['Access-Control-Allow-Credentials'] = 'true';
         proxyRes.headers['Access-Control-Allow-Methods'] = corsOptions.methods.join(', ');
@@ -72,7 +70,6 @@ const proxyConfigs: ProxyConfig = {
         });
       },
       proxyRes: (proxyRes, _req, _res) => {
-        // Modify the response headers
         proxyRes.headers['Access-Control-Allow-Origin'] = corsOptions.origin;
         proxyRes.headers['Access-Control-Allow-Credentials'] = 'true';
         proxyRes.headers['Access-Control-Allow-Methods'] = corsOptions.methods.join(', ');
@@ -95,7 +92,6 @@ const proxyConfigs: ProxyConfig = {
         });
       },
       proxyRes: (proxyRes, _req, _res) => {
-        // Modify the response headers
         proxyRes.headers['Access-Control-Allow-Origin'] = corsOptions.origin;
         proxyRes.headers['Access-Control-Allow-Credentials'] = 'true';
         proxyRes.headers['Access-Control-Allow-Methods'] = corsOptions.methods.join(', ');
