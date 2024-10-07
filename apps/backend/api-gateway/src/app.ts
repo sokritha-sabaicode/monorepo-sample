@@ -22,7 +22,7 @@ app.use(cookieParser())
 // ========================
 // Gateway Health
 // ========================
-app.get('/gateway-health', (_req: Request, res: Response) => {
+app.get('/v1/gateway-health', (_req: Request, res: Response) => {
   res.status(200).json({
     message: 'OK'
   })
