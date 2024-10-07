@@ -26,11 +26,14 @@ const proxyConfigs: ProxyConfig = {
           path: proxyReq.path
         });
       },
-      proxyRes: (proxyRes, _req, _res) => {
-        proxyRes.headers['Access-Control-Allow-Origin'] = corsOptions.origin;
-        proxyRes.headers['Access-Control-Allow-Credentials'] = 'true';
-        proxyRes.headers['Access-Control-Allow-Methods'] = corsOptions.methods.join(', ');
-        proxyRes.headers['Access-Control-Allow-Headers'] = 'Origin, X-Requested-With, Content-Type, Accept, Authorization';
+      proxyRes: (_proxyRes, _req, res) => {
+        res.setHeader('Access-Control-Allow-Origin', corsOptions.origin);
+        res.setHeader('Access-Control-Allow-Credentials', 'true');
+        res.setHeader('Access-Control-Allow-Methods', corsOptions.methods.join(', '));
+        res.setHeader(
+          'Access-Control-Allow-Headers',
+          'Origin, X-Requested-With, Content-Type, Accept, Authorization'
+        );
       }
     }
   },
@@ -47,11 +50,14 @@ const proxyConfigs: ProxyConfig = {
           path: proxyReq.path
         });
       },
-      proxyRes: (proxyRes, _req, _res) => {
-        proxyRes.headers['Access-Control-Allow-Origin'] = corsOptions.origin;
-        proxyRes.headers['Access-Control-Allow-Credentials'] = 'true';
-        proxyRes.headers['Access-Control-Allow-Methods'] = corsOptions.methods.join(', ');
-        proxyRes.headers['Access-Control-Allow-Headers'] = 'Origin, X-Requested-With, Content-Type, Accept, Authorization';
+      proxyRes: (_proxyRes, _req, res) => {
+        res.setHeader('Access-Control-Allow-Origin', corsOptions.origin);
+        res.setHeader('Access-Control-Allow-Credentials', 'true');
+        res.setHeader('Access-Control-Allow-Methods', corsOptions.methods.join(', '));
+        res.setHeader(
+          'Access-Control-Allow-Headers',
+          'Origin, X-Requested-With, Content-Type, Accept, Authorization'
+        );
       }
     }
   },
@@ -68,11 +74,14 @@ const proxyConfigs: ProxyConfig = {
           path: proxyReq.path
         });
       },
-      proxyRes: (proxyRes, _req, _res) => {
-        proxyRes.headers['Access-Control-Allow-Origin'] = corsOptions.origin;
-        proxyRes.headers['Access-Control-Allow-Credentials'] = 'true';
-        proxyRes.headers['Access-Control-Allow-Methods'] = corsOptions.methods.join(', ');
-        proxyRes.headers['Access-Control-Allow-Headers'] = 'Origin, X-Requested-With, Content-Type, Accept, Authorization';
+      proxyRes: (_proxyRes, _req, res) => {
+        res.setHeader('Access-Control-Allow-Origin', corsOptions.origin);
+        res.setHeader('Access-Control-Allow-Credentials', 'true');
+        res.setHeader('Access-Control-Allow-Methods', corsOptions.methods.join(', '));
+        res.setHeader(
+          'Access-Control-Allow-Headers',
+          'Origin, X-Requested-With, Content-Type, Accept, Authorization'
+        );
       }
     }
   },
@@ -90,11 +99,14 @@ const proxyConfigs: ProxyConfig = {
           path: proxyReq.path
         });
       },
-      proxyRes: (proxyRes, _req, _res) => {
-        proxyRes.headers['Access-Control-Allow-Origin'] = corsOptions.origin;
-        proxyRes.headers['Access-Control-Allow-Credentials'] = 'true';
-        proxyRes.headers['Access-Control-Allow-Methods'] = corsOptions.methods.join(', ');
-        proxyRes.headers['Access-Control-Allow-Headers'] = 'Origin, X-Requested-With, Content-Type, Accept, Authorization';
+      proxyRes: (_proxyRes, _req, res) => {
+        res.setHeader('Access-Control-Allow-Origin', corsOptions.origin);
+        res.setHeader('Access-Control-Allow-Credentials', 'true');
+        res.setHeader('Access-Control-Allow-Methods', corsOptions.methods.join(', '));
+        res.setHeader(
+          'Access-Control-Allow-Headers',
+          'Origin, X-Requested-With, Content-Type, Accept, Authorization'
+        );
       }
     }
   }
