@@ -1,9 +1,9 @@
 import Image from "next/image";
-import apple from "../../../../public/images/apple-logo.png";
-import google from "../../../../public/images/search.png";
-import facebook from "../../../../public/images/facebook.png";
+import { useAuth } from '../../../context/auth';
 
 export const ContactSocialMedia: React.FC = () => {
+  const { siginWithGoogle } = useAuth()
+
   return (
     <div className="flex flex-col gap-5">
       <div className="flex justify-center gap-x-2 items-center ">
@@ -15,23 +15,18 @@ export const ContactSocialMedia: React.FC = () => {
         <button
           className="p-4 flex items-center justify-start gap-x-12 bg-white drop-shadow-md w-full rounded-2xl 
          "
+          onClick={siginWithGoogle}
+          type="button"
         >
-          <Image src={facebook} alt="Facebook" width={20} height={20} /> Sign in
-          with Facebook
-        </button>
-        <button
-          className="p-4 flex items-center justify-start gap-x-12 bg-white drop-shadow-md w-full rounded-2xl 
-         "
-        >
-          <Image src={google} alt="Facebook" width={20} height={20} /> Sign in
+          <Image src="/images/search.png" alt="Facebook" width={20} height={20} /> Sign in
           with Google
         </button>
         <button
           className="p-4 flex items-center justify-start gap-x-12 bg-white drop-shadow-md w-full rounded-2xl 
          "
         >
-          <Image src={apple} alt="Facebook" width={20} height={20} /> Sign in
-          with Apple ID
+          <Image src="/images/facebook.png" alt="Facebook" width={20} height={20} /> Sign in
+          with Facebook
         </button>
       </div>
     </div>

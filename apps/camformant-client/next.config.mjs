@@ -40,6 +40,11 @@ const nextConfig = {
         hostname: 'postimg.cc',
         pathname: '/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'lh3.googleusercontent.com',
+        pathname: '/**',
+      },
     ],
   },
 };

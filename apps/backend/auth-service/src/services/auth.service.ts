@@ -100,7 +100,6 @@ class AuthService {
 
       // Add the user to the group based on the `role` attribute
       await this.addToGroup(username, role);
-      console.log(`AuthService verifyUser() method: User added to ${role} group`);
 
       // Send user info to the `User Service`
       await axios.post(`${configs.userServiceUrl}/v1/users`, {
@@ -258,7 +257,6 @@ class AuthService {
         const isLinked = existingUser.Attributes?.some(
           (attr) => attr.Name === 'identities' && attr.Value?.includes('Google')
         );
-        console.log('isLinked: ', isLinked);
 
         if (!isLinked) {
           // Step 3.1: Link the user to the existing Cognito user if not already linked
@@ -308,7 +306,6 @@ class AuthService {
           userId = user.data.data._id;
         } catch (error) {
           if (axios.isAxiosError(error) && error.response?.status === 409) {
-            // If the user already exists in the user service, handle it gracefully
             console.log('User already exists in user service, retrieving existing user info.');
             const existingUserResponse = await axios.get(`${configs.userServiceUrl}/v1/users/${userInfo.sub}`);
             userId = existingUserResponse.data.data._id;
@@ -353,6 +350,8 @@ class AuthService {
     try {
       const command = new AdminAddUserToGroupCommand(params);
       await client.send(command);
+
+      console.log(`AuthService verifyUser() method: User added to ${groupName} group`);
     } catch (error) {
       throw error;
     }
