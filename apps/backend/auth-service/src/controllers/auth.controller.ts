@@ -49,7 +49,6 @@ export class ProductController extends Controller {
 
   @Get("/google")
   public loginWithGoogle(@Query() state: string) {
-    console.log('state: ', state);
     const cognitoOAuthURL = AuthService.loginWithGoogle(state);
 
     return sendResponse({ message: 'Login with Google successfully', data: cognitoOAuthURL })

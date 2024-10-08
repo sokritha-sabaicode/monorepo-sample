@@ -106,7 +106,6 @@ const Page: React.FC = () => {
         </div>
       </form>
     </>
-
   );
 };
 

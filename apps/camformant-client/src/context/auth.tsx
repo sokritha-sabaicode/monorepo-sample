@@ -21,7 +21,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  // TODO: use router from redirect job
   const router = useRouter();
 
   const login = async ({ email, phone_number, password }: LoginRequest) => {
