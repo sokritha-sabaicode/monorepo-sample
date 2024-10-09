@@ -1,5 +1,9 @@
 /** @type {import('next').NextConfig} */
+
+const isMobile = process.env.NEXT_PUBLIC_IS_MOBILE === 'true';
+
 const nextConfig = {
+  ...(isMobile ? { output: 'export' } : {}),
   compiler: {
     // Remove console logs only in production
     removeConsole: process.env.NODE_ENV === "production"
