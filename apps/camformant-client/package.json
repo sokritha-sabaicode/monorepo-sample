@@ -9,7 +9,7 @@
     "lint": "next lint",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "static": "NEXT_PUBLIC_IS_MOBILE=true next build"
+    "static": "cross-env NEXT_PUBLIC_IS_MOBILE=true next build"
   },
   "dependencies": {
     "@headlessui/react": "1.7.18",

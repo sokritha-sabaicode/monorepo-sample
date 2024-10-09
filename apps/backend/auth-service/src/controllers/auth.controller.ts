@@ -7,7 +7,7 @@ import { Response, Request as ExpressRequest } from "express";
 import { Body, Controller, Get, Post, Queries, Query, Request, Route, SuccessResponse } from "tsoa";
 
 @Route('v1/auth')
-export class ProductController extends Controller {
+export class AuthController extends Controller {
   @Post("/signup")
   public async signup(@Body() body: SignupRequest): Promise<{ message: string }> {
     try {
