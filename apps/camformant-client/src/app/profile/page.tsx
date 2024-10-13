@@ -1,23 +1,19 @@
 "use client";
 
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState } from "react";
 import Image from "next/image";
 import { FaRegHeart } from "react-icons/fa";
-import { MdCircleNotifications } from "react-icons/md";
 import { FaCircleUser } from "react-icons/fa6";
 import { IoCameraSharp } from "react-icons/io5";
-import { useRouter } from "next/navigation";
 import Background from "@/components/background/background";
 import Link from "next/link";
 import Cropper, { Area } from "react-easy-crop";
 import getCroppedImg from "@/components/profile/crop";
 import HeaderBasic from "@/components/cv-rating-card/router-page/basic/header-basic";
-import { TypeProfile } from "@/components/profile/typeProfile";
-import { API_ENDPOINTS } from "@/utils/const/api-endpoints";
-import axiosInstance from "@/utils/axios";
 import ButtonSignOut from "@/components/login-logout/sign-out";
 import { useNotification } from "@/hooks/user-notification";
-import { isAPIErrorResponse } from "@/utils/types/common";
+import Notification from "@/components/notification/notification";
+import { useAuth } from "@/context/auth";
 
 const SkeletonLoader = ({
   width = "w-32",
@@ -48,6 +44,7 @@ const SkeletonLoader = ({
 
 const Page: React.FC = () => {
   const { addNotification, NotificationDisplay } = useNotification();
+  const { user, loading, logout } = useAuth();
 
   const RefFile = useRef<HTMLInputElement | null>(null);
   const [pic, setPic] = useState<File | string | null>(null);
@@ -57,46 +54,11 @@ const Page: React.FC = () => {
   const [zoom, setZoom] = useState(1);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null);
   const [isCropping, setIsCropping] = useState(false);
-  const [User, setUser] = useState<TypeProfile | null>(null);
-  const [loading, setLoading] = useState(true);
-  const router = useRouter();
 
-  useEffect(() => {
-    const manageProfileData = async () => {
-      setLoading(true);
-      try {
-        const formData = new FormData();
-
-        if (Upload) {
-          formData.append("photo", Upload);
-          await axiosInstance.post(API_ENDPOINTS.USER_PROFILE_UPDATE, formData)
-        }
-
-        // Fetch user data after uploading the photo
-        const res = await axiosInstance.get(API_ENDPOINTS.USER_PROFILE);
-        console.log('response', res)
-        setUser(res.data.data);
-        setPic(res.data.data.profile);
-      } catch (error) {
-        if (isAPIErrorResponse(error)) {
-          addNotification(error.response.data.message, 'error');
-        } else {
-          addNotification("Cannot load your data at the moment, please reload the page", 'error')
-        }
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    manageProfileData();
-  }, [Upload]);
+  console.log('isLoading:::', loading)
 
   function handleImage() {
-    if (User?.username) {
-      RefFile.current?.click();
-    } else {
-      addNotification("Please login to view and update your profile picture", 'error')
-    }
+    RefFile.current?.click();
   }
 
   function handleSelectImage(event: React.ChangeEvent<HTMLInputElement>) {
@@ -134,38 +96,22 @@ const Page: React.FC = () => {
     setIsCropping(false);
   }
 
-  function handleLogout() {
-    setUser(null);
-    setPic("");
-    if (!User?.username) {
-      router.push("/register");
-    }
-  }
-
   return (
     <React.Fragment>
       <NotificationDisplay />
       <div className="w-full h-screen ipse:h-[130vh] ipx:h-screen">
         <Background style="bg-mybg-linear ipx:h-[20%] ipse:h-[22%]">
           <div className="container mt-[-70px] flex flex-col items-center justify-center gap-5">
-            <div className={` relative ${loading ? "hidden" : ""} `}>
+            {/* ==================== PROFILE PICTURE  ================================*/}
+            <div className={`relative ${loading ? 'hidden' : ''}`}>
               <div className={` w-32 h-32 rounded-full overflow-hidden bg-white`}>
-                <div
-                  className={`w-10 h-10 rounded-full ml-9 mt-4 bg-mybg-linear ${pic ? "hidden" : ""} `}
-                ></div>
-                <div
-                  className={`w-28 h-28 rounded-full mt-2 ml-[-15px] bg-mybg-linear ${pic ? "hidden" : ""} `}
-                ></div>
-                {!pic && <SkeletonLoader />}
-                {pic &&
-                  <Image
-                    className="object-cover"
-                    src={pic.toString()}
-                    height={200}
-                    width={200}
-                    alt="Profile Picture"
-                  />
-                }
+                <Image
+                  className="object-cover"
+                  src={user?.profile!}
+                  height={200}
+                  width={200}
+                  alt="Profile Picture"
+                />
               </div>
               <input
                 onChange={handleSelectImage}
@@ -183,6 +129,7 @@ const Page: React.FC = () => {
               </span>
             </div>
 
+            {/* ==================== CROPPING IMAGE  ================================*/}
             {isCropping && (
               <div className="fixed w-full inset-0 z-40 flex items-center justify-center bg-black bg-opacity-60 ">
                 <div className="relative w-96 h-screen p-4 rounded">
@@ -207,40 +154,36 @@ const Page: React.FC = () => {
               </div>
             )}
 
-            <h1 className={` relative ${loading ? "hidden" : ""} text-xl `}>
-              {User ? User.username : "no nickname"}
+            {/* ==================== USERNAME  ================================*/}
+            <h1 className={`relative text-xl ${loading ? 'hidden' : ''}`}>
+              {user ? user.username : "no nickname"}
             </h1>
 
+            {/* ==================== PERSONAL INFO  ================================*/}
             {loading ? (
               <SkeletonLoader />
-            ) : (
-              <div className="p-5 w-full flex flex-col gap-5 justify-center items-center bg-white shadow-[0_35px_224px_15px_rgba(0,0,0,0.2)] rounded-3xl">
-                <Link
-                  className={`w-full ${User?.username ? "" : "hidden"}`}
-                  href={"/cv-rating"}
-                >
-                  <span className="flex w-full text-lg gap-5 items-center">
-                    <FaCircleUser />
-                    <div>Personal Profile</div>
-                  </span>
-                </Link>
-                <Link className="w-full" href={"/favorite"}>
-                  <span className="flex w-full text-lg gap-5 items-center">
-                    <FaRegHeart size={18} />
-                    <div className="pl-1">favorite</div>
-                  </span>
-                </Link>
-                <Link className="w-full" href={"/notification"}>
-                  <span className="flex w-full text-lg gap-5 items-center">
-                    <MdCircleNotifications size={22} />
-                    <div>Notification</div>
-                  </span>
-                </Link>
-              </div>
-            )}
+            ) : <div className="p-5 w-full flex flex-col gap-5 justify-center items-center bg-white shadow-[0_35px_224px_15px_rgba(0,0,0,0.2)] rounded-3xl">
+              <Link
+                className={`w-full`}
+                href={"/cv-rating"}
+              >
+                <span className="flex w-full text-lg gap-5 items-center">
+                  <FaCircleUser />
+                  <div>Personal Profile</div>
+                </span>
+              </Link>
+              <Link className="w-full" href={"/favorite"}>
+                <span className="flex w-full text-lg gap-5 items-center">
+                  <FaRegHeart size={18} />
+                  <div className="pl-1">favorite</div>
+                </span>
+              </Link>
+                <Notification addNotification={addNotification} />
+            </div>
+            }
             <ButtonSignOut
-              onHandleLogout={handleLogout}
-              isLogout={User?.username?.toString() || null}
+              onHandleLogout={logout}
+              isLogout={user?.username || null}
             />
           </div>
         </Background>

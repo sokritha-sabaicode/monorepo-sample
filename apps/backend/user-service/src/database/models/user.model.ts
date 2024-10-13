@@ -25,7 +25,7 @@ const userSchema = new mongoose.Schema({
   username: { type: String, required: true },
   email: { type: String, unique: true },
   phone_number: { type: String },
-  profile: { type: String, default: 'https://postimg.cc/Mn1MzLLT' },
+  profile: { type: String, default: 'https://microservice-sample-resource.s3.amazonaws.com/default_pic.jpg' },
   gender: { type: String },
   age: { type: Number },
   role: { type: String, default: 'user' }

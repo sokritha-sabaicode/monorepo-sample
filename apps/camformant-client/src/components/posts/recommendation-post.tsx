@@ -72,6 +72,7 @@ export const RecommendationPost: React.FC = () => {
           alt={"logo"}
           width={50} // Add some margin for spacing
           height={50}
+          unoptimized
         />
       </div>
       <Swiper

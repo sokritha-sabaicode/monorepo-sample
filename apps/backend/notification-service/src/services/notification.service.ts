@@ -27,11 +27,6 @@ class NotficationService {
 
   async subscribe(subscription: INotification) {
     try {
-      const existingNotification = await NotificationRepository.getSubscriptionByEndpoint(subscription.endpoint);
-      if (existingNotification) {
-        return existingNotification;
-      }
-
       const newNotification = await NotificationRepository.saveSubscription(subscription);
       return newNotification;
     } catch (error) {

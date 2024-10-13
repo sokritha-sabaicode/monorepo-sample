@@ -4,9 +4,14 @@ import { prettyObject } from "@sokritha-sabaicode/ms-libs";
 class NotificationRepository {
   async saveSubscription(newSubscriber: INotification) {
     try {
-      console.log('newSubscriber', newSubscriber)
-      const notification = new NotificationModel(newSubscriber);
-      await notification.save();
+      const notification = await NotificationModel.findOneAndUpdate(
+        { userId: newSubscriber.userId },
+        { endpoint: newSubscriber.endpoint, keys: newSubscriber.keys },
+        {
+          upsert: true, // Add if there is no existing userId
+          new: true, // Return the new document
+          setDefaultsOnInsert: true, // Set default values if creating a new document
+        })
 
       return notification;
     } catch (error) {
