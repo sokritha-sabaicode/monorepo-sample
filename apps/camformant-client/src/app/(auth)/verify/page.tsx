@@ -12,7 +12,7 @@ type VerifyFormProps = {
 };
 
 const Page: React.FC = () => {
-  const { verify } = useAuth();
+  const { verify, loading } = useAuth();
   const searchParams = useSearchParams();
   const contactQuery = searchParams.get('contact')
   const contactMethodQuery = searchParams.get('method')
@@ -86,7 +86,7 @@ const Page: React.FC = () => {
         {errors.otp && <p className="text-red-500 text-center">{errors.otp.message}</p>}
 
         <button type="submit" className="w-full py-3 mt-4 bg-primary text-white rounded-lg font-semibold hover:bg-primary-dark transition-colors duration-300">
-          Verify
+          {loading ? "Loading..." : "Verify"}
         </button>
       </form>
     </div>

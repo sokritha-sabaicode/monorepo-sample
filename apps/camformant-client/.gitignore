@@ -42,3 +42,7 @@ next-env.d.ts
 
 # open-next
 .open-next
+
+# Auto Generated PWA files
+**/public/sw.js
+**/public/workbox-*.js

@@ -1,15 +1,24 @@
 'use client'
 
 import axiosInstance from "@/utils/axios";
-import { createContext, ReactNode, useContext, useState } from "react";
+import { createContext, ReactNode, useContext, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { API_ENDPOINTS } from "@/utils/const/api-endpoints";
 import { LoginRequest, SignupRequest, VerifyUserRequest } from "@/utils/types/auth";
 
+interface User {
+  email: string;
+  profile: string;
+  role: string;
+  username: string;
+}
+
 interface AuthContextType {
   isAuthenticated: boolean;
   loading: boolean;
+  user: User | null;
   login: ({ email, phone_number, password }: LoginRequest) => Promise<void>;
+  logout: () => Promise<void>,
   signup: ({ sur_name, last_name, email, phone_number, password }: SignupRequest) => Promise<void>;
   verify: ({ email, phone_number, code }: VerifyUserRequest) => Promise<void>;
   siginWithGoogle: () => Promise<void>;
@@ -18,10 +27,29 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
+  const [user, setUser] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const router = useRouter();
+
+  useEffect(() => {
+    const checkAuthStatus = async () => {
+      try {
+        setLoading(true);
+        const res = await axiosInstance.get(API_ENDPOINTS.USER_PROFILE);
+
+        setUser(res.data.data)
+        setIsAuthenticated(true);
+      } catch (error) {
+        setIsAuthenticated(false)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    checkAuthStatus();
+  }, [])
 
   const login = async ({ email, phone_number, password }: LoginRequest) => {
     setLoading(true);
@@ -32,7 +60,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       })
 
       setIsAuthenticated(true);
-      router.push('/profile');
+      router.push('/');
     } catch (error) {
       setIsAuthenticated(false);
       throw error;
@@ -96,8 +124,22 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   }
 
+  const logout = async () => {
+    setLoading(true);
+    try {
+      // send logout to api
+      setIsAuthenticated(false);
+      setUser(null);
+      router.push('/login')
+    } catch (error) {
+      console.error('Logout Failed:::', error);
+    } finally {
+      setLoading(false)
+    }
+  }
+
   return (
-    <AuthContext.Provider value={{ isAuthenticated, loading, login, signup, verify, siginWithGoogle }}>
+    <AuthContext.Provider value={{ isAuthenticated, loading, user, login, logout, signup, verify, siginWithGoogle }}>
       {children}
     </AuthContext.Provider>
   );
