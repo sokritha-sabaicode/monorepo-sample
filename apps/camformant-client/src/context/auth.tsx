@@ -49,7 +49,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
 
     checkAuthStatus();
-  }, [])
+  }, [isAuthenticated])
 
   const login = async ({ email, phone_number, password }: LoginRequest) => {
     setLoading(true);
@@ -58,6 +58,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         [email ? 'email' : 'phone_number']: email || phone_number,
         password
       })
+
+      // Fetch the user profile data after login
+      const res = await axiosInstance.get(API_ENDPOINTS.USER_PROFILE);
+      setUser(res.data.data);
 
       setIsAuthenticated(true);
       router.push('/');
