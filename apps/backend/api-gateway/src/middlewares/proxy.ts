@@ -109,6 +109,39 @@ const proxyConfigs: ProxyConfig = {
         );
       }
     }
+  },
+  [ROUTE_PATHS.CONVERSATION.path]: {
+    target: ROUTE_PATHS.CONVERSATION.target,
+    pathRewrite: (path, _req) => `${ROUTE_PATHS.CONVERSATION.path}${path}`,
+    on: {
+      proxyReq: (proxyReq: ClientRequest, _req: IncomingMessage, _res: Response) => {
+
+        // @ts-ignore
+        logRequest(gatewayLogger, proxyReq, {
+          protocol: proxyReq.protocol,
+          host: proxyReq.getHeader('host'),
+          path: proxyReq.path
+        });
+      },
+      proxyRes: (_proxyRes, _req, res) => {
+        res.setHeader('Access-Control-Allow-Origin', corsOptions.origin);
+        res.setHeader('Access-Control-Allow-Credentials', 'true');
+        res.setHeader('Access-Control-Allow-Methods', corsOptions.methods.join(', '));
+        res.setHeader(
+          'Access-Control-Allow-Headers',
+          'Origin, X-Requested-With, Content-Type, Accept, Authorization'
+        );
+      }
+    }
+  },
+  [ROUTE_PATHS.CHAT_SERVICE.path]: {
+    target: ROUTE_PATHS.CHAT_SERVICE.target,
+    ws: true,
+    on: {
+      error: (err, _req, _res) => {
+        console.log('error chat:::', err)
+      }
+    }
   }
 }
 
@@ -116,7 +149,11 @@ const proxyConfigs: ProxyConfig = {
 const applyProxy = (app: express.Application) => {
   Object.keys(proxyConfigs).forEach((context: string) => {
     // Apply the proxy middleware
-    app.use(context, createProxyMiddleware(proxyConfigs[context]))
+    if (context === ROUTE_PATHS.CHAT_SERVICE.path) {
+      app.use(createProxyMiddleware(proxyConfigs[context]));
+    } else {
+      app.use(context, createProxyMiddleware(proxyConfigs[context]))
+    }
   })
 }
 

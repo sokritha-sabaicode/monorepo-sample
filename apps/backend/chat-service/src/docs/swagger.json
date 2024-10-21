@@ -1,0 +1,308 @@
+{
+	"openapi": "3.0.0",
+	"components": {
+		"examples": {},
+		"headers": {},
+		"parameters": {},
+		"requestBodies": {},
+		"responses": {},
+		"schemas": {
+			"IConversation": {
+				"properties": {
+					"participants": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"roomId": {
+						"type": "string"
+					},
+					"username": {
+						"type": "string"
+					},
+					"userProfile": {
+						"type": "string"
+					},
+					"companyName": {
+						"type": "string"
+					},
+					"companyProfile": {
+						"type": "string"
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"updatedAt": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"participants",
+					"roomId",
+					"username",
+					"userProfile",
+					"companyName",
+					"companyProfile"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"CreateConversationParams": {
+				"properties": {
+					"companyId": {
+						"type": "string"
+					},
+					"companyProfile": {
+						"type": "string"
+					},
+					"companyName": {
+						"type": "string"
+					},
+					"userId": {
+						"type": "string"
+					},
+					"username": {
+						"type": "string"
+					},
+					"userProfile": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"companyId",
+					"companyProfile",
+					"companyName",
+					"username",
+					"userProfile"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IMessage": {
+				"properties": {
+					"text": {
+						"type": "string"
+					},
+					"senderId": {
+						"type": "string"
+					},
+					"recipientId": {
+						"type": "string"
+					},
+					"conversationId": {
+						"type": "string"
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"updatedAt": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"text",
+					"senderId",
+					"recipientId",
+					"conversationId"
+				],
+				"type": "object",
+				"additionalProperties": false
+			}
+		},
+		"securitySchemes": {}
+	},
+	"info": {
+		"title": "chat-service",
+		"version": "1.0.0",
+		"license": {
+			"name": "MIT"
+		},
+		"contact": {}
+	},
+	"paths": {
+		"/v1/chat/health": {
+			"get": {
+				"operationId": "GetHealth",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"data": {
+											"type": "string"
+										},
+										"message": {
+											"type": "string"
+										}
+									},
+									"required": [
+										"data",
+										"message"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/v1/conversations": {
+			"get": {
+				"operationId": "GetConversations",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"data": {
+											"items": {
+												"$ref": "#/components/schemas/IConversation"
+											},
+											"type": "array"
+										},
+										"message": {
+											"type": "string"
+										}
+									},
+									"required": [
+										"data",
+										"message"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": []
+			},
+			"post": {
+				"operationId": "CreateConversation",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"data": {
+											"$ref": "#/components/schemas/IConversation"
+										},
+										"message": {
+											"type": "string"
+										}
+									},
+									"required": [
+										"data",
+										"message"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/CreateConversationParams"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/v1/conversations/{conversationId}/messages": {
+			"post": {
+				"operationId": "SaveMessage",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IMessage"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/IMessage"
+							}
+						}
+					}
+				}
+			},
+			"get": {
+				"operationId": "GetMessagesByConversationId",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"data": {
+											"items": {
+												"$ref": "#/components/schemas/IMessage"
+											},
+											"type": "array"
+										},
+										"message": {
+											"type": "string"
+										}
+									},
+									"required": [
+										"data",
+										"message"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "conversationId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		}
+	},
+	"servers": [
+		{
+			"url": "/"
+		}
+	]
+}

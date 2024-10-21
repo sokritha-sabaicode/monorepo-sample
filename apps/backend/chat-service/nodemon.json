@@ -1,0 +1,11 @@
+{
+  "watch": [
+    "src"
+  ],
+  "ext": "ts",
+  "ignore": [
+    "src/**/*.spec.ts"
+  ],
+  "exec": "nodemon --legacy-watch --exec ts-node src/server.ts",
+  "delay": "2000"
+}

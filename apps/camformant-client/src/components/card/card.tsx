@@ -129,7 +129,7 @@ export const Card: React.FC<CardProps> = (props) => {
           <Heart heart={heart} handleLove={Click_handleLove} />
         </section>
       </div>
-      <Link href={`/${title}/${_id}`}>
+      <Link href={`/jobs/${_id}`}>
         <div>
           <div className="flex flex-wrap space-x-2 text-xs text-primary  ">
             {type &&
@@ -137,7 +137,7 @@ export const Card: React.FC<CardProps> = (props) => {
               type.map((item, index) => (
                 <span
                   key={index}
-                  className=" bg-orange-50 px-3 py-1.5 rounded-full mt-5 "
+                  className="bg-orange-50 px-3 py-1.5 rounded-full mt-5 "
                 >
                   {item}
                 </span>

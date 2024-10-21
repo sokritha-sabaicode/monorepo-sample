@@ -7,6 +7,7 @@ import { API_ENDPOINTS } from "@/utils/const/api-endpoints";
 import { LoginRequest, SignupRequest, VerifyUserRequest } from "@/utils/types/auth";
 
 interface User {
+  _id: string;
   email: string;
   profile: string;
   role: string;
@@ -49,7 +50,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
 
     checkAuthStatus();
-  }, [isAuthenticated])
+  }, [])
 
   const login = async ({ email, phone_number, password }: LoginRequest) => {
     setLoading(true);

@@ -39,6 +39,8 @@ const authenticateToken = async (req: Request, _res: Response, next: NextFunctio
   try {
     const { methodConfig } = req;
 
+    console.log('req cookie:::', req.cookies)
+
     // Step 1
     if (methodConfig.authRequired) {
       // Step 2
@@ -171,6 +173,10 @@ const findRouteConfig = (
 // Step 3: Attach the route configuration and method config to the request object
 const routeConfigMiddleware = (req: Request, _res: Response, next: NextFunction) => {
   const { path, method } = req;
+
+  console.log('path:::', path);
+  console.log('method:::', method)
+
   // Step 1
   let routeConfig = null;
   for (const key in ROUTE_PATHS) {
@@ -191,9 +197,6 @@ const routeConfigMiddleware = (req: Request, _res: Response, next: NextFunction)
   // Attach the route configuration and method config to the request object
   req.routeConfig = routeConfig;
   req.methodConfig = methodConfig;
-
-  console.log('req.routeConfig', routeConfig);
-  console.log('req.methodConfig', methodConfig);
 
   next();
 }
