@@ -13,18 +13,33 @@ export class ConversationRepository {
     }
   }
 
-  async checkIfConversationExist(userId: string, companyId: string): Promise<IConversation | null | undefined> {
+  async findOrCreateConversation(userId: string, companyId: string, conversationData: Partial<IConversation>): Promise<IConversation | null> {
     try {
       const userObjectId = new Types.ObjectId(userId);
       const companyObjectId = new Types.ObjectId(companyId);
 
-      const result = await ConversationModel.findOne({
-        participants: { $all: [userObjectId, companyObjectId] },
-      })
+      // Sort the participants to ensure uniqueness regardless of order
+      const participants = [userObjectId, companyObjectId].sort();
 
-      return result || null;
+      const conversation = await ConversationModel.findOneAndUpdate(
+        {
+          participants
+        },
+        {
+          $setOnInsert: {
+            ...conversationData,
+            participants
+          }
+        },
+        {
+          new: true, // Return the new document if created
+          upsert: true, // Create the document if not found
+        }
+      );
+
+      return conversation;
     } catch (error) {
-      console.error("ConversationRepository checkIfConversationExist() method error::: ", error)
+      console.error("ConversationRepository findOrCreateConversation() error::: ", error);
       throw error;
     }
   }
@@ -33,7 +48,7 @@ export class ConversationRepository {
     try {
       // Find all conversations where the userId is in the participants array
       const conversations = await ConversationModel.find({ participants: userId });
-  
+
       // Return the list of conversations (or an empty array if none are found)
       return conversations;
     } catch (error) {

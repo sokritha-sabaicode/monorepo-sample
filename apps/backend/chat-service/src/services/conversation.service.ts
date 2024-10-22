@@ -12,16 +12,20 @@ export class ConversationService {
 
   async getOrCreateConversation(params: CreateConversationParams): Promise<IConversation> {
     try {
-      const isConversationExist = await this.conversationRepository.checkIfConversationExist(params.userId!, params.companyId);
-      console.log('isConversation::: ', isConversationExist)
+      const conversationData = {
+        companyName: params.companyName,
+        companyProfile: params.companyProfile,
+        username: params.username,
+        userProfile: params.userProfile,
+        roomId: generateRoomId(params.userId!, params.companyId)
+      };
 
-      if (!isConversationExist) {
-        return await this.createConversation(params)
-      }
+      // Perform find or create operation
+      const conversation = await this.conversationRepository.findOrCreateConversation(params.userId!, params.companyId, conversationData);
 
-      return isConversationExist;
+      return conversation as IConversation;
     } catch (error) {
-      console.error('ConversationService getOrCreateConversation() method error::: ', error)
+      console.error('ConversationService getOrCreateConversation() method error::: ', error);
       throw error;
     }
   }
@@ -46,7 +50,7 @@ export class ConversationService {
     }
   }
 
-  async getConversations(userId: string): Promise<IConversation[]> { 
+  async getConversations(userId: string): Promise<IConversation[]> {
     try {
       const conversations = await this.conversationRepository.getUserConversations(userId);
 

@@ -150,6 +150,23 @@ const ROUTE_PATHS: RoutesConfig = {
           }
         }
       },
+      {
+        path: "/search-history",
+        methods: {
+          GET: {
+            authRequired: true,
+            roles: ["user", "company"],
+          }
+        }
+      },
+      {
+        path: "/search-trending",
+        methods: {
+          GET: {
+            authRequired: false,
+          }
+        }
+      },
     ]
   },
   NOTIFICATION_SERVICE: {
@@ -180,7 +197,6 @@ const ROUTE_PATHS: RoutesConfig = {
     methods: {
       GET: {
         authRequired: false,
-        // roles: ["user", "company"],
       },
       POST: {
         authRequired: false

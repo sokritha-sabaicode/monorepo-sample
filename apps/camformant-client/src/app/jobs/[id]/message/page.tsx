@@ -51,6 +51,7 @@ const ChatPage = () => {
 
   useEffect(() => {
     if (companyId) {
+      console.log('fetch job')
       fetchJob();
     }
   }, [companyId, fetchJob]);
@@ -64,7 +65,6 @@ const ChatPage = () => {
     companyProfile: string;
   }) => {
     try {
-      console.log('user::: ', user?.username, user?.profile)
       const response = await axiosInstance.post(API_ENDPOINTS.CONVERSATIONS, {
         companyId,
         companyName,

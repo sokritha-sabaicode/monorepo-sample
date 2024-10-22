@@ -1,7 +1,7 @@
 
 "use client";
 import { useState, useEffect, useCallback, useRef } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { IoMdSend } from "react-icons/io";
 import Background from "../background/background";
 import socket from "@/utils/socketClient"; // Import the socket instance
@@ -12,7 +12,6 @@ import { formatDistanceToNow } from "date-fns";
 import { useAuth } from "@/context/auth";
 import React from "react";
 import { Job } from "@/app/jobs/[id]/message/page";
-import Link from "next/link";
 
 interface Message {
   _id?: string;
@@ -38,6 +37,7 @@ const SkeletonLoader = () => (
 const Message = React.memo(({ conversationId, job }: { conversationId: string | null, job: Job }) => {
   const params = useParams();
   const { user } = useAuth();
+  const router = useRouter();
   const id = Array.isArray(params.id) ? params.id[0] : params.id;
 
   const [messages, setMessages] = useState<Message[]>([]);
@@ -165,9 +165,9 @@ const Message = React.memo(({ conversationId, job }: { conversationId: string | 
             job && <div key={job._id} className=" absolute mt-[-220px] ml-36 gap-8 flex items-center justify-center">
               {/* Back1 displayed in front */}
               <div className=" -ml-32 z-10">
-                <Link href={`/jobs/${id}`}>
+                <button onClick={() => router.back()}>
                   <BackButton />
-                </Link>
+                </button>
               </div>
 
               {/* Company profile image */}

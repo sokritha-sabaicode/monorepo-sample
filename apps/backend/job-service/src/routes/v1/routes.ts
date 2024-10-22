@@ -1,7 +1,8 @@
 /* tslint:disable */
 /* eslint-disable */
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-import { TsoaRoute, fetchMiddlewares, ExpressTemplateService } from '@tsoa/runtime';
+import type { TsoaRoute } from '@tsoa/runtime';
+import {  fetchMiddlewares, ExpressTemplateService } from '@tsoa/runtime';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { JobController } from './../../controllers/job.controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -121,6 +122,15 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "APIResponse_string-Array_": {
+        "dataType": "refObject",
+        "properties": {
+            "message": {"dataType":"string","required":true},
+            "data": {"dataType":"array","array":{"dataType":"string"}},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "ICompany": {
         "dataType": "refObject",
         "properties": {
@@ -202,6 +212,7 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
 
             async function JobController_getAllJobs(request: ExRequest, response: ExResponse, next: any) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
+                    request: {"in":"request","name":"request","required":true,"dataType":"object"},
                     queries: {"in":"queries","name":"queries","required":true,"ref":"JobGetAllControllerParams"},
             };
 
@@ -215,6 +226,65 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
 
               await templateService.apiHandler({
                 methodName: 'getAllJobs',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.get('/v1/jobs/search-history',
+            ...(fetchMiddlewares<RequestHandler>(JobController)),
+            ...(fetchMiddlewares<RequestHandler>(JobController.prototype.getSearchHistory)),
+
+            async function JobController_getSearchHistory(request: ExRequest, response: ExResponse, next: any) {
+            const args: Record<string, TsoaRoute.ParameterSchema> = {
+                    request: {"in":"request","name":"request","required":true,"dataType":"object"},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args, request, response });
+
+                const controller = new JobController();
+
+              await templateService.apiHandler({
+                methodName: 'getSearchHistory',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.get('/v1/jobs/search-trending',
+            ...(fetchMiddlewares<RequestHandler>(JobController)),
+            ...(fetchMiddlewares<RequestHandler>(JobController.prototype.getSearchTrending)),
+
+            async function JobController_getSearchTrending(request: ExRequest, response: ExResponse, next: any) {
+            const args: Record<string, TsoaRoute.ParameterSchema> = {
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args, request, response });
+
+                const controller = new JobController();
+
+              await templateService.apiHandler({
+                methodName: 'getSearchTrending',
                 controller,
                 response,
                 next,
@@ -347,7 +417,12 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         app.post('/v1/companies',
-            upload.fields([{"name":"profile","maxCount":1,"multiple":false}]),
+            upload.fields([
+                {
+                    name: "profile",
+                    maxCount: 1
+                }
+            ]),
             ...(fetchMiddlewares<RequestHandler>(CompanyController)),
             ...(fetchMiddlewares<RequestHandler>(CompanyController.prototype.createCompany)),
 
@@ -444,7 +519,12 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         app.put('/v1/companies/:companyId',
-            upload.fields([{"name":"profile","maxCount":1,"multiple":false}]),
+            upload.fields([
+                {
+                    name: "profile",
+                    maxCount: 1
+                }
+            ]),
             ...(fetchMiddlewares<RequestHandler>(CompanyController)),
             ...(fetchMiddlewares<RequestHandler>(CompanyController.prototype.updateCompanyById)),
 

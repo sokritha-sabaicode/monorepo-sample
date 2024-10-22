@@ -22,6 +22,9 @@ const ConversationSchema: Schema = new Schema({
   { timestamps: true }
 )
 
+// Add a unique compound index for participants
+ConversationSchema.index({ participants: 1 }, { unique: true });
+
 const ConversationModel = mongoose.model<IConversation>("Conversation", ConversationSchema)
 
 export default ConversationModel

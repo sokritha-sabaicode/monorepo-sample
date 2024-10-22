@@ -1,21 +1,18 @@
-"use client";
-
 import React, { Suspense, useEffect, useState } from "react";
 import { Card } from "../card/card";
-import { useSearchParams } from "next/navigation";
-import axios from "axios";
+import axiosInstance from "@/utils/axios";
+import { API_ENDPOINTS } from "@/utils/const/api-endpoints";
+import { useDebounce } from "@/hooks/use-debounce";
+import { FilterValueParams } from "@/components/in-search/search-home-page";
 
-const SearchCard: React.FC = () => {
+const SearchCard = ({ searchValue, filterValues }: { searchValue: string, filterValues: FilterValueParams }) => {
   const [jobData, setJobData] = useState<any[]>([]);
-  const [getValue, setGetValue] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [love, setLove] = useState<boolean>(true);
 
-  const config = {
-    headers: { "Content-Type": "application/json" },
-    withCredentials: true,
-  };
+  // Debounced search value (waits 300ms after the user stops typing)
+  const debouncedSearchValue = useDebounce(searchValue, 3000);
 
   const toggleFavorite = (jobId: string) => {
     setJobData((prevData: any) =>
@@ -25,102 +22,121 @@ const SearchCard: React.FC = () => {
     );
   };
 
-  const searchParams = useSearchParams();
-  const values = searchParams.get("values");
-
-  useEffect(() => {
-    setGetValue(values || "");
-  }, [values]);
-
   useEffect(() => {
     const fetchJobData = async () => {
+      if (!debouncedSearchValue && isFilterEmpty(filterValues)) return;
+
       try {
         setLoading(true);
-        const jobResponse = await axios.get(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/v1/jobs`,
-          {
-            params: {
-              limit: 5,
-              sort: JSON.stringify({ createdAt: "desc" }),
-            },
-          }
+
+        const salary = {
+          min_salary: filterValues.minSalary > 0 ? filterValues.minSalary : undefined,
+          max_salary: filterValues.maxSalary > 0 ? filterValues.maxSalary : undefined,
+        };
+
+        const cleanedSalary = Object.fromEntries(
+          Object.entries(salary).filter(([_, value]) => value !== undefined)
         );
+        const filterSalary = Object.keys(cleanedSalary).length > 0 ? cleanedSalary : undefined;
 
-        // const [jobResponse, favoritesResponse] = await Promise.all([
-        //   axios.get("http://localhost:3001/api/v1/jobs", {
-        //     params: { search: getValue, page: 1, limit: 5 },
-        //   }),
-        //   axios.get("http://localhost:3040/v1/user/favorites/", config),
-        // ]);
+        const filter = {
+          schedule: filterValues.schedule || undefined,
+          type: filterValues.type || undefined,
+          workMode: filterValues.workMode || undefined,
+          required_experience: filterValues.required_experience || undefined,
+          salary: filterSalary,
+        };
 
-        const jobs = jobResponse?.data?.data?.jobs || [];
-        let favorites = [];
-        try {
-          const favoritesResponse = await axios.get(
-            `${process.env.NEXT_PUBLIC_API_URL}/v1/user/favorites/`,
-            config
-          );
-          favorites = favoritesResponse.data;
-        } catch (favError) {
-          console.error("Failed to fetch favorites data:", favError);
-          // Proceed without favorites
+        const params: Record<string, any> = {
+          limit: 5,
+          sort: JSON.stringify({ createdAt: "desc" }),
+          filter: JSON.stringify(filter),
+        };
+
+        if (debouncedSearchValue) {
+          params.search = debouncedSearchValue;
         }
-        const updatedJobs = jobs?.map((job: any) => {
-          const favoriteJob = favorites.find(
-            (fav: any) => fav.jobId === job._id
-          );
-          return {
-            ...job,
-            favorite: favoriteJob ? favoriteJob.favorite : false,
-          };
-        });
 
-        setJobData(updatedJobs);
-        setLoading(false);
+        const jobResponse = await axiosInstance.get(`${API_ENDPOINTS.JOBS}`, { params });
+        const jobs = jobResponse?.data?.data?.jobs || [];
+        setJobData(jobs);
       } catch (error) {
         console.error("Error fetching data:", error);
         setError("Failed to fetch job data");
+      } finally {
         setLoading(false);
       }
     };
 
     fetchJobData();
-  }, [getValue]);
+  }, [debouncedSearchValue, filterValues]);
+
+  const isFilterEmpty = (filterValues: FilterValueParams) => {
+    return (
+      !filterValues.schedule &&
+      !filterValues.type &&
+      !filterValues.workMode &&
+      !filterValues.required_experience &&
+      filterValues.minSalary === 0 &&
+      filterValues.maxSalary === 0
+    );
+  };
+
+  if (!searchValue && isFilterEmpty(filterValues)) {
+    return null;
+  }
 
   return (
     <Suspense>
       <div className="flex flex-col pt-6 pb-20 gap-4 w-full h-full">
-        {loading
-          ? Array.from({ length: 4 }).map((_, index) => (
-              <div className="mb-2 p-1" key={index}>
-                <Card
-                  isLoading={true}
-                  heart={love}
-                  setHeart={() => setLove((prev) => !prev)}
-                />
-              </div>
-            ))
-          : jobData?.map((job: any, index: any) => {
-              return (
-                <div key={index} className="container">
-                  <Card
-                    _id={job._id}
-                    title={job.title}
-                    position={job.position}
-                    profile={job?.companyId?.profile || "defaultProfileUrl"}
-                    min_salary={job.min_salary}
-                    max_salary={job.max_salary}
-                    job_opening={job.job_opening}
-                    type={job.type}
-                    schedule={job.schedule}
-                    location={job.location}
-                    deadline={new Date(job.deadline)}
-                    heart={job.favorite}
-                    setHeart={() => toggleFavorite(job._id)}
-                  />
-                </div>
-              );
-            })}
+        {loading ? (
+          Array.from({ length: 4 }).map((_, index) => (
+            <div className="mb-2 p-1" key={index}>
+              <Card
+                isLoading={true}
+                heart={love}
+                setHeart={() => setLove((prev) => !prev)}
+              />
+            </div>
+          ))
+        ) : jobData.length === 0 ? (
+          // Display this section when no jobs are found
+          <div className="flex flex-col items-center justify-center mt-10">
+            {/* <img
+              src="/no-jobs-found.png"
+              alt="No jobs found"
+              className="w-64 h-64"
+            /> */}
+            <h2 className="text-lg font-semibold text-gray-700 mt-5">
+              No Jobs Found
+            </h2>
+            <p className="text-gray-500 text-center max-w-md mt-2">
+              We couldn't find any jobs matching your criteria. Try clearing the
+              filters or search with different keywords.
+            </p>
+
+          </div>
+        ) : (
+          jobData.map((job: any, index: any) => (
+            <div key={index} className="container">
+              <Card
+                _id={job._id}
+                title={job.title}
+                position={job.position}
+                profile={job?.companyId?.profile || "defaultProfileUrl"}
+                min_salary={job.min_salary}
+                max_salary={job.max_salary}
+                job_opening={job.job_opening}
+                type={job.type}
+                schedule={job.schedule}
+                location={job.location}
+                deadline={new Date(job.deadline)}
+                heart={job.favorite}
+                setHeart={() => toggleFavorite(job._id)}
+              />
+            </div>
+          ))
+        )}
         {error && <div className="text-red-500">{error}</div>}
       </div>
     </Suspense>
