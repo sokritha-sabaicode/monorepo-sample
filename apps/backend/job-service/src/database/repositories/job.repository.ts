@@ -36,7 +36,8 @@ class JobRepository {
       "schedule",
       "required_experience",
       "location",
-      "position"
+      "position",
+      "workMode"
     ];
 
     // Convert sort from {'field': 'desc'} to {'field': -1}
@@ -60,12 +61,20 @@ class JobRepository {
       for (const key in filter) {
         // Handle range filtering for salaries
         if (key === "salary" && typeof filter[key] === "object") {
-          // Handle the salary filtering for min_salary and max_salary
-          if (filter[key].min_salary !== undefined) {
-            mongoFilter.min_salary = { $gte: filter[key].min_salary };
-          }
-          if (filter[key].max_salary !== undefined) {
-            mongoFilter.max_salary = { $lte: filter[key].max_salary };
+          const { min_salary, max_salary } = filter[key];
+
+          // Ensure salary ranges overlap
+          if (min_salary !== undefined && max_salary !== undefined) {
+            mongoFilter.$and = [
+              { min_salary: { $lte: max_salary } }, // Job's min salary <= user's max salary
+              { max_salary: { $gte: min_salary } }, // Job's max salary >= user's min salary
+            ];
+          } else if (min_salary !== undefined) {
+            // If only min salary is provided, return jobs with max salary >= min salary
+            mongoFilter.max_salary = { $gte: min_salary };
+          } else if (max_salary !== undefined) {
+            // If only max salary is provided, return jobs with min salary <= max salary
+            mongoFilter.min_salary = { $lte: max_salary };
           }
         } else if (
           typeof filter[key] === "object" &&
@@ -77,10 +86,10 @@ class JobRepository {
           ) {
             mongoFilter[key] = {};
             if (filter[key].min !== undefined) {
-              mongoFilter[key].$gte = filter[key].min;
+              mongoFilter[key].$lte = filter[key].min;
             }
             if (filter[key].max !== undefined) {
-              mongoFilter[key].$lte = filter[key].max;
+              mongoFilter[key].$gte = filter[key].max;
             }
           } else {
             mongoFilter[key] = filter[key];
@@ -105,7 +114,6 @@ class JobRepository {
             mongoFilter[key] = { $in: trimmedArray };
           }
         } else {
-          console.log('hello')
           mongoFilter[key] = filter[key];
         }
       }
@@ -113,7 +121,8 @@ class JobRepository {
       return mongoFilter;
     };
 
-    console.log('buildFilter', buildFilter(filter))
+    console.log('mongoFilter::: ', buildFilter(filter))
+
     // Adding search functionality
     const searchFilter = search
       ? {

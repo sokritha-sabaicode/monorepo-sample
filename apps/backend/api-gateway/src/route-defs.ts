@@ -150,6 +150,23 @@ const ROUTE_PATHS: RoutesConfig = {
           }
         }
       },
+      {
+        path: "/search-history",
+        methods: {
+          GET: {
+            authRequired: true,
+            roles: ["user", "company"],
+          }
+        }
+      },
+      {
+        path: "/search-trending",
+        methods: {
+          GET: {
+            authRequired: false,
+          }
+        }
+      },
     ]
   },
   NOTIFICATION_SERVICE: {
@@ -174,6 +191,40 @@ const ROUTE_PATHS: RoutesConfig = {
       }
     ]
   },
+  CHAT_SERVICE: {
+    target: configs.chatServiceUrl,
+    path: '/socket.io',
+    methods: {
+      GET: {
+        authRequired: false,
+      },
+      POST: {
+        authRequired: false
+      }
+    },
+  },
+  CONVERSATION: {
+    path: '/v1/conversations',
+    target: configs.chatServiceUrl,
+    methods: {
+      POST: {
+        authRequired: true, roles: ["user", "company"]
+      },
+      GET: {
+        authRequired: true, roles: ["user", "company"]
+      }
+    },
+    nestedRoutes: [
+      {
+        path: "/:id/messages",
+        methods: {
+          GET: {
+            authRequired: true, roles: ["user", "company"]
+          }
+        }
+      }
+    ]
+  }
 }
 
 export default ROUTE_PATHS

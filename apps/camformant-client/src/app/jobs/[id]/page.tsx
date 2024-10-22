@@ -1,4 +1,5 @@
 "use client";
+
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { Sheet } from "react-modal-sheet";
@@ -11,14 +12,15 @@ import { CardReq } from "@/components/card-detail/card-requirement";
 import { CardDescription } from "@/components/card-detail/card-description";
 import { CardLocation } from "@/components/card-detail/card-location";
 import { JobPublisher } from "@/components/card-detail/card-publisher";
-import ButtonApply from "@/components/card-detail/button-apply";
 import axios from "axios";
-import ErrorAlert from "@/components/alert/alert-error";
 import { BsPersonVcard } from "react-icons/bs";
 import { API_ENDPOINTS } from "@/utils/const/api-endpoints";
 import axiosInstance from "@/utils/axios";
+import { MdMessage } from "react-icons/md";
+import { useAuth } from "@/context/auth";
 
 const Page: React.FC = () => {
+  const { user } = useAuth();
   const params = useParams();
   const { id } = params;
   const router = useRouter();
@@ -28,12 +30,11 @@ const Page: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [apply, setApply] = useState<boolean>(false);
   const [selected, setSelected] = useState<boolean>(false);
-  const [token, setToken] = useState<boolean>(false);
-  const [checkCv, setCheckCv] = useState<boolean>(false);
+  const [cv, setCV] = useState<boolean>(false);
   const [next, setNext] = useState<boolean>(false);
   const [getIndexCv, setIndexCv] = useState<number>(0);
-  const [err, setErr] = useState<boolean>(false);
 
+  // Fetch Job Detail
   useEffect(() => {
     const fetchJob = async () => {
       try {
@@ -57,12 +58,7 @@ const Page: React.FC = () => {
 
     fetchJob();
   }, [id]);
-  const config = {
-    headers: {
-      "Content-Type": "application/json",
-    },
-    withCredentials: true,
-  };
+
   useEffect(() => {
     const storedCvIndex = localStorage.getItem("selectedCvIndex");
     if (storedCvIndex) {
@@ -71,38 +67,32 @@ const Page: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    async function getUser_and_Cv() {
+    async function getUserProfileAndCV() {
       try {
         setNext(true);
-        const check_user = await axios.get(
-          `${process.env.NEXT_PUBLIC_API_URL}/v1/user/profile/`,
-          config
-        );
-        if (check_user.status === 200) {
-          setToken(true);
-        }
-        const check_cv = await axios.get(
+
+        const cv = await axios.get(
           `${process.env.NEXT_PUBLIC_API_URL}/v1/user/cv/`,
-          config
         );
-        if (check_cv.status === 200) {
-          setCheckCv(true);
-        }
+
+        setCV(true);
       } catch (error) {
       } finally {
         setNext(false);
       }
     }
-    getUser_and_Cv();
-  }, []);
+    getUserProfileAndCV();
+  }, [user]);
+
   function popUpApply() {
     setApply(true);
-    if (!token) {
+    if (!user) {
       router.push("/register");
-    } else if (!checkCv) {
+    } else if (!cv) {
       router.push("/resume");
     }
   }
+
   async function handleConfirm() {
     if (selected) {
       try {
@@ -113,7 +103,6 @@ const Page: React.FC = () => {
         const response = await axios.post(
           `${process.env.NEXT_PUBLIC_API_URL}/v1/user/apply/?apply=${getIndexCv}`,
           data,
-          config
         );
         if (response.status === 200) {
           console.log("Application submitted successfully");
@@ -121,7 +110,6 @@ const Page: React.FC = () => {
             router.push("/applied");
           }, 600);
         } else {
-          setErr(true);
           console.log("CV not Found");
           setIndexCv(0);
           localStorage.setItem("selectedCvIndex", "0");
@@ -141,13 +129,6 @@ const Page: React.FC = () => {
 
   return (
     <div className="w-full h-full flex flex-col pb-28 ">
-      {err && (
-        <ErrorAlert
-          txt="Error Apply ,Please Apply Again "
-          setShow={setErr}
-          show={true}
-        />
-      )}
       <Link href={"../"}>
         <BackButton_md styles="absolute bg-white p-3 px-4 rounded-xl top-5 left-4 " />
       </Link>
@@ -206,14 +187,12 @@ const Page: React.FC = () => {
         ))}
       </div>
 
-      {
-        <ButtonApply
-          id={id}
-          handleClick={popUpApply}
-          next={next}
-          setNext={setNext}
-        />
-      }
+      <div className=' fixed pl-5 pr-5 w-full h-20 flex justify-center gap-3 items-center bottom-0 z-30 bg-white '>
+        <button onClick={popUpApply} className={` ${next ? 'bg-gray-400 pointer-events-none ' : 'bg-primary'} p-3 w-full rounded-3xl text-white`}>Apply Now</button>
+        <span className=' p-3  text-primary text-xl bg-white drop-shadow-2xl rounded-2xl '>
+          <Link href={`${id}/message`}> <MdMessage /></Link> </span>
+      </div>
+
       <Sheet
         isOpen={apply}
         onClose={() => setApply(false)}
@@ -229,7 +208,7 @@ const Page: React.FC = () => {
               </p>
               <div
                 onClick={handleSelectCv}
-                className={` ${token ? "flex" : " hidden"} h-20 pl-5 w-full flex rounded-3xl
+                className={` ${user ? "flex" : " hidden"} h-20 pl-5 w-full flex rounded-3xl
                              items-center
                                drop-shadow-xl ${selected ? "bg-orange-500" : "bg-white"} `}
               >

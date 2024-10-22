@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { NavigationBar } from "@/components/navigation-bar/navigation-bar";
-import Chat from "@/components/chat-home/chat";
 import { AuthProvider } from "@/context/auth";
 
 
@@ -41,10 +40,6 @@ export default function RootLayout({
         <AuthProvider>
           <NavigationBar />
           {children}
-
-          {/* 
-          <Chat className="fixed bottom-20 right-0 p-4 bg-gradient-to-br from-orange-400 via-pink-300 to-yellow-300 shadow-2xl rounded-full text-white transform transition-transform hover:scale-105" />
-          */}
         </AuthProvider>
       </body>
     </html>

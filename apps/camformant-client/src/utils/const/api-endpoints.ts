@@ -14,6 +14,11 @@ export const API_ENDPOINTS = {
 
   // JOB SERVICE
   JOBS: `${process.env.NEXT_PUBLIC_JOB_ENDPOINT}`,
+  SEARCH_HISTORY: `${process.env.NEXT_PUBLIC_JOB_ENDPOINT}/search-history`,
+  SEARCH_TRENDING: `${process.env.NEXT_PUBLIC_JOB_ENDPOINT}/search-trending`,
+
+  // CHAT SERVICE
+  CONVERSATIONS: `${process.env.NEXT_PUBLIC_CONVERSATION_ENDPOINT}`
 }
 
 export const API_ENDPOINTS_SERVER = {

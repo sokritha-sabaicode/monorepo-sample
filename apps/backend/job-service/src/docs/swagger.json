@@ -283,6 +283,24 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"APIResponse_string-Array_": {
+				"properties": {
+					"message": {
+						"type": "string"
+					},
+					"data": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"message"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"ICompany": {
 				"properties": {
 					"_id": {
@@ -446,6 +464,50 @@
 						}
 					}
 				]
+			}
+		},
+		"/v1/jobs/search-history": {
+			"get": {
+				"operationId": "GetSearchHistory",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/APIResponse_string-Array_"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Job"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/v1/jobs/search-trending": {
+			"get": {
+				"operationId": "GetSearchTrending",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/APIResponse_string-Array_"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Job"
+				],
+				"security": [],
+				"parameters": []
 			}
 		},
 		"/v1/jobs/{jobId}": {

@@ -9,6 +9,7 @@ type Config = {
   authServiceUrl: string;
   userServiceUrl: string;
   jobServiceUrl: string;
+  chatServiceUrl: string;
   awsCloudwatchLogsRegion: string;
   awsAccessKeyId: string;
   awsSecretAccessKey: string;
@@ -33,6 +34,7 @@ function loadConfig(): Config {
     AUTH_SERVICE_URL: Joi.string().required(),
     USER_SERVICE_URL: Joi.string().required(),
     JOB_SERVICE_URL: Joi.string().required(),
+    CHAT_SERVICE_URL: Joi.string().required(),
     AWS_CLOUDWATCH_LOGS_REGION: Joi.string().required(),
     AWS_ACCESS_KEY_ID: Joi.string().required(),
     AWS_SECRET_ACCESS_KEY: Joi.string().required(),
@@ -55,6 +57,7 @@ function loadConfig(): Config {
     authServiceUrl: envVars.AUTH_SERVICE_URL,
     userServiceUrl: envVars.USER_SERVICE_URL,
     jobServiceUrl: envVars.JOB_SERVICE_URL,
+    chatServiceUrl: envVars.CHAT_SERVICE_URL,
     awsCloudwatchLogsRegion: envVars.AWS_CLOUDWATCH_LOGS_REGION,
     awsAccessKeyId: envVars.AWS_ACCESS_KEY_ID,
     awsSecretAccessKey: envVars.AWS_SECRET_ACCESS_KEY,

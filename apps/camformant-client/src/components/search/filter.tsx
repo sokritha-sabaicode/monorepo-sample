@@ -1,16 +1,28 @@
 "use client";
 
 import { Listbox, Transition } from "@headlessui/react";
-import React, { Fragment, useState } from "react";
+import React, { Dispatch, Fragment, SetStateAction } from "react";
 import { AiFillCaretDown } from "react-icons/ai";
+import Slider from 'rc-slider';
+import 'rc-slider/assets/index.css';
+import { FilterValueParams } from "@/components/in-search/search-home-page";
 
-const people = [
-  { id: 1, name: "apple" },
-  { id: 2, name: "Wade Cooper" },
-  { id: 3, name: "Tanya Fox" },
-  { id: 4, name: "Arlene Mccoy" },
-  { id: 5, name: "Devon Webb" },
+const WORK_SCHEDULE = [
+  { id: 1, name: "Full-Time" },
+  { id: 2, name: "Part-Time" },
+  { id: 3, name: "Flexible-Hours" },
+  { id: 4, name: "Project-Based" },
 ];
+
+const EMPLOYMENT_TYPE = [
+  { id: 1, name: "Internship" },
+  { id: 2, name: "Contract" },
+];
+
+const WORK_LOCATION = [
+  { id: 1, name: "On-Site" },
+  { id: 2, name: "Remote" },
+]
 
 const experience = [
   { text: "No" },
@@ -21,51 +33,53 @@ const experience = [
 ];
 
 interface FilterProps {
-  reset?: number;
-  setReset: (value: number) => void;
-  selectedWorkSchedule:any;
-  selectedEmploymentType:any;
-  selectedWorkLocation:any;
-  setSelectedWorkSchedule:(value:any)=>void;
-  setSelectedEmploymentType:(value:any)=>void;
-  setSelectedWorkLocation:(value:any)=>void;
-  setIsopen:(value:boolean)=>void;
+  setIsopen: (value: boolean) => void;
+  filterValues: FilterValueParams;
+  setFilterValues: Dispatch<SetStateAction<FilterValueParams>>
+  handleCompleteFilter: () => void;
 }
 
 interface SelectProps {
   label: string;
+  values: { id: number, name: string }[];
   selected: any;
   setSelected: (value: any) => void;
-  onClick?: (value: string) => void;
 }
 
 interface ExperienceProps {
   text: string;
+  isSelected: boolean;
+  onClick: (text: string) => void;
 }
 
-const Experience: React.FC<ExperienceProps> = ({ text }) => {
+const Experience: React.FC<ExperienceProps> = ({ text, isSelected, onClick }) => {
   return (
-    <div className="bg-gray-200 rounded-full px-4 py-2 w-full">{text}</div>
+    <div
+      className={`bg-gray-200 rounded-full px-4 py-2 w-full cursor-pointer ${isSelected ? "bg-primary text-white" : "bg-gray-200 text-black"
+        }`}
+      onClick={() => onClick(text)}
+    >
+      {text}
+    </div>
   );
 };
 
 const Select: React.FC<SelectProps> = ({
   label,
-  onClick,
+  values,
   selected,
   setSelected,
 }) => {
-  const handleSelection = (person: any) => {
-    setSelected(person);
+  const handleSelection = (value: string) => {
+    setSelected(value);
   };
 
   return (
-    <div className="mt-7 ">
+    <div className="mt-6 ">
       <span className="font-semibold text-sm">{label}</span>
       <Listbox value={selected} onChange={handleSelection}>
         <div className="relative mt-5">
           <Listbox.Button
-            onChange={() => onClick}
             className="flex items-center justify-between space-x-3 w-full py-2 px-4 rounded-lg text-gray-500 border border-gray-300"
           >
             <span className="block truncate">{selected.name}</span>
@@ -81,14 +95,14 @@ const Select: React.FC<SelectProps> = ({
             leaveTo="opacity-0"
           >
             <Listbox.Options className="absolute mt-1 z-50 w-full overflow-auto rounded-lg bg-white shadow-lg">
-              {people.map((person, personIdx) => (
+              {values.map((item, itemIdx) => (
                 <Listbox.Option
-                  key={personIdx}
+                  key={itemIdx}
                   className={({ active }) =>
                     ` py-2 px-2 ${active ? "bg-amber-100 text-amber-900" : "text-gray-900"
                     }`
                   }
-                  value={person}
+                  value={item}
                 >
                   {({ selected }) => (
                     <>
@@ -96,7 +110,7 @@ const Select: React.FC<SelectProps> = ({
                         className={`block truncate ${selected ? "font-medium" : "font-normal"
                           }`}
                       >
-                        {person.name}
+                        {item.name}
                       </span>
                     </>
                   )}
@@ -111,43 +125,85 @@ const Select: React.FC<SelectProps> = ({
 };
 
 export const Filter: React.FC<FilterProps> = ({
-   reset, setReset,selectedEmploymentType,selectedWorkLocation,selectedWorkSchedule,
-   setSelectedWorkLocation,setSelectedEmploymentType,setSelectedWorkSchedule,setIsopen
-  
-  }) => {
-  const defaultPerson = { id: 0, name: "default" };
+  setIsopen,
+  filterValues,
+  setFilterValues,
+  handleCompleteFilter
+}) => {
+  const handleScheduleChange = (newSchedule: any) => {
+    setFilterValues((prevValues) => ({
+      ...prevValues,
+      schedule: newSchedule.name,
+    }));
+  };
 
-  const onChangeSalary = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setReset(Number(e.target.value));
+  const handleTypeChange = (newType: any) => {
+    setFilterValues((prevValues) => ({
+      ...prevValues,
+      type: newType.name,
+    }));
+  };
+
+  const handleWorkModeChange = (newWorkMode: any) => {
+    setFilterValues((prevValues) => ({
+      ...prevValues,
+      workMode: newWorkMode.name,
+    }));
+  };
+
+  const handleExperienceChange = (newExperience: string) => {
+    setFilterValues((prevValues) => ({
+      ...prevValues,
+      required_experience: newExperience,
+    }));
+  };
+
+  const handleSalaryChange = (value: number | number[]) => {
+    if (Array.isArray(value)) {
+      const [minSalary, maxSalary] = value;
+      setFilterValues((prevValues) => ({
+        ...prevValues,
+        minSalary,
+        maxSalary,
+      }));
+    }
   };
 
   return (
     <div className=" flex flex-col justify-between w-full h-full ">
       <div className="container flex pt-7 flex-col overflow-y-scroll justify-center h-3/4 w-full ">
-
+        <div className="mt-24" />
         <Select
+          values={WORK_SCHEDULE}
           label="Work Schedule"
-          selected={selectedWorkSchedule}
-          setSelected={setSelectedWorkSchedule}
+          selected={WORK_SCHEDULE.find((item) => item.name === filterValues.schedule) || { name: "default" }}
+          setSelected={handleScheduleChange}
         />
         <Select
+          values={EMPLOYMENT_TYPE}
           label="Employment Type"
-          selected={selectedEmploymentType}
-          setSelected={setSelectedEmploymentType}
+          selected={EMPLOYMENT_TYPE.find((item) => item.name === filterValues.type) || { name: "default" }}
+          setSelected={handleTypeChange}
         />
         <Select
+          values={WORK_LOCATION}
           label="Work Location"
-          selected={selectedWorkLocation}
-          setSelected={setSelectedWorkLocation}
+          selected={WORK_LOCATION.find((item) => item.name === filterValues.workMode) || { name: "default" }}
+          setSelected={handleWorkModeChange}
         />
 
         <div className="mt-7">
           <label className="font-semibold text-sm">Experience</label>
           <div className="flex flex-wrap gap-4 mt-4">
             {experience.map((x) => {
+              const isSelected: boolean = filterValues.required_experience === x.text;
               return (
                 <div key={x.text}>
-                  <Experience text={x.text} />
+                  <Experience
+                    text={x.text}
+                    isSelected={isSelected}
+                    onClick={handleExperienceChange}
+                  />
                 </div>
               );
             })}
@@ -156,23 +212,27 @@ export const Filter: React.FC<FilterProps> = ({
 
         <div className="my-7">
           <label className="font-semibold text-sm"> Salary</label>
-          <div className=" pt-5 ">
-            <div className="w-full pb-2 ">0$ - {reset}$</div>
+          <div className="pt-5">
+            <div className="w-full pb-2">
+              {filterValues.minSalary}$ - {filterValues.maxSalary}$
+            </div>
 
             <div className="w-full">
-              <input
-                className="w-full bg-primary"
+              <Slider
+                range
+                min={0}
                 max={5000}
-                type="range"
-                value={reset}
-                onChange={onChangeSalary}
+                defaultValue={[filterValues.minSalary, filterValues.maxSalary]}
+                value={[filterValues.minSalary, filterValues.maxSalary]}
+                onChange={handleSalaryChange}
+                styles={{ track: { backgroundColor: "#FF7300" } }}
               />
             </div>
           </div>
         </div>
       </div>
       <div className=" p-4 flex border-t-2 justify-center items-center ">
-        <button onClick={()=>setIsopen(false)} className="p-5 bg-primary w-full rounded-2xl text-white">Done</button>
+        <button onClick={handleCompleteFilter} className="p-5 bg-primary w-full rounded-2xl text-white">Done</button>
       </div>
     </div>
   );

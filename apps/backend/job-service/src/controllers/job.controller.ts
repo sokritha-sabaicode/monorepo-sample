@@ -1,6 +1,7 @@
 import { JobGetAllControllerParams, JobParams } from "@/src/controllers/types/job-controller.type";
 import { IJob } from "@/src/database/models/job.model";
 import jobService from "@/src/services/job.service";
+import searchService from "@/src/services/search.service";
 import sendResponse from "@/src/utils/send-response";
 import { APIResponse, PaginationResponse, prettyObject } from "@sokritha-sabaicode/ms-libs";
 import {
@@ -15,7 +16,10 @@ import {
   Delete,
   Queries,
   SuccessResponse,
+  Request
 } from "tsoa";
+import { Request as ExpressRequest } from 'express';
+
 
 @Route("/v1/jobs")
 @Tags("Job")
@@ -34,14 +38,42 @@ export class JobController extends Controller {
     }
   }
 
-  @Get("")
+  @Get("/")
   public async getAllJobs(
+    @Request() request: ExpressRequest,
     @Queries() queries: JobGetAllControllerParams
   ): Promise<APIResponse<PaginationResponse<IJob>>> {
     try {
-      const response = await jobService.getAllJobs(queries);
+      const userId = request.cookies['user_id'] || null
+
+      const response = await jobService.getAllJobs(queries, userId);
 
       return sendResponse<PaginationResponse<IJob>>({ message: "success", data: response });
+    } catch (error) {
+      throw error;
+    }
+  }
+
+
+  @Get("/search-history")
+  public async getSearchHistory(@Request() request: ExpressRequest): Promise<APIResponse<string[]>> {
+    try {
+      const userId = request.cookies['user_id'] || null
+
+      const response = await searchService.getSearchHistory(userId)
+
+      return sendResponse<string[]>({ message: "success", data: response });
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  @Get("/search-trending")
+  public async getSearchTrending(): Promise<APIResponse<string[]>> {
+    try {
+      const response = await searchService.getTrendingSearches();
+
+      return sendResponse<string[]>({ message: "success", data: response });
     } catch (error) {
       throw error;
     }
@@ -89,6 +121,7 @@ export class JobController extends Controller {
       throw error;
     }
   }
+
 }
 
 export default new JobController();

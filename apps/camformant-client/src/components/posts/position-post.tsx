@@ -124,8 +124,8 @@ export const PositionPost: React.FC = () => {
       </div>
 
       {jobData.length > 0 ? (
-        jobData.map((job) => (
-          <div key={job._id} className="mb-5">
+        jobData.map((job, idx) => (
+          <div key={idx} className="mb-5">
             <Card
               _id={job._id}
               title={job.title}
