@@ -111,7 +111,7 @@ const SearchCard = ({ searchValue, filterValues }: { searchValue: string, filter
               No Jobs Found
             </h2>
             <p className="text-gray-500 text-center max-w-md mt-2">
-              We couldn't find any jobs matching your criteria. Try clearing the
+              We couldn{`&apos;`}t find any jobs matching your criteria. Try clearing the
               filters or search with different keywords.
             </p>
 

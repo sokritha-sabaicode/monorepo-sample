@@ -247,4 +247,7 @@ const Message = React.memo(({ conversationId, job }: { conversationId: string | 
   );
 });
 
+// Add displayName for the component
+Message.displayName = "MessageComponent";
+
 export default Message;
