@@ -13,8 +13,8 @@ interface autoFocusd {
   focus?: RefObject<HTMLInputElement>;
   buttonBack?: boolean;
   isFilterDisplay?: boolean;
-  setSearchValue: Dispatch<SetStateAction<string>>;
-  setCompleteFilter: Dispatch<SetStateAction<FilterValueParams>>
+  setSearchValue?: Dispatch<SetStateAction<string>>;
+  setCompleteFilter?: Dispatch<SetStateAction<FilterValueParams>>
 }
 
 export const Search: React.FC<autoFocusd> = ({ focus, buttonBack, isFilterDisplay = false, setSearchValue, setCompleteFilter }) => {
@@ -22,7 +22,7 @@ export const Search: React.FC<autoFocusd> = ({ focus, buttonBack, isFilterDispla
   const [filterValues, setFilterValues] = useState(defaultFilterValue);
 
   const handleCompleteFilter = () => {
-    setCompleteFilter(filterValues);
+    setCompleteFilter!(filterValues);
     setOpen(false);
   }
 
@@ -60,7 +60,7 @@ export const Search: React.FC<autoFocusd> = ({ focus, buttonBack, isFilterDispla
 
           <input
             type="text"
-            onChange={(e) => setSearchValue(e.target.value)}
+            onChange={(e) => setSearchValue!(e.target.value)}
             ref={focus || undefined}
             placeholder="Search Job vacancy"
             className="relative shadow-md outline-none p-4 placeholder:text-md bg-whit rounded-2xl w-full pl-16 "

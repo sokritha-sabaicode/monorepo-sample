@@ -37,7 +37,6 @@ const SearchHomePage: React.FC = () => {
   const [searchHistory, setSearchHistory] = useState<string[]>([]);
   const [searchTrending, setSearchTrending] = useState<string[]>([]);
 
-  console.log('filterValues:: ', filterValues)
 
   useEffect(() => {
     const fetchSearchHistory = async () => {

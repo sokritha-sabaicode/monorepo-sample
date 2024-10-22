@@ -20,6 +20,7 @@ const people = [
 
 export const Header: React.FC = () => {
   const [selected, setSelected] = useState(people[0]);
+  
   return (
     <div className="container pt-10 pb-10 ">
       <div className=" flex flex-col justify-between h-40 bg-mybg-linear rounded-2xl">
@@ -54,10 +55,9 @@ export const Header: React.FC = () => {
                         <Listbox.Option
                           key={personIdx}
                           className={({ active }) =>
-                            ` py-2 px-2 ${
-                              active
-                                ? "bg-amber-100 text-amber-900"
-                                : "text-gray-900"
+                            ` py-2 px-2 ${active
+                              ? "bg-amber-100 text-amber-900"
+                              : "text-gray-900"
                             }`
                           }
                           value={person}
@@ -65,9 +65,8 @@ export const Header: React.FC = () => {
                           {({ selected }) => (
                             <>
                               <span
-                                className={`block truncate ${
-                                  selected ? "font-medium" : "font-normal"
-                                }`}
+                                className={`block truncate ${selected ? "font-medium" : "font-normal"
+                                  }`}
                               >
                                 {person.name}
                               </span>
@@ -98,7 +97,7 @@ export const Header: React.FC = () => {
           </div>
         </div>
         <div className="pl-3 pr-3 mb-[-25px] ">
-          <Search /* handleClick={handleClick} isOpen={isOpen} */ />
+          <Search />
         </div>
       </div>
     </div>
