@@ -12,6 +12,9 @@ export const API_ENDPOINTS = {
   // PUSH NOTIFICATION SERVICE
   SUBSCRIBE: `${process.env.NEXT_PUBLIC_PUSH_NOTIFICATION_ENDPOINT}/subscribe`,
 
+  // FAVORITE
+  FAVORITE: `${process.env.NEXT_PUBLIC_USER_ENDPOINT}/me/favorites`,
+
   // JOB SERVICE
   JOBS: `${process.env.NEXT_PUBLIC_JOB_ENDPOINT}`,
   SEARCH_HISTORY: `${process.env.NEXT_PUBLIC_JOB_ENDPOINT}/search-history`,

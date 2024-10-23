@@ -1,4 +1,4 @@
-import UserModel from "@/src/database/models/user.model";
+import UserModel, { IUser } from "@/src/database/models/user.model";
 import { MongoError, UserCreationRepoParams, UserGetAllRepoParams, UserSortParams, UserUpdateRepoParams } from "@/src/database/repositories/types/user-repository.type";
 import mongoose, { SortOrder } from "mongoose";
 import { APP_ERROR_MESSAGE, InvalidInputError, NotFoundError, ResourceConflictError, prettyObject } from "@sokritha-sabaicode/ms-libs";
@@ -133,10 +133,10 @@ class UserRepository {
   async updateBySub(updateInfo: UserUpdateRepoParams) {
     try {
       const { id, ...newUpdateInfo } = updateInfo
-     
+
       const result = await UserModel.findOneAndUpdate({
         $or: [
-          { sub: id },
+          { userId: id },
           { googleSub: id },
           { facebookSub: id },
         ],
@@ -164,6 +164,59 @@ class UserRepository {
     } catch (error) {
       console.error(`UserRepository - updateById() method error: `, prettyObject(error as {}))
       throw error
+    }
+  }
+
+  async addFavorite(userId: string, jobId: string): Promise<IUser> {
+    try {
+      const user = await UserModel.findByIdAndUpdate(
+        userId,
+        { $addToSet: { favorites: jobId } },
+        { new: true }
+      );
+
+      if (!user) {
+        throw new NotFoundError('User not found');
+      }
+
+      return user;
+    } catch (error) {
+      console.error(`UserRepository - addFavorite() method error: `, prettyObject(error as {}));
+      throw error;
+    }
+  }
+
+  async removeFavorite(userId: string, jobId: string): Promise<IUser> {
+    try {
+      const user = await UserModel.findByIdAndUpdate(
+        userId,
+        { $pull: { favorites: jobId } },
+        { new: true }
+      );
+
+      if (!user) {
+        throw new NotFoundError('User not found');
+      }
+
+      return user;
+    } catch (error) {
+      console.error(`UserRepository - removeFavorite() method error: `, prettyObject(error as {}));
+      throw error;
+    }
+  }
+
+  async getUserFavorites(userId: string): Promise<string[]> {
+    try {
+      const user = await UserModel.findById(userId).select('favorites');
+
+      if (!user) {
+        throw new NotFoundError('User not found');
+      }
+
+      return user.favorites;
+    } catch (error) {
+      console.error(`UserRepository - getUserFavorites() method error: `, prettyObject(error as {}));
+      throw error;
     }
   }
 }

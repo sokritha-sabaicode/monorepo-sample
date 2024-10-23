@@ -4,6 +4,7 @@ import axiosInstance from "@/utils/axios";
 import { API_ENDPOINTS } from "@/utils/const/api-endpoints";
 import { useDebounce } from "@/hooks/use-debounce";
 import { FilterValueParams } from "@/components/in-search/search-home-page";
+import SkeletonCard from "@/components/skeleton/skeleton-card";
 
 const SearchCard = ({ searchValue, filterValues }: { searchValue: string, filterValues: FilterValueParams }) => {
   const [jobData, setJobData] = useState<any[]>([]);
@@ -92,11 +93,7 @@ const SearchCard = ({ searchValue, filterValues }: { searchValue: string, filter
         {loading ? (
           Array.from({ length: 4 }).map((_, index) => (
             <div className="mb-2 p-1" key={index}>
-              <Card
-                isLoading={true}
-                heart={love}
-                setHeart={() => setLove((prev) => !prev)}
-              />
+              <SkeletonCard />
             </div>
           ))
         ) : jobData.length === 0 ? (
@@ -111,7 +108,7 @@ const SearchCard = ({ searchValue, filterValues }: { searchValue: string, filter
               No Jobs Found
             </h2>
             <p className="text-gray-500 text-center max-w-md mt-2">
-              We couldn{`&apos;`}t find any jobs matching your criteria. Try clearing the
+              We could not find any jobs matching your criteria. Try clearing the
               filters or search with different keywords.
             </p>
 

@@ -2,61 +2,84 @@
 
 import { BackButton_md } from "@/components/back/BackButton";
 import { Card } from "@/components/card/card";
-import axios from "axios";
+import SkeletonCard from "@/components/skeleton/skeleton-card";
+import axiosInstance from "@/utils/axios";
+import { API_ENDPOINTS } from "@/utils/const/api-endpoints";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
+import { useAuth } from "@/context/auth";
 
-const Page = () => {
+const Page: React.FC = () => {
+  const { user } = useAuth();
   const [jobData, setJobData] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [love, setLove] = useState<boolean>(true);
-  const config = {
-    headers: {
-      "Content-Type": "application/json",
-    },
-    withCredentials: true, // Make sure cookies are handled properly
+
+  const toggleFavorite = async (jobId: string) => {
+    const jobIndex = jobData.findIndex((job) => job._id === jobId);
+    if (jobIndex === -1) return;
+
+    const currentFavoriteStatus = jobData[jobIndex].favorite;
+    const newFavoriteStatus = !currentFavoriteStatus;
+
+    const updatedJobs = [...jobData];
+    updatedJobs[jobIndex].favorite = newFavoriteStatus;
+    setJobData(updatedJobs);
+
+    try {
+      if (newFavoriteStatus) {
+        await axiosInstance.post(`${API_ENDPOINTS.FAVORITE}`, { jobId });
+      } else {
+        await axiosInstance.delete(`${API_ENDPOINTS.FAVORITE}/${jobId}`);
+        // Remove the job from the list if unfavorited
+        setJobData((prevData) => prevData.filter((job) => job._id !== jobId));
+      }
+    } catch (error) {
+      console.error('Error updating favorite status:', error);
+      setError('Failed to update favorite status. Please try again later.');
+
+      // Revert the UI change if the API call fails
+      updatedJobs[jobIndex].favorite = currentFavoriteStatus;
+      setJobData(updatedJobs);
+    }
   };
-    const toggleFavorite = (jobId: string) => {
-    setJobData((prevData) =>
-      prevData.map((job) =>
-        job._id === jobId ? { ...job, favorite: !job.favorite } : job
-      )
-    );
-  };
+
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchFavoriteJobs = async () => {
       try {
-        const [jobResponse, favoritesResponse] = await Promise.all([
-          axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/jobs`, {}),
-          axios.get(`${process.env.NEXT_PUBLIC_API_URL}/v1/user/favorites/`, config),
-        ]);
+        setLoading(true);
+        setError(null);
 
-        const jobs = jobResponse.data.data.jobs;
-        const favorites = favoritesResponse.data;
+        // Get the user's favorite job IDs
+        const favoriteJobIds = user?.favorites || [];
 
-        const updatedJobs = jobs.map((job: any) => {
-          const favoriteJob = favorites.find(
-            (fav: any) => fav.jobId === job._id
-          );
-          return {
-            ...job,
-            favorite: favoriteJob ? favoriteJob.favorite : false,
-          };
-        });
+        if (favoriteJobIds.length === 0) {
+          setJobData([]);
+          setLoading(false);
+          return;
+        }
 
-        setJobData(updatedJobs);
+        const response = await axiosInstance.get(`${API_ENDPOINTS.JOBS}`);
+
+        const jobs = response.data.data.jobs;
+
+        // Set favorite status to true for these jobs
+        const jobsWithFavoriteStatus = jobs.map((job: any) => ({
+          ...job,
+          favorite: true,
+        }));
+
+        setJobData(jobsWithFavoriteStatus);
         setLoading(false);
       } catch (error) {
-        setError("Failed to fetch data");
+        console.error('Error fetching favorite jobs:', error);
+        setError("Failed to fetch favorite jobs.");
         setLoading(false);
       }
     };
 
-    fetchData();
-  }, []);
-
-
+    fetchFavoriteJobs();
+  }, [user]);
 
   if (error) {
     return (
@@ -67,9 +90,6 @@ const Page = () => {
       </div>
     );
   }
-
-  // Filter to show only favorite jobs (where favorite is true)
-  const filteredJobs = jobData.filter((job) => job.favorite === true);
 
   return (
     <div className="container pt-2 mb-20">
@@ -83,11 +103,11 @@ const Page = () => {
           .fill(0)
           .map((_, index) => (
             <div key={index} className="mb-4 rounded-xl drop-shadow-md">
-              <Card isLoading={true} setHeart={setLove} heart={love} />
+              <SkeletonCard />
             </div>
           ))
-      ) : filteredJobs.length > 0 ? (
-        filteredJobs.map((job) => (
+      ) : jobData.length > 0 ? (
+        jobData.map((job) => (
           <div key={job._id} className="mb-5">
             <Card
               _id={job._id}

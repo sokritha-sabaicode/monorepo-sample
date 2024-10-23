@@ -74,11 +74,63 @@ export class UsersController extends Controller {
     }
   }
 
-  @Get("{userId}")
+  @Post('/me/favorites')
+  public async addFavorite(
+    @Request() request: ExpressRequest,
+    @Body() body: { jobId: string }
+  ): Promise<UserProfileResponse> {
+    try {
+      const userId = request.cookies['user_id']
+      const { jobId } = body;
+
+      const response = await UserService.addFavorite(userId, jobId);
+
+      return sendResponse<IUser>({ message: 'Favorite added successfully', data: response });
+    } catch (error) {
+      console.error(`UsersController - addFavorite() method error: `, prettyObject(error as {}));
+      throw error;
+    }
+  }
+
+  @Get('/me/favorites')
+  public async getFavorites(
+    @Request() request: ExpressRequest
+  ): Promise<{ message: string; data: string[] }> {
+    try {
+      const userId = request.cookies['user_id']
+
+      const favorites = await UserService.getUserFavorites(userId);
+
+      return sendResponse<string[]>({ message: 'success', data: favorites });
+    } catch (error) {
+      console.error(`UsersController - getFavorites() method error: `, prettyObject(error as {}));
+      throw error;
+    }
+  }
+
+  @Delete('/me/favorites/{jobId}')
+  public async removeFavorite(
+    @Request() request: ExpressRequest,
+    @Path() jobId: string
+  ): Promise<UserProfileResponse> {
+    try {
+      const userId = request.cookies['user_id']
+
+      const response = await UserService.removeFavorite(userId, jobId);
+
+      return sendResponse<IUser>({ message: 'Favorite removed successfully', data: response });
+    } catch (error) {
+      console.error(`UsersController - removeFavorite() method error: `, prettyObject(error as {}));
+      throw error;
+    }
+  }
+
+  @Get("/{userId}")
   public async getUserProfile(
     @Path() userId: string
   ): Promise<UserProfileResponse> {
     try {
+      console.log('userId: ', userId)
       const response = await UserService.getUserBySub(userId);
 
       return sendResponse<IUser>({ message: 'success', data: response })
@@ -88,7 +140,7 @@ export class UsersController extends Controller {
     }
   }
 
-  @Put("{userId}")
+  @Put("/{userId}")
   public async updateUserById(
     @Path() userId: string,
     @Body() updateUserInfo: UserUpdateRequestParams

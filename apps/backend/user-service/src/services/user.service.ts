@@ -1,4 +1,5 @@
 import { UserGetAllControllerParams } from "@/src/controllers/types/user-controller.type";
+import { IUser } from "@/src/database/models/user.model";
 import { UserCreationRepoParams, UserUpdateRepoParams } from "@/src/database/repositories/types/user-repository.type";
 import UserRepository from "@/src/database/repositories/user.repository";
 import { prettyObject } from '@sokritha-sabaicode/ms-libs';
@@ -77,6 +78,35 @@ class UserService {
     }
   }
 
+  async addFavorite(userId: string, jobId: string): Promise<IUser> {
+    try {
+      const user = await UserRepository.addFavorite(userId, jobId);
+      return user;
+    } catch (error) {
+      console.error(`UserService - addFavorite() method error: `, prettyObject(error as {}));
+      throw error;
+    }
+  }
+
+  async removeFavorite(userId: string, jobId: string): Promise<IUser> {
+    try {
+      const user = await UserRepository.removeFavorite(userId, jobId);
+      return user;
+    } catch (error) {
+      console.error(`UserService - removeFavorite() method error: `, prettyObject(error as {}));
+      throw error;
+    }
+  }
+
+  async getUserFavorites(userId: string): Promise<string[]> {
+    try {
+      const favorites = await UserRepository.getUserFavorites(userId);
+      return favorites;
+    } catch (error) {
+      console.error(`UserService - getUserFavorites() method error: `, prettyObject(error as {}));
+      throw error;
+    }
+  }
 }
 
 export default new UserService();

@@ -7,12 +7,15 @@ import { CategoryPosition } from "@/components/category-position/category-positi
 import axiosInstance from "@/utils/axios";
 import { API_ENDPOINTS } from "@/utils/const/api-endpoints";
 import { Card } from "@/components/card/card";
+import { useAuth } from "@/context/auth";
+import { Job } from "@/app/jobs/[id]/message/page";
+import SkeletonCard from "@/components/skeleton/skeleton-card";
 
 export const PositionPost: React.FC = () => {
+  const { user } = useAuth();
   const [jobData, setJobData] = useState<any[]>([]);
   const [selectedPosition, setSelectedPosition] =
     useState<string>("All");
-  const [love, setLove] = useState<boolean>(true);
 
   // FETCHING DATA STATE
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -37,7 +40,11 @@ export const PositionPost: React.FC = () => {
         setHasMore(false); // No more data to fetch
       }
 
-      setJobData((prevJobs) => [...prevJobs, ...jobs]);
+      const jobsWithFavoriteStatus = jobs.map((job: Job) => ({
+        ...job, favorite: user?.favorites.includes(job._id) || false
+      }))
+
+      setJobData((prevJobs) => [...prevJobs, ...jobsWithFavoriteStatus]);
       setPage(nextPage);
     } catch (error) {
       console.error('Error fetching more jobs:', error);
@@ -61,15 +68,34 @@ export const PositionPost: React.FC = () => {
     setSelectedPosition(category);
     setJobData([]);
     setPage(1);
-    setHasMore(true); // Reset hasMore when category changes
+    setHasMore(true);
   };
 
-  const toggleFavorite = (jobId: string) => {
-    setJobData((prevData) =>
-      prevData.map((job) =>
-        job._id === jobId ? { ...job, favorite: !job.favorite } : job
-      )
-    );
+  const toggleFavorite = async (jobId: string) => {
+    const jobIndex = jobData.findIndex((job) => job._id === jobId);
+    if (jobIndex === -1) return;
+
+    const currentFavoriteStatus = jobData[jobIndex].favorite;
+    const newFavoriteStatus = !currentFavoriteStatus;
+
+    const updatedJobs = [...jobData];
+    updatedJobs[jobIndex].favorite = newFavoriteStatus;
+    setJobData(updatedJobs);
+
+    try {
+      if (newFavoriteStatus) {
+        await axiosInstance.post(API_ENDPOINTS.FAVORITE, { jobId })
+      } else {
+        await axiosInstance.delete(`${API_ENDPOINTS.FAVORITE}/${jobId}`)
+      }
+    } catch (error) {
+      console.error('Error updating favorite status:', error);
+      setError('Failed to update favorite status. Please try again later.');
+
+      // Revert the UI change if the API call fails
+      updatedJobs[jobIndex].favorite = currentFavoriteStatus;
+      setJobData(updatedJobs);
+    }
   };
 
   useEffect(() => {
@@ -87,10 +113,16 @@ export const PositionPost: React.FC = () => {
         const { jobs, totalPages } = jobResponse.data.data; // Adjust based on your actual response structure
 
         if (jobs.length === 0 || 1 >= totalPages) {
-          setHasMore(false); // No more data to fetch
+          setHasMore(false);
         }
 
-        setJobData(jobs);
+        // Merge favorite status into jobs
+        const jobsWithFavoriteStatus = jobs.map((job: any) => ({
+          ...job,
+          favorite: user?.favorites.includes(job._id) || false
+        }))
+
+        setJobData(jobsWithFavoriteStatus);
       } catch (error) {
         console.error("Error fetching jobs:", error);
         setError("Failed to fetch jobs. Please try again later.");
@@ -100,7 +132,7 @@ export const PositionPost: React.FC = () => {
     };
 
     fetchJobs();
-  }, [selectedPosition]);
+  }, [selectedPosition, user]);
 
   useEffect(() => {
     window.addEventListener("scroll", onScroll);
@@ -148,7 +180,7 @@ export const PositionPost: React.FC = () => {
           .fill(0)
           .map((_, index) => (
             <div key={index} className="mb-4 rounded-xl drop-shadow-md">
-              <Card isLoading={true} setHeart={setLove} heart={love} />
+              <SkeletonCard />
             </div>
           ))
       ) : (

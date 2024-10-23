@@ -13,6 +13,7 @@ export interface IUser {
   gender: string;
   age: number;
   role: string;
+  favorites: string[];
   createdAt: Date;
   updatedAt: Date;
 }
@@ -28,7 +29,8 @@ const userSchema = new mongoose.Schema({
   profile: { type: String, default: 'https://microservice-sample-resource.s3.amazonaws.com/default_pic.jpg' },
   gender: { type: String },
   age: { type: Number },
-  role: { type: String, default: 'user' }
+  role: { type: String, default: 'user' },
+  favorites: { type: [String], default: [] },
 }, {
   timestamps: true,
   toObject: {
