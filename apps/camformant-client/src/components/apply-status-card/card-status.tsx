@@ -10,6 +10,7 @@ import { PiTextAlignLeftFill } from "react-icons/pi";
 import axios from "axios";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
+import SkeletonCard from "@/components/skeleton/skeleton-card";
 
 // Process Template Mapping
 const processTemplate: { [key: string]: { text: string; icon: JSX.Element } } = {
@@ -29,8 +30,8 @@ const CardStatus: React.FC<ApplyTotal> = ({ total, setTotal }) => {
   const [status, setStatus] = useState<number | undefined | null>(0);
   const [jobData, setJobData] = useState<any>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [love ,setLove]=useState<boolean>(false);
-  
+  const [love, setLove] = useState<boolean>(false);
+
   const config = {
     headers: {
       "Content-Type": "application/json",
@@ -43,14 +44,14 @@ const CardStatus: React.FC<ApplyTotal> = ({ total, setTotal }) => {
       try {
         const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/v1/user/applied/`, config);
         const responseData = res.data;
-  
+
         // Extract the data array from responseData
         const data = responseData.data;
-  
+
         let favorites = [];
         const favoritesResponse = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/v1/user/favorites/`, config);
         favorites = favoritesResponse.data;
-  
+
         // Check if extracted data is an array
         if (Array.isArray(data)) {
           const updatedJobs = data.map((item: any) => {
@@ -61,21 +62,21 @@ const CardStatus: React.FC<ApplyTotal> = ({ total, setTotal }) => {
               favorite: fav ? fav.favorite : false,
             };
           });
-  
+
           // Update jobData with the modified favorite status
           setJobData(updatedJobs);
           setTotal(updatedJobs.length); // Update total count
         } else {
           console.error("Expected data to be an array but received:", data);
         }
-  
+
         setIsLoading(false); // Stop loading once data is fetched
       } catch (error) {
         console.error("Error fetching data:", error);
         setIsLoading(false); // Stop loading even if there's an error
       }
     }
-  
+
     GetData();
   }, []);
 
@@ -106,13 +107,13 @@ const CardStatus: React.FC<ApplyTotal> = ({ total, setTotal }) => {
     }
   };
 
-  function handleClick_Heart(id:any){
+  function handleClick_Heart(id: any) {
     setJobData(jobData.map((item: any) => {
-      const { job, company ,favorite} = item;
-      if(job._id===id){
+      const { job, company, favorite } = item;
+      if (job._id === id) {
         return {
-         ...item,
-          favorite:!favorite,
+          ...item,
+          favorite: !favorite,
         }
       }
       return item;
@@ -124,7 +125,7 @@ const CardStatus: React.FC<ApplyTotal> = ({ total, setTotal }) => {
       {isLoading ? (
         Array(5).fill(0).map((_, index) => (
           <div key={index} className="mb-5 rounded-xl drop-shadow-md">
-            <Card isLoading={true} setHeart={() => {}} heart={false} />
+            <SkeletonCard />
           </div>
         ))
       ) : (
@@ -149,7 +150,7 @@ const CardStatus: React.FC<ApplyTotal> = ({ total, setTotal }) => {
                 schedule={job.schedule}
                 location={job.location}
                 deadline={new Date(job.deadline)}
-                setHeart={() =>handleClick_Heart(job._id)} // You can implement the favorite toggle logic here
+                setHeart={() => handleClick_Heart(job._id)} // You can implement the favorite toggle logic here
                 heart={favorite}     // Pass the favorite status to the Card component
               />
               <div className={`${status !== job._id ? "hidden" : "block"} h-full w-full pb-7`}>
@@ -170,7 +171,7 @@ const CardStatus: React.FC<ApplyTotal> = ({ total, setTotal }) => {
       )}
     </div>
   );
-  
+
 };
 
 export default CardStatus;

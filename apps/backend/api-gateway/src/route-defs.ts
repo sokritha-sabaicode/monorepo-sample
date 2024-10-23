@@ -121,8 +121,32 @@ const ROUTE_PATHS: RoutesConfig = {
           GET: {
             authRequired: true, roles: ["user", "admin"]
           }
-        }
-      }
+        },
+        nestedRoutes: [
+          {
+            path: "/favorites",
+            methods: {
+              GET: {
+                authRequired: true, roles: ["user", "admin"]
+              },
+              POST: {
+                authRequired: true, roles: ["user", "admin"]
+              }
+            },
+            nestedRoutes: [
+              {
+                path: "/:id",
+                methods: {
+                  DELETE: {
+                    authRequired: true, roles: ["user", "admin"]
+                  }
+                }
+              }
+            ]
+          },
+        ]
+      },
+
     ]
   },
   JOB_SERVICE: {

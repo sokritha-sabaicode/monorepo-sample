@@ -8,50 +8,74 @@ import { Pagination } from "swiper/modules";
 import { Heading } from "@/components/heading/heading";
 import { Button } from "@/components/button/button";
 import { AiOutlineArrowRight } from "react-icons/ai";
-import axios from "axios";
 import Image from "next/image";
 import axiosInstance from "@/utils/axios";
 import { API_ENDPOINTS } from "@/utils/const/api-endpoints";
 import { Card } from "@/components/card/card";
+import { useAuth } from "@/context/auth";
+import SkeletonCard from "@/components/skeleton/skeleton-card";
 
 export const RecommendationPost: React.FC = () => {
+  const { user } = useAuth();
   const [jobData, setJobData] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [love, setLove] = useState<boolean>(true); // State for triggering re-fetch
 
-  const toggleFavorite = (jobId: string) => {
-    setJobData((prevData) =>
-      prevData.map((job) =>
-        job._id === jobId ? { ...job, favorite: !job.favorite } : job
-      )
-    );
+  const toggleFavorite = async (jobId: string) => {
+    const jobIndex = jobData.findIndex((job) => job._id === jobId);
+    if (jobIndex === -1) return;
+
+    const currentFavoriteStatus = jobData[jobIndex].favorite;
+    const newFavoriteStatus = !currentFavoriteStatus;
+
+    const updatedJobs = [...jobData];
+    updatedJobs[jobIndex].favorite = newFavoriteStatus;
+    setJobData(updatedJobs);
+
+    try {
+      if (newFavoriteStatus) {
+        await axiosInstance.post(`${API_ENDPOINTS.FAVORITE}`, { jobId });
+      } else {
+        await axiosInstance.delete(`${API_ENDPOINTS.FAVORITE}/${jobId}`);
+      }
+    } catch (error) {
+      console.error("Error updating favorite status:", error);
+      setError("Failed to update favorite status. Please try again later.");
+
+      // Revert the UI change if the API call fails
+      updatedJobs[jobIndex].favorite = currentFavoriteStatus;
+      setJobData(updatedJobs);
+    }
   };
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const jobResponse = await axiosInstance.get(
-          `${API_ENDPOINTS.JOBS}`,
-          {
-            params: {
-              limit: 5,
-              sort: JSON.stringify({ createdAt: "desc" }),
-            },
-          }
-        );
+        const jobResponse = await axiosInstance.get(`${API_ENDPOINTS.JOBS}`, {
+          params: {
+            limit: 5,
+            sort: JSON.stringify({ createdAt: "desc" }),
+          },
+        });
         const jobs = jobResponse.data.data.jobs;
 
-        setJobData(jobs);
+        // Merge favorite status into jobs
+        const jobsWithFavoriteStatus = jobs.map((job: any) => ({
+          ...job,
+          favorite: user?.favorites.includes(job._id) || false,
+        }));
+
+        setJobData(jobsWithFavoriteStatus);
         setLoading(false);
       } catch (jobError) {
+        console.error("Error fetching job data:", jobError);
         setError("Failed to fetch job data");
         setLoading(false);
       }
     };
 
     fetchData();
-  }, []);
+  }, [user]);
 
   if (error) {
     return (
@@ -70,7 +94,7 @@ export const RecommendationPost: React.FC = () => {
         <Image
           src={"/images/bloodbros-search.gif"}
           alt={"logo"}
-          width={50} // Add some margin for spacing
+          width={50}
           height={50}
           unoptimized
         />
@@ -88,11 +112,7 @@ export const RecommendationPost: React.FC = () => {
           ? Array.from({ length: 3 }).map((_, index) => (
             <SwiperSlide key={index}>
               <div className="mb-5 p-1">
-                <Card
-                  isLoading={true}
-                  heart={love}
-                  setHeart={() => setLove((prev) => !prev)}
-                />
+                <SkeletonCard />
               </div>
             </SwiperSlide>
           ))
@@ -111,7 +131,6 @@ export const RecommendationPost: React.FC = () => {
                   schedule={job.schedule}
                   location={job.location}
                   deadline={new Date(job.deadline)}
-                  isLoading={loading}
                   heart={job.favorite}
                   setHeart={() => toggleFavorite(job._id)}
                 />

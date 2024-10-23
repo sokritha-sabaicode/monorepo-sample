@@ -12,6 +12,7 @@ interface User {
   profile: string;
   role: string;
   username: string;
+  favorites: string[]
 }
 
 interface AuthContextType {

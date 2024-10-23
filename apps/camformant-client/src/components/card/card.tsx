@@ -1,13 +1,10 @@
-/* eslint-disable @next/next/no-img-element */
 "use client";
 import { MdCalendarToday } from "react-icons/md";
 import { dateFormat } from "@/utils/date";
 import { FaMapMarkerAlt } from "react-icons/fa";
 import Link from "next/link";
-import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import Heart from "./heart";
-import axios from "axios";
 import { useRouter } from "next/navigation";
 
 interface CardProps {
@@ -24,9 +21,8 @@ interface CardProps {
   schedule?: string[];
   location?: string;
   day?: number | string;
-  isLoading?: boolean;
   isFavorite?: boolean;
-  setHeart: (value: boolean) => void;
+  setHeart: () => void;
   heart: boolean;
 }
 
@@ -43,72 +39,10 @@ export const Card: React.FC<CardProps> = (props) => {
     max_salary,
     location,
     type,
-    isLoading,
     heart,
     setHeart,
   } = props;
-
   const router = useRouter();
-  const config = {
-    headers: {
-      "Content-Type": "application/json",
-    },
-    withCredentials: true, // Make sure cookies are handled properly
-  };
-  const Click_handleLove = () => {
-    const newHeartState = !heart;
-    setHeart(newHeartState);
-    async function PostFav() {
-      try {
-        const data = {
-          jobId: _id,
-          favorite: newHeartState, // Use the updated heart state here
-        };
-        const res = await axios.post(
-          `${process.env.NEXT_PUBLIC_API_URL}/v1/user/favorites/`,
-          data,
-          config
-        );
-      } catch (error) {
-        router.push("/login");
-      } finally {
-        console.log("Data updated");
-      }
-    }
-
-    PostFav();
-  };
-
-  if (isLoading) {
-    return (
-      <div className="shadow drop-shadow-md bg-white rounded-2xl p-5">
-        <div className="flex justify-between">
-          <section className="flex gap-x-5 items-center">
-            <Skeleton circle width={50} height={50} />
-            <div className="">
-              <Skeleton width={100} height={20} />
-              <Skeleton width={150} height={15} />
-            </div>
-          </section>
-          <div className="text-xl ">
-            <Skeleton width={24} height={24} />
-          </div>
-        </div>
-        <div className="mt-2">
-          <Skeleton width={200} height={20} className="mb-2" />
-          <Skeleton width={150} height={15} />
-        </div>
-        <div className="flex justify-between items-center mt-4">
-          <Skeleton width={100} height={20} />
-          <Skeleton width={80} height={20} />
-        </div>
-        <div className="flex justify-between mt-3">
-          <Skeleton width={100} height={20} />
-          <Skeleton width={100} height={20} />
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="shadow drop-shadow-md bg-white rounded-2xl p-5">
@@ -126,7 +60,7 @@ export const Card: React.FC<CardProps> = (props) => {
         </section>
 
         <section>
-          <Heart heart={heart} handleLove={Click_handleLove} />
+          <Heart heart={heart} handleLove={setHeart} />
         </section>
       </div>
       <Link href={`/jobs/${_id}`}>
